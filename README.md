@@ -7,3 +7,9 @@
 [플로우 차트](docs/01_FlowChart.md)
 
 [시퀀스 다이어그램](docs/02_SequenceDiagram.md)
+
+### 심화과제
+
+[API 명세서](docs/03_ApiSpec.md)
+
+[ERD 다이어그램](docs/04_ERDDiagram.md)
