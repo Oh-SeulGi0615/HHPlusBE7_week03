@@ -1,0 +1,33 @@
+package kr.hhplus.be.server.domain.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "user")
+public class UserEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
+
+    @Column(nullable = false)
+    private String userName;
+
+    @Column(nullable = false)
+    private Long point;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public Long getPoint() {
+        return point;
+    }
+
+    public void setPoint(Long point) {
+        this.point = point;
+    }
+}

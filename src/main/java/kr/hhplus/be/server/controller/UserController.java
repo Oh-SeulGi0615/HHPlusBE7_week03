@@ -1,5 +1,9 @@
 package kr.hhplus.be.server.controller;
 
+import kr.hhplus.be.server.domain.dto.PointChargeResponse;
+import kr.hhplus.be.server.exeption.InvalidPointException;
+import kr.hhplus.be.server.exeption.UserNotFoundException;
+import kr.hhplus.be.server.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,28 +17,21 @@ import java.util.Map;
 @RequestMapping("/api")
 public class UserController {
 
+    private final UserService userService;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @PostMapping("/users/{id}/points/charge")
     public ResponseEntity<Object> chargePoint(@PathVariable("id") Long userId, Long point) {
-        Long mypoint = 9900000L;
-
-        if (userId > 1000000) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저를 찾을 수 없습니다.");
+        try {
+            PointChargeResponse response = userService.chargePoint(userId, point);
+            return ResponseEntity.ok(response);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (InvalidPointException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        if (point < 0 || point % 10 > 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("충전 가능한 금액은 0원 초과 10원 단위입니다.");
-        }
-        if (point > 1000000) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("1회 충전 가능한 금액은 최대 1,000,000원 입니다.");
-        }
-        if (point + mypoint > 10000000) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("보유할 수 있는 최대 금액은 10,000,000원 입니다.");
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("userId", userId);
-        response.put("point", point + mypoint);
-
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users/{id}/points/check")
