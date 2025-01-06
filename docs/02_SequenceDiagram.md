@@ -6,8 +6,13 @@
 #### 잔액 조회
 ![시퀀스다이어그램_잔액조회](https://github.com/user-attachments/assets/b12f09cb-0ab6-4188-aed2-822fd01c4650)
 
-#### 전체 / 개별 상품 조회
-![시퀀스다이어그램_상품조회](https://github.com/user-attachments/assets/bf84eaf8-d421-4f63-a58c-3e43d2b1afda)
+#### 전체 상품 조회
+![전체상품조회](https://github.com/user-attachments/assets/71016091-b981-41f7-afe4-fd16ed322226)
+- 전체 상품 / 개별 상품 조회 분리
+
+#### 개별 상품 조회
+![개별상품조회](https://github.com/user-attachments/assets/a4018ee4-66e0-4415-8a30-854e17aab6d4)
+- 전체 상품 / 개별 상품 조회 분리
 
 #### 인기 상품 조회
 ![시퀀스다이어그램_인기상품조회](https://github.com/user-attachments/assets/42289e61-7198-495e-b01d-0ed727407430)
@@ -19,7 +24,8 @@
 ![시퀀스다이어그램_쿠폰조회](https://github.com/user-attachments/assets/e72d47a4-cff8-4c33-b49a-32a3d3b679af)
 
 #### 상품 주문
-![시퀀스다이어그램_상품주문](https://github.com/user-attachments/assets/1e981fb2-406a-4cdd-b985-faa9f9ceb604)
+![상품주문](https://github.com/user-attachments/assets/db9f4ca3-b351-4e65-8510-84f73476e58a)
+- 재고 차감 로직 추가
 
 #### 상품 결제
 ![시퀀스다이어그램_상품결제](https://github.com/user-attachments/assets/51c0771a-dcf6-4171-a72d-5ca0c20ee28d)
