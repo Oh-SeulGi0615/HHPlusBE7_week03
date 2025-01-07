@@ -64,11 +64,11 @@ public class UserService {
         return new PointResponse(pointRequest.getUserid(), updatedPoint);
     }
 
-    public PointResponse checkPoint(PointRequest pointRequest) {
-        UserEntity userEntity = userRepository.findById(pointRequest.getUserid()).orElseThrow(
+    public PointResponse checkPoint(Long userId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
                 () -> new InvalidUserException("유저를 찾을 수 없습니다.")
         );
         Long currentPoint = userEntity.getPoint();
-        return new PointResponse(pointRequest.getUserid(), currentPoint);
+        return new PointResponse(userId, currentPoint);
     }
 }

@@ -36,8 +36,9 @@ public class UserController {
     }
 
     @PostMapping("/users/{id}/points/charge")
-    public ResponseEntity<Object> chargePoint(@PathVariable("id") @RequestBody PointRequest pointRequest) {
+    public ResponseEntity<Object> chargePoint(@PathVariable("id") Long userId, @RequestBody Long point) {
         try {
+            PointRequest pointRequest = new PointRequest(userId, point);
             PointResponse response = userService.chargePoint(pointRequest);
             return ResponseEntity.ok(response);
         } catch (InvalidUserException e) {
@@ -48,9 +49,9 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}/points/check")
-    public ResponseEntity<Object> checkPoint(@PathVariable("id") PointRequest pointRequest) {
+    public ResponseEntity<Object> checkPoint(@PathVariable("id") Long userId) {
         try {
-            PointResponse response = userService.checkPoint(pointRequest);
+            PointResponse response = userService.checkPoint(userId);
             return ResponseEntity.ok(response);
         } catch (InvalidUserException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
