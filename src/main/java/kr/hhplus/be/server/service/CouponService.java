@@ -69,4 +69,8 @@ public class CouponService {
                 coupon.getDueDate()
         );
     }
+
+    public List<CouponResponse> checkAllMyCoupon(Long userId) {
+        List<UserCouponEntity> myCouponList = userCouponRepository.findAllByUserId(userId);
+    }
 }

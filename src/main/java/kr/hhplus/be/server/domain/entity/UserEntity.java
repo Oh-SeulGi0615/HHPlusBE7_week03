@@ -37,4 +37,8 @@ public class UserEntity extends BaseEntity{
     public void setPoint(Long point) {
         this.point = point;
     }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 }

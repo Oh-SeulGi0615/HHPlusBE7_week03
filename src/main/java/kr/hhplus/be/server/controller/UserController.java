@@ -2,6 +2,7 @@ package kr.hhplus.be.server.controller;
 
 import kr.hhplus.be.server.domain.dto.request.UserRequest;
 import kr.hhplus.be.server.domain.dto.request.PointRequest;
+import kr.hhplus.be.server.domain.dto.response.UserCouponResponse;
 import kr.hhplus.be.server.domain.dto.response.UserResponse;
 import kr.hhplus.be.server.domain.dto.response.PointResponse;
 import kr.hhplus.be.server.exeption.InvalidPointException;
@@ -11,10 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -61,15 +59,11 @@ public class UserController {
 
     @GetMapping("/users/{id}/coupons")
     public ResponseEntity<Object> checkCoupon(@PathVariable("id") Long userId) {
-        Long userId1 = 1L;
-        List<Long> couponList = new ArrayList<>(List.of(1L, 2L, 3L));
-        Map<Long, List<Long>> userInfo = new HashMap<>(Map.of(userId1, couponList));
-
-        if (!userInfo.containsKey(userId)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저를 찾을 수 없습니다.");
+        try {
+            List<UserCouponResponse> response = userService.checkAllMyCoupon(userId);
+            return ResponseEntity.ok(response);
+        } catch (InvalidUserException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
-        List<Long> userCoupons = userInfo.get(userId);
-        return ResponseEntity.ok(userCoupons);
     }
 }
