@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.domain.dto;
+package kr.hhplus.be.server.domain.dto.request;
 
-public class PointChargeRequest {
+public class PointRequest {
     private Long userid;
     private Long point;
 

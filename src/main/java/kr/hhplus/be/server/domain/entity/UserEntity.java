@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "user")
-public class UserEntity {
+public class UserEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -14,6 +14,13 @@ public class UserEntity {
 
     @Column(nullable = false)
     private Long point;
+
+    protected UserEntity() {}
+
+    public UserEntity(String name) {
+        this.userName = name;
+        this.point = 0L;
+    }
 
     public Long getUserId() {
         return userId;

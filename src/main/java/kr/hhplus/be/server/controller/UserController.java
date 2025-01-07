@@ -1,8 +1,11 @@
 package kr.hhplus.be.server.controller;
 
-import kr.hhplus.be.server.domain.dto.PointChargeResponse;
+import kr.hhplus.be.server.domain.dto.request.UserRequest;
+import kr.hhplus.be.server.domain.dto.request.PointRequest;
+import kr.hhplus.be.server.domain.dto.response.UserResponse;
+import kr.hhplus.be.server.domain.dto.response.PointResponse;
 import kr.hhplus.be.server.exeption.InvalidPointException;
-import kr.hhplus.be.server.exeption.UserNotFoundException;
+import kr.hhplus.be.server.exeption.InvalidUserException;
 import kr.hhplus.be.server.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +25,22 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/users/{id}/points/charge")
-    public ResponseEntity<Object> chargePoint(@PathVariable("id") Long userId, Long point) {
+    @PostMapping("/users/create")
+    public ResponseEntity<Object> createUser(@RequestBody UserRequest userRequest) {
         try {
-            PointChargeResponse response = userService.chargePoint(userId, point);
+            UserResponse response = userService.createUser(userRequest);
             return ResponseEntity.ok(response);
-        } catch (UserNotFoundException e) {
+        } catch (InvalidUserException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/users/{id}/points/charge")
+    public ResponseEntity<Object> chargePoint(@PathVariable("id") @RequestBody PointRequest pointRequest) {
+        try {
+            PointResponse response = userService.chargePoint(pointRequest);
+            return ResponseEntity.ok(response);
+        } catch (InvalidUserException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (InvalidPointException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -35,43 +48,17 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}/points/check")
-    public ResponseEntity<Object> checkPoint(@PathVariable("id") Long userId) {
-        if (userId > 1000000) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저를 찾을 수 없습니다.");
+    public ResponseEntity<Object> checkPoint(@PathVariable("id") PointRequest pointRequest) {
+        try {
+            PointResponse response = userService.checkPoint(pointRequest);
+            return ResponseEntity.ok(response);
+        } catch (InvalidUserException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-        Map<String, Object> response = new HashMap<>();
-        response.put("userId", userId);
-        response.put("point", 100000L);
-
-        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/users/{id}/coupons/get")
-    public ResponseEntity<Object> getCoupon(@PathVariable("id") Long userId, Long couponId) {
-        List<Long> couponList = new ArrayList<>(List.of(1L, 2L, 3L));
 
-        if (userId > 1000000) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저를 찾을 수 없습니다.");
-        }
-        if (couponId > 1000000) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("쿠폰 정보를 찾을 수 없습니다.");
-        }
-        if (!couponList.contains(couponId)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 발급된 쿠폰입니다.");
-        }
-        Map<String, Object> response = new HashMap<>();
-        Map<String, Object> couponState = new HashMap<>();
-
-        couponState.put("couponId", couponId);
-        couponState.put("state", false);
-
-        response.put("userID", userId);
-        response.put("coupon", couponState);
-
-        return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("/users/{id}/coupons/check")
+    @GetMapping("/users/{id}/coupons")
     public ResponseEntity<Object> checkCoupon(@PathVariable("id") Long userId) {
         Long userId1 = 1L;
         List<Long> couponList = new ArrayList<>(List.of(1L, 2L, 3L));

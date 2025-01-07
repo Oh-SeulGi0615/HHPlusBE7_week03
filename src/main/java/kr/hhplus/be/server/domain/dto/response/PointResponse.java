@@ -1,10 +1,10 @@
-package kr.hhplus.be.server.domain.dto;
+package kr.hhplus.be.server.domain.dto.response;
 
-public class PointChargeResponse {
+public class PointResponse {
     private Long userId;
     private Long point;
 
-    public PointChargeResponse(Long userId, Long point) {
+    public PointResponse(Long userId, Long point) {
         this.userId = userId;
         this.point = point;
     }
