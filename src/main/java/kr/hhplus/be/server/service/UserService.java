@@ -44,7 +44,7 @@ public class UserService {
     }
 
     public PointResponse chargePoint(PointRequest pointRequest) {
-        UserEntity userEntity = userRepository.findById(pointRequest.getUserid()).orElseThrow(
+        UserEntity userEntity = userRepository.findByUserId(pointRequest.getUserid()).orElseThrow(
                 () -> new InvalidUserException("유저를 찾을 수 없습니다.")
         );
         Long currentPoint = userEntity.getPoint();
@@ -68,7 +68,7 @@ public class UserService {
     }
 
     public PointResponse checkPoint(Long userId) {
-        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
+        UserEntity userEntity = userRepository.findByUserId(userId).orElseThrow(
                 () -> new InvalidUserException("유저를 찾을 수 없습니다.")
         );
         Long currentPoint = userEntity.getPoint();
@@ -76,7 +76,7 @@ public class UserService {
     }
 
     public List<UserCouponResponse> checkAllMyCoupon(Long userId) {
-        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
+        UserEntity userEntity = userRepository.findByUserId(userId).orElseThrow(
                 () -> new InvalidUserException("유저를 찾을 수 없습니다.")
         );
         List<UserCouponEntity> myCouponList = userCouponRepository.findAllByUserId(userEntity.getUserId());

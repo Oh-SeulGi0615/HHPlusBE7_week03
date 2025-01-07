@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface CouponRepository extends JpaRepository<CouponEntity, Long> {
+public interface CouponRepository {
     Optional<CouponEntity> findByCouponId(Long couponId);
     Optional<CouponEntity> findByCouponName(String couponName);
     Optional<CouponEntity> findByDueDate(LocalDate dueDate);
@@ -21,4 +21,6 @@ public interface CouponRepository extends JpaRepository<CouponEntity, Long> {
     @Transactional
     @Query("UPDATE CouponEntity c SET c.capacity = c.capacity - 1 WHERE c.couponId = :couponId")
     int decrementCapacity(@Param("couponId") Long couponId);
+
+    CouponEntity save(CouponEntity couponEntity);
 }

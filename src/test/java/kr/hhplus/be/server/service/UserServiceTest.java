@@ -98,7 +98,7 @@ class UserServiceTest {
 
         PointRequest pointRequest = new PointRequest(1L, 500L);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
+        when(userRepository.findByUserId(1L)).thenReturn(Optional.of(userEntity));
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
         //when
@@ -114,7 +114,7 @@ class UserServiceTest {
     void 포인트충전_유저조회불가_실패케이스() {
         //given
         PointRequest pointRequest = new PointRequest(1L, 500L);
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findByUserId(1L)).thenReturn(Optional.empty());
 
         //when
         Exception exception = assertThrows(
@@ -137,7 +137,7 @@ class UserServiceTest {
 
         PointRequest pointRequest = new PointRequest(userEntity.getUserId(), -10L);
 
-        when(userRepository.findById(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
+        when(userRepository.findByUserId(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
 
         //when
         Exception exception = assertThrows(
@@ -160,7 +160,7 @@ class UserServiceTest {
 
         PointRequest pointRequest = new PointRequest(userEntity.getUserId(), 13L);
 
-        when(userRepository.findById(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
+        when(userRepository.findByUserId(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
 
         //when
         Exception exception = assertThrows(
@@ -183,7 +183,7 @@ class UserServiceTest {
 
         PointRequest pointRequest = new PointRequest(userEntity.getUserId(), 100_000_000L);
 
-        when(userRepository.findById(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
+        when(userRepository.findByUserId(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
 
         //when
         Exception exception = assertThrows(
@@ -206,7 +206,7 @@ class UserServiceTest {
 
         PointRequest pointRequest = new PointRequest(userEntity.getUserId(), 1_000_000L);
 
-        when(userRepository.findById(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
+        when(userRepository.findByUserId(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
 
         //when
         Exception exception = assertThrows(
@@ -227,7 +227,7 @@ class UserServiceTest {
         userEntity.setUserId(1L);
         userEntity.setPoint(2000L);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(userEntity));
+        when(userRepository.findByUserId(1L)).thenReturn(Optional.of(userEntity));
 
         //when
         PointResponse response = userService.checkPoint(1L);
@@ -240,7 +240,7 @@ class UserServiceTest {
 
     @Test
     void 보유포인트조회_유저조회_실패케이스() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findByUserId(1L)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(
                 Exception.class,
