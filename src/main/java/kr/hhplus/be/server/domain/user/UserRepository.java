@@ -7,6 +7,5 @@ public interface UserRepository {
     Optional<UserEntity> findByUserId(Long userId);
     Optional<UserEntity> findByUserName(String userName);
     List<UserEntity> findAll();
-
     UserEntity save(UserEntity userEntity);
 }
