@@ -1,12 +1,9 @@
-package kr.hhplus.be.server.service;
+package kr.hhplus.be.server.domain.user;
 
 import kr.hhplus.be.server.api.request.PointRequest;
 import kr.hhplus.be.server.api.request.UserRequest;
 import kr.hhplus.be.server.api.response.PointResponse;
 import kr.hhplus.be.server.api.response.UserResponse;
-import kr.hhplus.be.server.domain.user.UserEntity;
-import kr.hhplus.be.server.domain.user.UserRepository;
-import kr.hhplus.be.server.domain.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

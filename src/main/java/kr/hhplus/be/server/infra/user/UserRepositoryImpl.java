@@ -32,7 +32,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public UserEntity save(UserEntity userEntity) {
-        jpaUserRepository.save(userEntity);
-        return userEntity;
+        return jpaUserRepository.save(userEntity);
     }
 }
