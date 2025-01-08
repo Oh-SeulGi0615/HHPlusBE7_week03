@@ -1,13 +1,12 @@
 package kr.hhplus.be.server.service;
 
-import kr.hhplus.be.server.domain.dto.request.PointRequest;
-import kr.hhplus.be.server.domain.dto.request.UserRequest;
-import kr.hhplus.be.server.domain.dto.response.PointResponse;
-import kr.hhplus.be.server.domain.dto.response.UserResponse;
-import kr.hhplus.be.server.domain.entity.UserEntity;
-import kr.hhplus.be.server.exeption.InvalidPointException;
-import kr.hhplus.be.server.exeption.InvalidUserException;
-import kr.hhplus.be.server.repository.UserRepository;
+import kr.hhplus.be.server.api.request.PointRequest;
+import kr.hhplus.be.server.api.request.UserRequest;
+import kr.hhplus.be.server.api.response.PointResponse;
+import kr.hhplus.be.server.api.response.UserResponse;
+import kr.hhplus.be.server.domain.user.UserEntity;
+import kr.hhplus.be.server.domain.user.UserRepository;
+import kr.hhplus.be.server.domain.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
