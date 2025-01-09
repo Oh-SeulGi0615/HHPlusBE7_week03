@@ -9,10 +9,7 @@ import kr.hhplus.be.server.exeption.InvalidOrderException;
 import kr.hhplus.be.server.exeption.InvalidUserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,7 +36,7 @@ public class OrderController {
     }
 
     @GetMapping("/orders/{id}")
-    public ResponseEntity<Object> getMyOrder(Long userId) {
+    public ResponseEntity<Object> getMyOrder(@PathVariable("id") Long userId) {
         try {
             List<OrderResponse> response = orderService.getMyOrder(userId);
             return ResponseEntity.ok(response);
@@ -49,7 +46,7 @@ public class OrderController {
     }
 
     @PostMapping("/orders/{id}/cancel")
-    public ResponseEntity<Object> cancelOrder(Long userId, Long orderId) {
+    public ResponseEntity<Object> cancelOrder(@PathVariable("id") Long userId, Long orderId) {
         try {
            OrderResponse response = orderService.cancelOrder(userId, orderId);
             return ResponseEntity.ok(response);
