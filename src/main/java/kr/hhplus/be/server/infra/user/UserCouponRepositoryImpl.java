@@ -31,4 +31,14 @@ public class UserCouponRepositoryImpl implements UserCouponRepository {
         jpaUserCouponRepository.save(userCoupon);
         return userCoupon;
     }
+
+    @Override
+    public Optional<UserCouponEntity> findByCouponIdAndUserId(Long couponId, Long userId) {
+        return jpaUserCouponRepository.findByCouponIdAndUserId(couponId, userId);
+    }
+
+    @Override
+    public Optional<UserCouponEntity> updateCouponStatus(Enum status, Long userId, Long couponId) {
+        return jpaUserCouponRepository.updateStatus(status, userId, couponId);
+    }
 }

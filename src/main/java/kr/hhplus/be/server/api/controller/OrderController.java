@@ -5,6 +5,7 @@ import kr.hhplus.be.server.api.response.OrderResponse;
 import kr.hhplus.be.server.domain.order.OrderService;
 import kr.hhplus.be.server.exeption.GoodsOutOfStockException;
 import kr.hhplus.be.server.exeption.InvalidGoodsException;
+import kr.hhplus.be.server.exeption.InvalidOrderException;
 import kr.hhplus.be.server.exeption.InvalidUserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,18 @@ public class OrderController {
             List<OrderResponse> response = orderService.getMyOrder(userId);
             return ResponseEntity.ok(response);
         } catch (InvalidUserException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/orders/{id}/cancel")
+    public ResponseEntity<Object> cancelOrder(Long userId, Long orderId) {
+        try {
+           OrderResponse response = orderService.cancelOrder(userId, orderId);
+            return ResponseEntity.ok(response);
+        } catch (InvalidUserException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (InvalidOrderException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }

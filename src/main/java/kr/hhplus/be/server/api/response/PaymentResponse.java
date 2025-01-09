@@ -1,34 +1,32 @@
-package kr.hhplus.be.server.domain.payment;
+package kr.hhplus.be.server.api.response;
 
-import jakarta.persistence.*;
 import kr.hhplus.be.server.enums.PaymentStatus;
 
-@Entity
-@Table(name = "payment")
-public class PaymentEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PaymentResponse {
     private Long paymentId;
-
-    @Column(nullable = false)
     private Long orderId;
-
     private Long couponId;
-
-    @Column(nullable = false)
     private Long totalPrice;
-
-    @Column(nullable = false)
     private Enum status;
 
-    public PaymentEntity(Long orderId, Long couponId, Long totalPrice) {
+    public PaymentResponse(Long paymentId, Long orderId, Long couponId, Long totalPrice, Enum status) {
+        this.paymentId = paymentId;
+        this.orderId = orderId;
+        this.couponId = couponId;
+        this.totalPrice = totalPrice;
+        this.status = status;
+    }
+
+    public PaymentResponse(Long paymentId, Long orderId, Long couponId, Long totalPrice) {
+        this.paymentId = paymentId;
         this.orderId = orderId;
         this.couponId = couponId;
         this.totalPrice = totalPrice;
         this.status = PaymentStatus.WAITING;
     }
 
-    public PaymentEntity(Long orderId, Long totalPrice) {
+    public PaymentResponse(Long paymentId, Long orderId, Long totalPrice) {
+        this.paymentId = paymentId;
         this.orderId = orderId;
         this.couponId = null;
         this.totalPrice = totalPrice;
@@ -53,13 +51,5 @@ public class PaymentEntity {
 
     public Enum getStatus() {
         return status;
-    }
-
-    public void setStatus(Enum status) {
-        this.status = status;
-    }
-
-    public void setPaymentId(Long paymentId) {
-        this.paymentId = paymentId;
     }
 }

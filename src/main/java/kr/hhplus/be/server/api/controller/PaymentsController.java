@@ -1,7 +1,14 @@
 package kr.hhplus.be.server.api.controller;
 
+import kr.hhplus.be.server.api.request.PaymentRequest;
+import kr.hhplus.be.server.api.response.OrderResponse;
+import kr.hhplus.be.server.api.response.PaymentResponse;
+import kr.hhplus.be.server.domain.payment.PaymentService;
+import kr.hhplus.be.server.exeption.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,67 +19,52 @@ import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class PaymentsController {
+    private final PaymentService paymentService;
 
-    @PostMapping("/payments")
-    public ResponseEntity<Object> payments(Long userId, Long orderId, Optional<Long> couponId) {
-        List<Long> userList = new ArrayList<>(List.of(1L, 2L, 3L));
-        List<Long> couponList = new ArrayList<>(List.of(1L, 2L, 3L));
-        Long point = 100000L;
+    @Autowired
+    public PaymentsController(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
 
-        List<Map<String, Object>> orderList = new ArrayList<>();
-        Map<String, Object> order1 = new HashMap<>();
-        order1.put("orderId", 1L);
-        order1.put("orderDate", LocalDateTime.now());
-        order1.put("userId", 1L);
-        order1.put("goodsId", 1L);
-        order1.put("orderedQuantity", 1L);
-        order1.put("price", 100000L);
-
-        Map<String, Object> order2 = new HashMap<>();
-        order2.put("orderId", 1L);
-        order2.put("orderDate", LocalDateTime.now());
-        order2.put("userId", 1L);
-        order2.put("goodsId", 2L);
-        order2.put("orderedQuantity", 2L);
-        order2.put("price", 50000L);
-
-        orderList.add(order1);
-        orderList.add(order2);
-
-        if (!userList.contains(userId)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("유저를 찾을 수 없습니다.");
+    @PostMapping("/payments/create")
+    public ResponseEntity<Object> createPayment(PaymentRequest paymentRequest) {
+        try {
+            PaymentResponse response = paymentService.createPayment(paymentRequest);
+            return ResponseEntity.ok(response);
+        } catch (InvalidUserException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (InvalidOrderException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (InvalidCouponException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
+    }
 
-        if (couponId.isPresent() && !couponList.contains(couponId.get())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 쿠폰입니다.");
+    @PostMapping("/payments/{id}")
+    public ResponseEntity<Object> completePayment(@PathVariable("id") Long paymentId, Long userId) {
+        try {
+            PaymentResponse response = paymentService.completePayment(userId, paymentId);
+            return ResponseEntity.ok(response);
+        } catch (InvalidUserException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (InvalidPaymentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (InsufficientPointException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (GoodsOutOfStockException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
 
-        List<Map<String, Object>> myOrders = new ArrayList<>();
-        for (Map<String, Object> order : orderList) {
-            if (order.get("orderId").equals(orderId)) {
-                 myOrders.add(order);
-            }
+    @PostMapping("/payments/{id}/cancel")
+    public ResponseEntity<Object> cancelPayment(@PathVariable("id") Long paymentId, Long userId) {
+        try {
+            PaymentResponse response = paymentService.cancelPayment(userId, paymentId);
+            return ResponseEntity.ok(response);
+        } catch (InvalidUserException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (InvalidPaymentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-
-        if (myOrders == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("주문을 찾을 수 없습니다.");
-        }
-
-        Long totalPrice = 0L;
-        for (Map<String, Object> order : myOrders) {
-            totalPrice += (Long) order.get("price");
-        }
-        if (totalPrice > point) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잔액이 부족합니다.");
-        }
-
-        Map<String, Object> payments = new HashMap<>();
-        payments.put("paymentId", 1L);
-        payments.put("paymentDate", LocalDateTime.now());
-        payments.put("userId", userId);
-        payments.put("orderId", orderId);
-        payments.put("totalPrice", totalPrice);
-
-        return ResponseEntity.ok(payments);
     }
 }

@@ -1,10 +1,28 @@
 package kr.hhplus.be.server.domain.coupon;
 
+import kr.hhplus.be.server.api.request.CreateCouponRequest;
+import kr.hhplus.be.server.api.request.GetCouponRequest;
+import kr.hhplus.be.server.api.response.CouponResponse;
+import kr.hhplus.be.server.api.response.UserCouponResponse;
+import kr.hhplus.be.server.enums.UserCouponStatus;
+import kr.hhplus.be.server.exeption.CouponOutOfStockException;
+import kr.hhplus.be.server.exeption.ExpiredCouponException;
+import kr.hhplus.be.server.exeption.InvalidCouponException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CouponServiceTest {
@@ -18,41 +36,125 @@ class CouponServiceTest {
     private CouponService couponService;
 
     @Test
-    void createCoupon() {
-        //given
+    void 신규쿠폰생성_성공케이스() {
+        // given
+        CreateCouponRequest request = new CreateCouponRequest("TestCoupon", 20L, 100L, LocalDate.now().plusDays(10));
+        CouponEntity couponEntity = new CouponEntity("TestCoupon", 20L, 100L, LocalDate.now().plusDays(10));
 
+        when(couponRepository.findByCouponName(request.getCouponName())).thenReturn(Optional.empty());
+        when(couponRepository.save(any(CouponEntity.class))).thenReturn(couponEntity);
 
-        //when
+        // when
+        CouponResponse response = couponService.createCoupon(request);
 
-
-        //then
-
-
+        // then
+        assertEquals("TestCoupon", response.getCouponName());
+        assertEquals(20L, response.getDiscountRate());
+        assertEquals(100L, response.getCapacity());
     }
 
     @Test
-    void allCouponList() {
-        //given
+    void 신규쿠폰생성_중복쿠폰_실패케이스() {
+        // given
+        CreateCouponRequest request = new CreateCouponRequest("DuplicateCoupon", 20L, 100L, LocalDate.now().plusDays(10));
+        CouponEntity existingCoupon = new CouponEntity("DuplicateCoupon", 20L, 100L, LocalDate.now().plusDays(10));
 
+        when(couponRepository.findByCouponName(request.getCouponName())).thenReturn(Optional.of(existingCoupon));
 
-        //when
+        // when
+        Exception exception = assertThrows(InvalidCouponException.class, () -> couponService.createCoupon(request));
 
-
-        //then
-
-
+        // then
+        assertEquals("이미 등록된 쿠폰입니다.", exception.getMessage());
     }
 
     @Test
-    void getCoupon() {
-        //given
+    void 전체쿠폰리스트조회_성공케이스() {
+        // given
+        CouponEntity coupon1 = new CouponEntity("Coupon1", 10L, 50L, LocalDate.now().plusDays(5));
+        CouponEntity coupon2 = new CouponEntity("Coupon2", 20L, 100L, LocalDate.now().plusDays(10));
+        when(couponRepository.findAll()).thenReturn(List.of(coupon1, coupon2));
 
+        // when
+        List<CouponEntity> result = couponService.allCouponList();
 
-        //when
+        // then
+        assertEquals(2, result.size());
+    }
 
+    @Test
+    void 쿠폰정보조회_성공케이스() {
+        // given
+        GetCouponRequest request = new GetCouponRequest(1L, 100L);
+        CouponEntity coupon = new CouponEntity("TestCoupon", 10L, 5L, LocalDate.now().plusDays(5));
 
-        //then
+        when(couponRepository.findByCouponId(request.getCouponId())).thenReturn(Optional.of(coupon));
+        when(userCouponRepository.save(any(UserCouponEntity.class))).thenReturn(new UserCouponEntity(100L, 1L));
 
+        // when
+        CouponResponse response = couponService.getCoupon(request);
 
+        // then
+        assertEquals("TestCoupon", response.getCouponName());
+        assertEquals(4L, response.getCapacity());
+        verify(couponRepository, times(1)).decrementCapacity(request.getCouponId());
+        verify(userCouponRepository, times(1)).save(any(UserCouponEntity.class));
+    }
+
+    @Test
+    void 쿠폰정보조회_재고소진_실패케이스() {
+        // given
+        GetCouponRequest request = new GetCouponRequest(1L, 100L);
+        CouponEntity coupon = new CouponEntity("TestCoupon", 10L, 0L, LocalDate.now().plusDays(5));
+
+        when(couponRepository.findByCouponId(request.getCouponId())).thenReturn(Optional.of(coupon));
+
+        // when
+        Exception exception = assertThrows(CouponOutOfStockException.class, () -> couponService.getCoupon(request));
+
+        // then
+        assertEquals("쿠폰이 모두 소진되었습니다.", exception.getMessage());
+        verify(couponRepository, never()).decrementCapacity(anyLong());
+        verify(userCouponRepository, never()).save(any(UserCouponEntity.class));
+    }
+
+    @Test
+    void 쿠폰사용_성공케이스() {
+        // given
+        GetCouponRequest request = new GetCouponRequest(1L, 1L);
+        UserCouponEntity userCoupon = new UserCouponEntity(1L, 1L);
+        CouponEntity coupon = new CouponEntity("TestCoupon", 10L, 5L, LocalDate.now().plusDays(5));
+
+        when(userCouponRepository.findByCouponIdAndUserId(request.getCouponId(), request.getUserId())).thenReturn(Optional.of(userCoupon));
+        when(couponRepository.findByCouponId(request.getCouponId())).thenReturn(Optional.of(coupon));
+        when(userCouponRepository.updateCouponStatus(eq(UserCouponStatus.USED), eq(1L), eq(1L))).thenReturn(Optional.of(userCoupon));
+
+        // when
+        UserCouponResponse response = couponService.useCoupon(request);
+
+        // then
+        assertNotNull(response);
+        assertEquals(1L, response.getUserId());
+        assertEquals(1L, response.getCouponId());
+        verify(userCouponRepository, times(1)).updateCouponStatus(eq(UserCouponStatus.USED), eq(1L), eq(1L));
+    }
+
+    @Test
+    void 쿠폰사용_만료된쿠폰_실패케이스() {
+        // given
+        GetCouponRequest request = new GetCouponRequest(1L, 1L);
+        UserCouponEntity userCoupon = new UserCouponEntity(1L, 1L);
+        CouponEntity expiredCoupon = new CouponEntity("ExpiredCoupon", 10L, 5L, LocalDate.now().minusDays(1));
+
+        when(userCouponRepository.findByCouponIdAndUserId(request.getCouponId(), request.getUserId()))
+                .thenReturn(Optional.of(userCoupon));
+        when(couponRepository.findByCouponId(request.getCouponId()))
+                .thenReturn(Optional.of(expiredCoupon));
+
+        // when
+        Exception exception = assertThrows(ExpiredCouponException.class, () -> couponService.useCoupon(request));
+
+        // then
+        assertEquals("만료된 쿠폰입니다.", exception.getMessage());
     }
 }

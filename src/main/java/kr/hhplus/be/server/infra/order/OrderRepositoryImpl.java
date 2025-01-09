@@ -2,6 +2,7 @@ package kr.hhplus.be.server.infra.order;
 
 import kr.hhplus.be.server.domain.order.OrderEntity;
 import kr.hhplus.be.server.domain.order.OrderRepository;
+import kr.hhplus.be.server.enums.OrderStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,5 +34,10 @@ public class OrderRepositoryImpl implements OrderRepository {
     @Override
     public OrderEntity save(OrderEntity orderEntity) {
         return jpaOrderRepository.save(orderEntity);
+    }
+
+    @Override
+    public OrderEntity updateOrderStatus(Long orderId, OrderStatus status) {
+        return jpaOrderRepository.updateOrderStatus(orderId, status);
     }
 }

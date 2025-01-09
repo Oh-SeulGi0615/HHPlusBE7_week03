@@ -17,6 +17,12 @@ public class OrderResponse {
         this.quantity = quantity;
     }
 
+    public OrderResponse(Long orderId, Long userId, Enum status) {
+        this.orderId = orderId;
+        this.userId = userId;
+        this.status = status;
+    }
+
     public Long getGoodsId() {
         return goodsId;
     }

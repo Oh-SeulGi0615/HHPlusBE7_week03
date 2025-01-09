@@ -2,6 +2,7 @@ package kr.hhplus.be.server.infra.payment;
 
 import kr.hhplus.be.server.domain.payment.PaymentEntity;
 import kr.hhplus.be.server.domain.payment.PaymentRepository;
+import kr.hhplus.be.server.enums.PaymentStatus;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,8 +17,8 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
-    public Optional<PaymentEntity> findByPayId(Long payId) {
-        return jpaPaymentRepository.findByPayId(payId);
+    public Optional<PaymentEntity> findByPaymentId(Long payId) {
+        return jpaPaymentRepository.findByPaymentId(payId);
     }
 
     @Override
@@ -33,5 +34,10 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     @Override
     public PaymentEntity save(PaymentEntity paymentEntity) {
         return jpaPaymentRepository.save(paymentEntity);
+    }
+
+    @Override
+    public PaymentEntity updatePaymentStatus(Long paymentId, PaymentStatus status) {
+        return jpaPaymentRepository.updatePaymentStatus(paymentId, status);
     }
 }

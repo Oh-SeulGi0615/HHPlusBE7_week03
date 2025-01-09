@@ -2,10 +2,12 @@ package kr.hhplus.be.server.infra.order;
 
 import kr.hhplus.be.server.domain.order.OrderDetailEntity;
 import kr.hhplus.be.server.domain.order.OrderDetailRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class OrderDetailRepositoryImpl implements OrderDetailRepository {
     private JpaOrderDetailRepository jpaOrderDetailRepository;
 

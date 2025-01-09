@@ -33,6 +33,10 @@ public class GoodsEntity extends BaseEntity {
         return price;
     }
 
+    public void setGoodsId(Long goodsId) {
+        this.goodsId = goodsId;
+    }
+
     public void setPrice(Long price) {
         this.price = price;
     }

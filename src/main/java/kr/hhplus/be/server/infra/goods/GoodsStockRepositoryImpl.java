@@ -34,4 +34,9 @@ public class GoodsStockRepositoryImpl implements GoodsStockRepository {
     public GoodsStockEntity save(GoodsStockEntity goodsStockEntity) {
         return jpaGoodsStockRepository.save(goodsStockEntity);
     }
+
+    @Override
+    public GoodsStockEntity updateGoodsStock(Long goodsId, Long quantity) {
+        return jpaGoodsStockRepository.updateGoodsStockStatus(goodsId, quantity);
+    }
 }

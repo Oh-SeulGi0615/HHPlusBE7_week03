@@ -3,11 +3,16 @@ package kr.hhplus.be.server.domain.coupon;
 import kr.hhplus.be.server.api.request.CreateCouponRequest;
 import kr.hhplus.be.server.api.request.GetCouponRequest;
 import kr.hhplus.be.server.api.response.CouponResponse;
+import kr.hhplus.be.server.api.response.UserCouponResponse;
+import kr.hhplus.be.server.enums.UserCouponStatus;
 import kr.hhplus.be.server.exeption.CouponOutOfStockException;
+import kr.hhplus.be.server.exeption.ExpiredCouponException;
 import kr.hhplus.be.server.exeption.InvalidCouponException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CouponService {
@@ -29,10 +34,9 @@ public class CouponService {
                 createCouponRequest.getCapacity(),
                 createCouponRequest.getDueDate()
         );
-        couponRepository.save(couponEntity);
-        Long couponId = couponRepository.findByCouponName(createCouponRequest.getCouponName()).get().getCouponId();
+        CouponEntity savedCoupon = couponRepository.save(couponEntity);
         return new CouponResponse(
-                couponId,
+                savedCoupon.getCouponId(),
                 createCouponRequest.getCouponName(),
                 createCouponRequest.getDiscountRate(),
                 createCouponRequest.getCapacity(),
@@ -64,5 +68,19 @@ public class CouponService {
                 coupon.getCapacity() - 1,
                 coupon.getDueDate()
         );
+    }
+
+    public UserCouponResponse useCoupon(GetCouponRequest getCouponRequest) {
+       UserCouponEntity myCoupon = userCouponRepository.findByCouponIdAndUserId(
+                getCouponRequest.getCouponId(), getCouponRequest.getUserId()
+        ).orElseThrow(() -> new InvalidCouponException("존재하지 않는 쿠폰입니다."));
+
+       if (couponRepository.findByCouponId(myCoupon.getCouponId()).get().getDueDate().isBefore(LocalDate.now())) {
+           Optional<UserCouponEntity> userCouponEntity = userCouponRepository.updateCouponStatus(UserCouponStatus.EXPIRED, myCoupon.getUserId(), myCoupon.getCouponId());
+           throw new ExpiredCouponException("만료된 쿠폰입니다.");
+       }
+
+        Optional<UserCouponEntity> userCouponEntity = userCouponRepository.updateCouponStatus(UserCouponStatus.USED, myCoupon.getUserId(), myCoupon.getCouponId());
+        return new UserCouponResponse(myCoupon.getUserId(), myCoupon.getCouponId(), userCouponEntity.get().isStatus());
     }
 }

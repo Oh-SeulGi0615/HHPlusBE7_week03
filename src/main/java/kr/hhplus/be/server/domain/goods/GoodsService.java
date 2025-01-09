@@ -31,8 +31,7 @@ public class GoodsService {
             throw new InvalidGoodsException("이미 등록된 상품입니다.");
         }
         GoodsEntity goodsEntity = new GoodsEntity(goodsRequest.getGoodsName(), goodsRequest.getPrice());
-        goodsRepository.save(goodsEntity);
-        Long goodsId = goodsRepository.findByGoodsName(goodsRequest.getGoodsName()).get().getGoodsId();
+        Long goodsId = goodsRepository.save(goodsEntity).getGoodsId();
 
         GoodsStockEntity goodsStockEntity = new GoodsStockEntity(goodsId, goodsRequest.getQuantity());
         goodsStockRepository.save(goodsStockEntity);
