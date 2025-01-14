@@ -1,12 +1,16 @@
 package kr.hhplus.be.server.exeption;
 
+import kr.hhplus.be.server.api.controller.*;
 import kr.hhplus.be.server.exeption.customExceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+@RestControllerAdvice(annotations = {RestController.class}, basePackageClasses = {
+        UserController.class, PaymentsController.class, OrderController.class, GoodsController.class, CouponController.class
+})
 public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidUserException.class)
     public ResponseEntity<Object> handleInvalidUserException(InvalidUserException ex) {
