@@ -4,6 +4,8 @@ public class GetCouponRequest {
     private Long userId;
     private Long couponId;
 
+    public GetCouponRequest(){}
+
     public GetCouponRequest(Long userId, Long couponId) {
         this.userId = userId;
         this.couponId = couponId;

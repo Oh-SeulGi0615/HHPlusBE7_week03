@@ -1,13 +1,19 @@
 package kr.hhplus.be.server.api.response;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import kr.hhplus.be.server.enums.OrderStatus;
 
 public class OrderResponse {
     private Long orderId;
     private Long userId;
-    private Enum status;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
     private Long goodsId;
     private Long quantity;
+
+    public OrderResponse(){}
 
     public OrderResponse(Long orderId, Long userId, Long goodsId, Long quantity) {
         this.orderId = orderId;
@@ -17,7 +23,7 @@ public class OrderResponse {
         this.quantity = quantity;
     }
 
-    public OrderResponse(Long orderId, Long userId, Enum status) {
+    public OrderResponse(Long orderId, Long userId, OrderStatus status) {
         this.orderId = orderId;
         this.userId = userId;
         this.status = status;
@@ -39,7 +45,7 @@ public class OrderResponse {
         return userId;
     }
 
-    public Enum getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 }

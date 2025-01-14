@@ -13,8 +13,4 @@ import java.util.Optional;
 public interface JpaGoodsStockRepository extends JpaRepository<GoodsStockEntity, Long> {
     Optional<GoodsStockEntity> findByGoodsStockId(Long goodsStockId);
     Optional<GoodsStockEntity> findByGoodsId(Long goodsId);
-
-    @Modifying
-    @Query("UPDATE GoodsStockEntity g SET g.quantity = :quantity WHERE g.goodsId = :goodsId")
-    GoodsStockEntity updateGoodsStockStatus(@Param("goodsId") Long goodsId, @Param("quantity") Long quantity);
 }

@@ -32,12 +32,12 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public OrderEntity save(OrderEntity orderEntity) {
-        return jpaOrderRepository.save(orderEntity);
+    public List<OrderEntity> findAllByUserId(Long userId) {
+        return jpaOrderRepository.findAllByUserId(userId);
     }
 
     @Override
-    public OrderEntity updateOrderStatus(Long orderId, OrderStatus status) {
-        return jpaOrderRepository.updateOrderStatus(orderId, status);
+    public OrderEntity save(OrderEntity orderEntity) {
+        return jpaOrderRepository.save(orderEntity);
     }
 }

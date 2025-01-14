@@ -12,8 +12,4 @@ import java.util.Optional;
 @Repository
 public interface JpaUserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByUserName(String userName);
-
-    @Modifying
-    @Query("UPDATE UserEntity u SET u.point = :point WHERE u.userId = :userId")
-    UserEntity updateUserPoint(@Param("userId") Long userId, @Param("point") Long point);
 }

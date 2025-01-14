@@ -16,6 +16,8 @@ public class GoodsStockEntity extends BaseEntity {
     @Column(nullable = false)
     private Long quantity;
 
+    protected GoodsStockEntity(){}
+
     public GoodsStockEntity(Long goodsId, Long quantity) {
         this.goodsId = goodsId;
         this.quantity = quantity;

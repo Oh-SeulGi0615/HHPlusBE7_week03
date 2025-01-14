@@ -9,6 +9,8 @@ public class PaymentResponse {
     private Long totalPrice;
     private Enum status;
 
+    public PaymentResponse(){}
+
     public PaymentResponse(Long paymentId, Long orderId, Long couponId, Long totalPrice, Enum status) {
         this.paymentId = paymentId;
         this.orderId = orderId;

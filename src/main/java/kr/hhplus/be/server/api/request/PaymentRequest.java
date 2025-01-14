@@ -5,6 +5,8 @@ public class PaymentRequest {
     private Long orderId;
     private Long couponId;
 
+    public PaymentRequest(){}
+
     public PaymentRequest(Long userId, Long orderId, Long couponId) {
         this.userId = userId;
         this.orderId = orderId;

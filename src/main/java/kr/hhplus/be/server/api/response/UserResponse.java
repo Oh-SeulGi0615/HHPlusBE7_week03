@@ -1,9 +1,13 @@
 package kr.hhplus.be.server.api.response;
 
+import java.security.PublicKey;
+
 public class UserResponse {
     private Long userId;
     private String userName;
     private Long point;
+
+    public UserResponse(){}
 
     public UserResponse(Long userId, String userName, Long point) {
         this.userId = userId;

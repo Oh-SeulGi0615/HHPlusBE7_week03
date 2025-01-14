@@ -19,6 +19,8 @@ public class SalesHistoryEntity extends BaseEntity {
     @Column(nullable = false)
     private Long quantity;
 
+    protected SalesHistoryEntity(){}
+
     public SalesHistoryEntity(Long goodsId, Long userId, Long quantity) {
         this.goodsId = goodsId;
         this.userId = userId;

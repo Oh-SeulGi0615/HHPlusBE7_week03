@@ -4,6 +4,8 @@ public class PointRequest {
     private Long userid;
     private Long point;
 
+    public PointRequest(){}
+
     public PointRequest(Long userid, Long point) {
         this.userid = userid;
         this.point = point;

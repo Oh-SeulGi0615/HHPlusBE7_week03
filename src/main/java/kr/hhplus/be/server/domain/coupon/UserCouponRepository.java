@@ -13,11 +13,4 @@ public interface UserCouponRepository {
     List<UserCouponEntity> findAllByUserId(Long userId);
     UserCouponEntity save(UserCouponEntity userCoupon);
     Optional<UserCouponEntity> findByCouponIdAndUserId(Long couponId, Long userId);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE UserCouponEntity u SET u.status = :status WHERE u.userId = :userId AND u.couponId = :couponId")
-    Optional<UserCouponEntity> updateCouponStatus(@Param("status") Enum status,
-                                                  @Param("userId") Long userId,
-                                                  @Param("couponId") Long couponId);
 }

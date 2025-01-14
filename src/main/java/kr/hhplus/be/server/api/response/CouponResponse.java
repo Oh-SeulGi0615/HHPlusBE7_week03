@@ -9,6 +9,8 @@ public class CouponResponse {
     private Long capacity;
     private LocalDate dueDate;
 
+    public CouponResponse(){}
+
     public CouponResponse(Long couponId, String couponName, Long discountRate, Long capacity, LocalDate dueDate) {
         this.couponId = couponId;
         this.couponName = couponName;

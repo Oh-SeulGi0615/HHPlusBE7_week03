@@ -18,8 +18,11 @@ public class PaymentEntity {
     @Column(nullable = false)
     private Long totalPrice;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Enum status;
+    private PaymentStatus status;
+
+    protected PaymentEntity(){}
 
     public PaymentEntity(Long orderId, Long couponId, Long totalPrice) {
         this.orderId = orderId;
@@ -51,11 +54,11 @@ public class PaymentEntity {
         return totalPrice;
     }
 
-    public Enum getStatus() {
+    public PaymentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Enum status) {
+    public void setStatus(PaymentStatus status) {
         this.status = status;
     }
 

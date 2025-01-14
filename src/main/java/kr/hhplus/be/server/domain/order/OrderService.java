@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.order;
 
+import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.api.request.OrderRequest;
 import kr.hhplus.be.server.api.response.OrderResponse;
 import kr.hhplus.be.server.domain.goods.GoodsRepository;
@@ -7,6 +8,7 @@ import kr.hhplus.be.server.domain.goods.GoodsStockRepository;
 import kr.hhplus.be.server.domain.user.UserEntity;
 import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.enums.OrderStatus;
+import kr.hhplus.be.server.exeption.customExceptions.GoodsOutOfStockException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidOrderException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidUserException;
@@ -40,25 +42,39 @@ public class OrderService {
         OrderEntity orderEntity = new OrderEntity(userId);
         Long orderId = orderRepository.save(orderEntity).getOrderId();
 
-        List<OrderResponse> orderResponseList = new ArrayList<>();
+        ArrayList<OrderResponse> orderResponseList = new ArrayList<>();
         for (OrderRequest orderRequests:orderRequestList){
             if (goodsRepository.findByGoodsId(orderRequests.getGoodsId()).isEmpty()){
                 throw new InvalidGoodsException("상품정보를 찾을 수 없습니다.");
             }
+            if (goodsStockRepository.findByGoodsId(orderRequests.getGoodsId()).get().getQuantity() < orderRequests.getQuantity()){
+                throw new GoodsOutOfStockException("상품 재고가 부족합니다.");
+            }
+
+            orderDetailRepository.save(new OrderDetailEntity(orderId, orderRequests.getGoodsId(), orderRequests.getQuantity()));
             OrderResponse orderResponse = new OrderResponse(orderId, userId, orderRequests.getGoodsId(), orderRequests.getQuantity());
             orderResponseList.add(orderResponse);
         }
         return orderResponseList;
     }
 
-    public List<OrderResponse> getMyOrder(Long userId) {
+    public List<OrderEntity> getMyAllOrder(Long userId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
 
-        OrderEntity orderEntity = orderRepository.findByUserId(userId)
-                .orElseThrow(() -> new InvalidOrderException("주문 정보를 찾을 수 없습니다."));
+        List<OrderEntity> allMyOrderList = orderRepository.findAllByUserId(userId);
+        if (allMyOrderList.isEmpty()) {
+            throw new InvalidOrderException("주문 정보를 찾을 수 없습니다.");
+        }
 
-        Long orderId = orderEntity.getOrderId();
+        return allMyOrderList;
+    }
+
+    public List<OrderResponse> getMyDetailOrder(Long userId, Long orderId) {
+        UserEntity userEntity = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
+        OrderEntity orderEntity = orderRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new InvalidOrderException("주문 정보를 찾을 수 없습니다."));
 
         List<OrderResponse> myOrderList = new ArrayList<>();
         List<OrderDetailEntity> OrderList = orderDetailRepository.findAllByOrderId(orderId);
@@ -71,13 +87,14 @@ public class OrderService {
         return myOrderList;
     }
 
+    @Transactional
     public OrderResponse cancelOrder(Long userId, Long orderId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
         OrderEntity orderEntity = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new InvalidOrderException("주문 정보를 찾을 수 없습니다."));
 
-        OrderEntity response = orderRepository.updateOrderStatus(orderId, OrderStatus.CANCELED);
-        return new OrderResponse(orderId, userId, OrderStatus.CANCELED);
+        orderEntity.setStatus(OrderStatus.CANCELED);
+        return new OrderResponse(orderId, userId, orderRepository.findByOrderId(orderId).get().getStatus());
     }
 }

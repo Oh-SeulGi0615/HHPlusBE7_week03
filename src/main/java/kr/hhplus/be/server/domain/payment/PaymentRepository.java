@@ -15,8 +15,4 @@ public interface PaymentRepository {
     Optional<PaymentEntity> findByOrderId(Long orderId);
     List<PaymentEntity> findAll();
     PaymentEntity save(PaymentEntity paymentEntity);
-
-    @Modifying
-    @Query("UPDATE PaymentEntity p SET p.status = :status WHERE p.paymentId = :paymentId")
-    PaymentEntity updatePaymentStatus(@Param("paymenId") Long paymentId, @Param("status") PaymentStatus status);
 }

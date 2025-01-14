@@ -16,6 +16,8 @@ public class GoodsEntity extends BaseEntity {
     @Column(nullable = false)
     private Long price;
 
+    protected GoodsEntity(){}
+
     public GoodsEntity(String goodsName, Long price) {
         this.goodsName = goodsName;
         this.price = price;

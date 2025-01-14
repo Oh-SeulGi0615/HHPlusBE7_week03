@@ -5,6 +5,8 @@ public class GoodsRequest {
     private Long price;
     private Long quantity;
 
+    public GoodsRequest(){}
+
     public GoodsRequest(String goodsName, Long price, Long quantity) {
         this.goodsName = goodsName;
         this.price = price;

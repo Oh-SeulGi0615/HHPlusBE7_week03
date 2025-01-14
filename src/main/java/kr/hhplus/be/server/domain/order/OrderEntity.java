@@ -6,7 +6,7 @@ import kr.hhplus.be.server.enums.OrderStatus;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "order")
+@Table(name = "order_table")
 public class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +18,11 @@ public class OrderEntity {
     @Column(nullable = false)
     private LocalDate dueDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Enum status;
+    private OrderStatus status;
+
+    protected OrderEntity(){}
 
     public OrderEntity(Long userId) {
         this.userId = userId;
@@ -35,7 +38,7 @@ public class OrderEntity {
         return userId;
     }
 
-    public Enum getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
@@ -51,7 +54,7 @@ public class OrderEntity {
         this.dueDate = dueDate;
     }
 
-    public void setStatus(Enum status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 }

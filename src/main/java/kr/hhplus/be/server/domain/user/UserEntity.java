@@ -16,6 +16,8 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false)
     private Long point;
 
+    protected UserEntity(){}
+
     public UserEntity(String name) {
         this.userName = name;
         this.point = 0L;

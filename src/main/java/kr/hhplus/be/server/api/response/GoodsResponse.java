@@ -6,6 +6,8 @@ public class GoodsResponse {
     private Long price;
     private Long quantity;
 
+    public GoodsResponse(){}
+
     public GoodsResponse(Long goodsId, String goodsName, Long price, Long quantity) {
         this.goodsId = goodsId;
         this.goodsName = goodsName;

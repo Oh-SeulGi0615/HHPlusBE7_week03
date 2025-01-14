@@ -4,6 +4,9 @@ public class OrderRequest {
     private Long goodsId;
     private Long quantity;
 
+    public OrderRequest() {
+    }
+
     public OrderRequest(Long goodsId, Long quantity) {
         this.goodsId = goodsId;
         this.quantity = quantity;

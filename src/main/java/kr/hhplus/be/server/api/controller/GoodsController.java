@@ -4,8 +4,6 @@ import kr.hhplus.be.server.api.request.GoodsRequest;
 import kr.hhplus.be.server.api.response.GoodsResponse;
 import kr.hhplus.be.server.domain.goods.GoodsService;
 import kr.hhplus.be.server.domain.goods.SalesHistoryEntity;
-import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +29,8 @@ public class GoodsController {
         return goodsService.getAllGoods();
     }
 
-    @GetMapping("/goods/{id}")
-    public ResponseEntity<Object> getOneGoodsInfo(@PathVariable("id") Long goodsId) {
+    @GetMapping("/goods/{goodsId}")
+    public ResponseEntity<Object> getOneGoodsInfo(@PathVariable("goodsId") Long goodsId) {
         GoodsResponse response = goodsService.getOneGoodsInfo(goodsId);
         return ResponseEntity.ok(response);
     }

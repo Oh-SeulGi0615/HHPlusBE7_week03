@@ -1,13 +1,9 @@
 package kr.hhplus.be.server.api.controller;
 
-import kr.hhplus.be.server.api.request.OrderRequest;
+import kr.hhplus.be.server.api.request.OrderCreateRequest;
 import kr.hhplus.be.server.api.response.OrderResponse;
+import kr.hhplus.be.server.domain.order.OrderEntity;
 import kr.hhplus.be.server.domain.order.OrderService;
-import kr.hhplus.be.server.exeption.customExceptions.GoodsOutOfStockException;
-import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
-import kr.hhplus.be.server.exeption.customExceptions.InvalidOrderException;
-import kr.hhplus.be.server.exeption.customExceptions.InvalidUserException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,19 +18,25 @@ public class OrderController {
     }
 
     @PostMapping("/orders")
-    public ResponseEntity<Object> orderGoods(Long userId, List<OrderRequest> orderRequestList) {
-        List<OrderResponse> response = orderService.createOrder(userId, orderRequestList);
+    public ResponseEntity<Object> orderGoods(@RequestBody OrderCreateRequest request) {
+        List<OrderResponse> response = orderService.createOrder(request.getUserId(), request.getOrders());
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/orders/{id}")
-    public ResponseEntity<Object> getMyOrder(@PathVariable("id") Long userId) {
-        List<OrderResponse> response = orderService.getMyOrder(userId);
+    @GetMapping("/orders/{userId}")
+    public ResponseEntity<Object> getMyAllOrder(@PathVariable("userId") Long userId) {
+        List<OrderEntity> response = orderService.getMyAllOrder(userId);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/orders/{id}/cancel")
-    public ResponseEntity<Object> cancelOrder(@PathVariable("id") Long userId, Long orderId) {
+    @GetMapping("/orders/{userId}/{orderId}")
+    public ResponseEntity<Object> getMyDetailOrder(@PathVariable("userId") Long userId, @PathVariable("orderId") Long orderId) {
+        List<OrderResponse> response = orderService.getMyDetailOrder(userId, orderId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/orders/{userId}/cancel")
+    public ResponseEntity<Object> cancelOrder(@PathVariable("userId") Long userId, Long orderId) {
         OrderResponse response = orderService.cancelOrder(userId, orderId);
         return ResponseEntity.ok(response);
     }

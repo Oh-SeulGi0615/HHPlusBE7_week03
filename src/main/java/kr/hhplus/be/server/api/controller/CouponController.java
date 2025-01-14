@@ -4,10 +4,7 @@ import kr.hhplus.be.server.api.request.CreateCouponRequest;
 import kr.hhplus.be.server.api.request.GetCouponRequest;
 import kr.hhplus.be.server.api.response.CouponResponse;
 import kr.hhplus.be.server.domain.coupon.CouponEntity;
-import kr.hhplus.be.server.exeption.customExceptions.CouponOutOfStockException;
-import kr.hhplus.be.server.exeption.customExceptions.InvalidCouponException;
 import kr.hhplus.be.server.domain.coupon.CouponService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

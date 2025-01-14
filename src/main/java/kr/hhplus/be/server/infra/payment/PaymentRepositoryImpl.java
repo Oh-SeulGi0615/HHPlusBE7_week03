@@ -35,9 +35,4 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     public PaymentEntity save(PaymentEntity paymentEntity) {
         return jpaPaymentRepository.save(paymentEntity);
     }
-
-    @Override
-    public PaymentEntity updatePaymentStatus(Long paymentId, PaymentStatus status) {
-        return jpaPaymentRepository.updatePaymentStatus(paymentId, status);
-    }
 }

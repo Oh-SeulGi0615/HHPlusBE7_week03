@@ -18,6 +18,8 @@ public class OrderDetailEntity {
     @Column(nullable = false)
     private Long quantity;
 
+    public OrderDetailEntity(){}
+
     public OrderDetailEntity(Long orderId, Long goodsId, Long quantity) {
         this.orderId = orderId;
         this.goodsId = goodsId;

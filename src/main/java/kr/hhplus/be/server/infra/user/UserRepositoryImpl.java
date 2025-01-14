@@ -34,9 +34,4 @@ public class UserRepositoryImpl implements UserRepository {
     public UserEntity save(UserEntity userEntity) {
         return jpaUserRepository.save(userEntity);
     }
-
-    @Override
-    public UserEntity updateUserPoint(Long userId, Long point) {
-        return jpaUserRepository.updateUserPoint(userId, point);
-    }
 }

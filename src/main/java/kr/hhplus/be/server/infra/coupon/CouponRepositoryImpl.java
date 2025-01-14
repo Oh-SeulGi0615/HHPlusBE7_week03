@@ -42,15 +42,6 @@ public class CouponRepositoryImpl implements CouponRepository {
     }
 
     @Override
-    @Transactional
-    public int decrementCapacity(Long couponId) {
-        String query = "UPDATE CouponEntity c SET c.capacity = c.capacity - 1 WHERE c.couponId = :couponId";
-        return entityManager.createQuery(query)
-                .setParameter("couponId", couponId)
-                .executeUpdate();
-    }
-
-    @Override
     public CouponEntity save(CouponEntity couponEntity) {
         jpaCouponRepository.save(couponEntity);
         return couponEntity;

@@ -13,10 +13,6 @@ public interface OrderRepository {
     Optional<OrderEntity> findByUserId(Long userId);
     Optional<OrderEntity> findByOrderId(Long orderId);
     List<OrderEntity> findAll();
+    List<OrderEntity> findAllByUserId(Long userId);
     OrderEntity save(OrderEntity orderEntity);
-
-    @Modifying
-    @Query("UPDATE OrderEntity o SET o.status = :status WHERE o.orderId = :orderId")
-    OrderEntity updateOrderStatus(@Param("orderId") Long orderId, @Param("status") OrderStatus status);
-
 }

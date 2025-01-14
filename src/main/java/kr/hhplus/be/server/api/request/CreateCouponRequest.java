@@ -8,6 +8,8 @@ public class CreateCouponRequest {
     private Long capacity;
     private LocalDate dueDate;
 
+    public CreateCouponRequest(){}
+
     public CreateCouponRequest(String couponName, Long discountRate, Long capacity, LocalDate dueDate) {
         this.couponName = couponName;
         this.discountRate = discountRate;
