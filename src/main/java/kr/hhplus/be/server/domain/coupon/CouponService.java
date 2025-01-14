@@ -5,9 +5,9 @@ import kr.hhplus.be.server.api.request.GetCouponRequest;
 import kr.hhplus.be.server.api.response.CouponResponse;
 import kr.hhplus.be.server.api.response.UserCouponResponse;
 import kr.hhplus.be.server.enums.UserCouponStatus;
-import kr.hhplus.be.server.exeption.CouponOutOfStockException;
-import kr.hhplus.be.server.exeption.ExpiredCouponException;
-import kr.hhplus.be.server.exeption.InvalidCouponException;
+import kr.hhplus.be.server.exeption.customExceptions.CouponOutOfStockException;
+import kr.hhplus.be.server.exeption.customExceptions.ExpiredCouponException;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidCouponException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

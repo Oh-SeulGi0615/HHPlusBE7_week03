@@ -4,16 +4,12 @@ import kr.hhplus.be.server.api.request.OrderRequest;
 import kr.hhplus.be.server.api.response.OrderResponse;
 import kr.hhplus.be.server.domain.goods.GoodsEntity;
 import kr.hhplus.be.server.domain.goods.GoodsRepository;
-import kr.hhplus.be.server.domain.goods.GoodsStockEntity;
-import kr.hhplus.be.server.domain.goods.GoodsStockRepository;
 import kr.hhplus.be.server.domain.user.UserEntity;
 import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.enums.OrderStatus;
-import kr.hhplus.be.server.exeption.GoodsOutOfStockException;
-import kr.hhplus.be.server.exeption.InvalidGoodsException;
-import kr.hhplus.be.server.exeption.InvalidOrderException;
-import kr.hhplus.be.server.exeption.InvalidUserException;
-import org.apache.catalina.User;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidOrderException;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidUserException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +22,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

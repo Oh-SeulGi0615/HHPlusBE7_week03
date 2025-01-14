@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.exeption;
+package kr.hhplus.be.server.exeption.customExceptions;
 
 public class InsufficientPointException extends RuntimeException{
     public InsufficientPointException(String message) {

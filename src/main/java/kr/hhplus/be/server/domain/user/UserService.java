@@ -7,8 +7,8 @@ import kr.hhplus.be.server.api.response.UserResponse;
 import kr.hhplus.be.server.api.response.PointResponse;
 import kr.hhplus.be.server.domain.coupon.UserCouponEntity;
 import kr.hhplus.be.server.domain.coupon.UserCouponRepository;
-import kr.hhplus.be.server.exeption.InvalidPointException;
-import kr.hhplus.be.server.exeption.InvalidUserException;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidPointException;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidUserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

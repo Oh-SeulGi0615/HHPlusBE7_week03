@@ -7,10 +7,9 @@ import kr.hhplus.be.server.domain.goods.GoodsStockRepository;
 import kr.hhplus.be.server.domain.user.UserEntity;
 import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.enums.OrderStatus;
-import kr.hhplus.be.server.exeption.GoodsOutOfStockException;
-import kr.hhplus.be.server.exeption.InvalidGoodsException;
-import kr.hhplus.be.server.exeption.InvalidOrderException;
-import kr.hhplus.be.server.exeption.InvalidUserException;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidOrderException;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidUserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

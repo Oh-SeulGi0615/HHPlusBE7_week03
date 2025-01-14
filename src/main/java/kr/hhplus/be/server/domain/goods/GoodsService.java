@@ -2,7 +2,7 @@ package kr.hhplus.be.server.domain.goods;
 
 import kr.hhplus.be.server.api.request.GoodsRequest;
 import kr.hhplus.be.server.api.response.GoodsResponse;
-import kr.hhplus.be.server.exeption.InvalidGoodsException;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

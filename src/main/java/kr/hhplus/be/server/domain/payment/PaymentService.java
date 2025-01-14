@@ -13,7 +13,7 @@ import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.enums.OrderStatus;
 import kr.hhplus.be.server.enums.PaymentStatus;
 import kr.hhplus.be.server.enums.UserCouponStatus;
-import kr.hhplus.be.server.exeption.*;
+import kr.hhplus.be.server.exeption.customExceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

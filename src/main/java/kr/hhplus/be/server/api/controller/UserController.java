@@ -5,8 +5,8 @@ import kr.hhplus.be.server.api.request.PointRequest;
 import kr.hhplus.be.server.api.response.UserCouponResponse;
 import kr.hhplus.be.server.api.response.UserResponse;
 import kr.hhplus.be.server.api.response.PointResponse;
-import kr.hhplus.be.server.exeption.InvalidPointException;
-import kr.hhplus.be.server.exeption.InvalidUserException;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidPointException;
+import kr.hhplus.be.server.exeption.customExceptions.InvalidUserException;
 import kr.hhplus.be.server.domain.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,45 +25,27 @@ public class UserController {
 
     @PostMapping("/users/create")
     public ResponseEntity<Object> createUser(@RequestBody UserRequest userRequest) {
-        try {
-            UserResponse response = userService.createUser(userRequest);
-            return ResponseEntity.ok(response);
-        } catch (InvalidUserException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        UserResponse response = userService.createUser(userRequest);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/users/{id}/points/charge")
     public ResponseEntity<Object> chargePoint(@PathVariable("id") Long userId, @RequestBody Long point) {
-        try {
-            PointRequest pointRequest = new PointRequest(userId, point);
-            PointResponse response = userService.chargePoint(pointRequest);
-            return ResponseEntity.ok(response);
-        } catch (InvalidUserException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (InvalidPointException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        PointRequest pointRequest = new PointRequest(userId, point);
+        PointResponse response = userService.chargePoint(pointRequest);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users/{id}/points/check")
     public ResponseEntity<Object> checkPoint(@PathVariable("id") Long userId) {
-        try {
-            PointResponse response = userService.checkPoint(userId);
-            return ResponseEntity.ok(response);
-        } catch (InvalidUserException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        PointResponse response = userService.checkPoint(userId);
+        return ResponseEntity.ok(response);
     }
 
 
     @GetMapping("/users/{id}/coupons")
     public ResponseEntity<Object> checkCoupon(@PathVariable("id") Long userId) {
-        try {
-            List<UserCouponResponse> response = userService.checkAllMyCoupon(userId);
-            return ResponseEntity.ok(response);
-        } catch (InvalidUserException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        List<UserCouponResponse> response = userService.checkAllMyCoupon(userId);
+        return ResponseEntity.ok(response);
     }
 }
