@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.payment;
+package kr.hhplus.be.server.unit;
 
 import kr.hhplus.be.server.api.request.PaymentRequest;
 import kr.hhplus.be.server.api.response.PaymentResponse;
@@ -11,6 +11,9 @@ import kr.hhplus.be.server.domain.order.OrderDetailEntity;
 import kr.hhplus.be.server.domain.order.OrderDetailRepository;
 import kr.hhplus.be.server.domain.order.OrderEntity;
 import kr.hhplus.be.server.domain.order.OrderRepository;
+import kr.hhplus.be.server.domain.payment.PaymentEntity;
+import kr.hhplus.be.server.domain.payment.PaymentRepository;
+import kr.hhplus.be.server.domain.payment.PaymentService;
 import kr.hhplus.be.server.domain.user.UserEntity;
 import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.enums.OrderStatus;

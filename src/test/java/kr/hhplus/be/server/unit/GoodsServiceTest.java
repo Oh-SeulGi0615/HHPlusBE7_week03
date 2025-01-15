@@ -1,7 +1,8 @@
-package kr.hhplus.be.server.domain.goods;
+package kr.hhplus.be.server.unit;
 
 import kr.hhplus.be.server.api.request.GoodsRequest;
 import kr.hhplus.be.server.api.response.GoodsResponse;
+import kr.hhplus.be.server.domain.goods.*;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,9 +1,10 @@
-package kr.hhplus.be.server.domain.coupon;
+package kr.hhplus.be.server.unit;
 
 import kr.hhplus.be.server.api.request.CreateCouponRequest;
 import kr.hhplus.be.server.api.request.GetCouponRequest;
 import kr.hhplus.be.server.api.response.CouponResponse;
 import kr.hhplus.be.server.api.response.UserCouponResponse;
+import kr.hhplus.be.server.domain.coupon.*;
 import kr.hhplus.be.server.enums.UserCouponStatus;
 import kr.hhplus.be.server.exeption.customExceptions.CouponOutOfStockException;
 import kr.hhplus.be.server.exeption.customExceptions.ExpiredCouponException;

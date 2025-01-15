@@ -1,8 +1,9 @@
-package kr.hhplus.be.server.api.controller;
+package kr.hhplus.be.server.intergration;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import kr.hhplus.be.server.api.request.UserRequest;
+import kr.hhplus.be.server.config.IntegrationTest;
 import kr.hhplus.be.server.domain.coupon.CouponEntity;
 import kr.hhplus.be.server.domain.coupon.CouponRepository;
 import kr.hhplus.be.server.domain.coupon.UserCouponEntity;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
@@ -24,43 +26,13 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class UserControllerIntegrationTest {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CouponRepository couponRepository;
-    @Autowired
-    private UserCouponRepository userCouponRepository;
-
-    @LocalServerPort
-    private int port;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
-
-        UserEntity user1 = new UserEntity("test1");
-        user1.setPoint(9500000L);
-        userRepository.save(user1);
-
-        UserEntity user2 = new UserEntity("test2");
-        user2.setPoint(5000L);
-        userRepository.save(user2);
-
-        CouponEntity coupon1 = new CouponEntity("coupon1", 10L, 10L, LocalDate.now().plusDays(10));
-        couponRepository.save(coupon1);
-
-        UserCouponEntity myCoupon1 = new UserCouponEntity(1L, 1L);
-        userCouponRepository.save(myCoupon1);
-    }
-
+class UserControllerIntegrationTest extends IntegrationTest {
     @Test
     @DisplayName("[POST] /api/user/create - 유저 생성 성공 케이스")
     void createUser1() {
         // given
-        UserRequest userRequest = new UserRequest("test3");
+        UserRequest userRequest = new UserRequest("test1");
 
         // when & then
         given()
@@ -71,8 +43,8 @@ class UserControllerIntegrationTest {
         .then()
             .log().all()
             .statusCode(HttpStatus.OK.value())
-            .body("userId", equalTo(3))
-            .body("userName", equalTo("test3"))
+            .body("userId", equalTo(1))
+            .body("userName", equalTo("test1"))
             .body("point", equalTo(0));
     }
 
@@ -80,6 +52,9 @@ class UserControllerIntegrationTest {
     @DisplayName("[POST] /api/users/create - 유저 생성 실패 케이스 - 중복 유저")
     void createUser2() {
         // given
+        UserEntity user1 = new UserEntity("test1");
+        jpaUserRepository.save(user1);
+
         UserRequest userRequest = new UserRequest("test1");
 
         // when & then
@@ -99,7 +74,11 @@ class UserControllerIntegrationTest {
     @DisplayName("[POST] /api/users/{userId}/points/charge - 포인트 충전 성공 케이스")
     void chargePoint1() {
         // given
-        Long userId = 1L;
+        UserEntity user1 = new UserEntity("test1");
+        user1.setPoint(25000L);
+        jpaUserRepository.save(user1);
+
+        Long userId = jpaUserRepository.findByUserName("test1").get().getUserId();
         Long point = 5000L;
 
         // when & then
@@ -113,7 +92,7 @@ class UserControllerIntegrationTest {
                 .log().all()
                 .statusCode(HttpStatus.OK.value())
                 .body("userId", equalTo(userId.intValue()))
-                .body("point", equalTo(9505000));
+                .body("point", equalTo(30000));
     }
 
     @Test
@@ -141,7 +120,10 @@ class UserControllerIntegrationTest {
     @DisplayName("[POST] /api/users/{userId}/points/charge - 포인트 충전 실패 케이스 - 마이너스 금액 충전 요청")
     void chargePoint3() {
         // given
-        Long userId = 1L;
+        UserEntity user1 = new UserEntity("test1");
+        jpaUserRepository.save(user1);
+
+        Long userId = jpaUserRepository.findByUserName("test1").get().getUserId();
         Long point = -5000L;
 
         // when & then
@@ -162,7 +144,10 @@ class UserControllerIntegrationTest {
     @DisplayName("[POST] /api/users/{userId}/points/charge - 포인트 충전 실패 케이스 - 1회 충전 요청 가능 금액 초과")
     void chargePoint4() {
         // given
-        Long userId = 1L;
+        UserEntity user1 = new UserEntity("test1");
+        jpaUserRepository.save(user1);
+
+        Long userId = jpaUserRepository.findByUserName("test1").get().getUserId();
         Long point = 1500000L;
 
         // when & then
@@ -183,7 +168,11 @@ class UserControllerIntegrationTest {
     @DisplayName("[POST] /api/users/{userId}/points/charge - 포인트 충전 실패 케이스 - 총 보유 포인트 한도 초과")
     void chargePoint5() {
         // given
-        Long userId = 1L;
+        UserEntity user1 = new UserEntity("test1");
+        user1.setPoint(9500000L);
+        jpaUserRepository.save(user1);
+
+        Long userId = jpaUserRepository.findByUserName("test1").get().getUserId();
         Long point = 800000L;
 
         // when & then
@@ -204,7 +193,11 @@ class UserControllerIntegrationTest {
     @DisplayName("[GET] /api/users/{userId}/points/check - 포인트 조회 성공 케이스")
     void checkPoint1() {
         // given
-        Long userId = 1L;
+        UserEntity user1 = new UserEntity("test1");
+        user1.setPoint(9500000L);
+        jpaUserRepository.save(user1);
+
+        Long userId = jpaUserRepository.findByUserName("test1").get().getUserId();
 
         // when & then
         given()
@@ -242,7 +235,12 @@ class UserControllerIntegrationTest {
     @DisplayName("[GET] /api/users/{userId}/coupons - 쿠폰 조회 성공 케이스")
     void checkMyCoupon1() {
         // given
-        Long userId = 1L;
+        UserEntity user1 = new UserEntity("test1");
+        jpaUserRepository.save(user1);
+        UserCouponEntity myCoupon1 = new UserCouponEntity(jpaUserRepository.findByUserName("test1").get().getUserId(), 1L);
+        jpaUserCouponRepository.save(myCoupon1);
+
+        Long userId = jpaUserRepository.findByUserName("test1").get().getUserId();
 
         // when & then
         given()

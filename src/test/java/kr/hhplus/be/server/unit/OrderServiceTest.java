@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.domain.order;
+package kr.hhplus.be.server.unit;
 
 import kr.hhplus.be.server.api.request.OrderRequest;
 import kr.hhplus.be.server.api.response.OrderResponse;
@@ -6,6 +6,10 @@ import kr.hhplus.be.server.domain.goods.GoodsEntity;
 import kr.hhplus.be.server.domain.goods.GoodsRepository;
 import kr.hhplus.be.server.domain.goods.GoodsStockEntity;
 import kr.hhplus.be.server.domain.goods.GoodsStockRepository;
+import kr.hhplus.be.server.domain.order.OrderDetailRepository;
+import kr.hhplus.be.server.domain.order.OrderEntity;
+import kr.hhplus.be.server.domain.order.OrderRepository;
+import kr.hhplus.be.server.domain.order.OrderService;
 import kr.hhplus.be.server.domain.user.UserEntity;
 import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.enums.OrderStatus;
