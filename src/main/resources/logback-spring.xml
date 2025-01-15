@@ -16,10 +16,11 @@
         </encoder>
     </appender>
 
-    <root level="info">
+    <root level="WARN">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </root>
 
-    <logger name="com.example" level="debug" />
+    <logger name="kr.hhplus.be.server.api.controller" level="INFO" />
+<!--    <logger name="com.example" level="debug" />-->
 </configuration>

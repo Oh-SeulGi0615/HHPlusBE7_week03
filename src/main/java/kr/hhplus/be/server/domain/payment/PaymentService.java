@@ -60,7 +60,7 @@ public class PaymentService {
             throw new InvalidOrderException("이미 처리된 주문입니다.");
         }
 
-        if (paymentRequest.getCouponId() != 0 && userCouponRepository.findByCouponIdAndUserId(
+        if ((paymentRequest.getCouponId() != null && paymentRequest.getCouponId() != 0) && userCouponRepository.findByCouponIdAndUserId(
                 paymentRequest.getCouponId(), paymentRequest.getUserId()
                 ).isEmpty()){
             throw new InvalidCouponException("쿠폰 정보를 찾을 수 없습니다.");
@@ -76,7 +76,7 @@ public class PaymentService {
 
         if (paymentRequest.getCouponId() != null) {
             Long discountRate = couponRepository.findByCouponId(paymentRequest.getCouponId()).get().getDiscountRate();
-            totalPrice = (Long) (totalPrice * discountRate / 100);
+            totalPrice = (Long) (totalPrice * (100 - discountRate) / 100);
             PaymentEntity paymentEntity = new PaymentEntity(paymentRequest.getOrderId(), paymentRequest.getCouponId(), totalPrice);
             PaymentEntity savedPayment = paymentRepository.save(paymentEntity);
 
@@ -121,8 +121,10 @@ public class PaymentService {
 
         userEntity.setPoint(userEntity.getPoint() - paymentEntity.getTotalPrice());
 
-        Optional<UserCouponEntity> userCouponEntity = userCouponRepository.findByCouponId(paymentEntity.getCouponId());
-        userCouponEntity.get().setStatus(UserCouponStatus.USED);
+        if (paymentEntity.getCouponId() != null) {
+            Optional<UserCouponEntity> userCouponEntity = userCouponRepository.findByCouponId(paymentEntity.getCouponId());
+            userCouponEntity.get().setStatus(UserCouponStatus.USED);
+        }
 
         Optional<OrderEntity> orderEntity = orderRepository.findByOrderId(paymentEntity.getOrderId());
         orderEntity.get().setStatus(OrderStatus.PAID);

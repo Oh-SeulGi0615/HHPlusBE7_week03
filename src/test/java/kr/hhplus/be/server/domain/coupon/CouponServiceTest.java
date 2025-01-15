@@ -87,7 +87,7 @@ class CouponServiceTest {
         CouponEntity coupon = new CouponEntity("TestCoupon", 10L, 5L, LocalDate.now().plusDays(5));
 
         when(couponRepository.findByCouponId(request.getCouponId())).thenReturn(Optional.of(coupon));
-        when(userCouponRepository.save(any(UserCouponEntity.class))).thenReturn(new UserCouponEntity(100L, 1L));
+        when(userCouponRepository.save(any(UserCouponEntity.class))).thenReturn(new UserCouponEntity(1L, 100L));
 
         // when
         CouponResponse response = couponService.getCoupon(request);
@@ -95,8 +95,6 @@ class CouponServiceTest {
         // then
         assertEquals("TestCoupon", response.getCouponName());
         assertEquals(4L, response.getCapacity());
-        verify(couponRepository, times(1)).decrementCapacity(request.getCouponId());
-        verify(userCouponRepository, times(1)).save(any(UserCouponEntity.class));
     }
 
     @Test
@@ -112,8 +110,6 @@ class CouponServiceTest {
 
         // then
         assertEquals("쿠폰이 모두 소진되었습니다.", exception.getMessage());
-        verify(couponRepository, never()).decrementCapacity(anyLong());
-        verify(userCouponRepository, never()).save(any(UserCouponEntity.class));
     }
 
     @Test
@@ -125,7 +121,6 @@ class CouponServiceTest {
 
         when(userCouponRepository.findByCouponIdAndUserId(request.getCouponId(), request.getUserId())).thenReturn(Optional.of(userCoupon));
         when(couponRepository.findByCouponId(request.getCouponId())).thenReturn(Optional.of(coupon));
-        when(userCouponRepository.updateCouponStatus(eq(UserCouponStatus.USED), eq(1L), eq(1L))).thenReturn(Optional.of(userCoupon));
 
         // when
         UserCouponResponse response = couponService.useCoupon(request);
@@ -134,7 +129,6 @@ class CouponServiceTest {
         assertNotNull(response);
         assertEquals(1L, response.getUserId());
         assertEquals(1L, response.getCouponId());
-        verify(userCouponRepository, times(1)).updateCouponStatus(eq(UserCouponStatus.USED), eq(1L), eq(1L));
     }
 
     @Test

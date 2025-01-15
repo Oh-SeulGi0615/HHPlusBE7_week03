@@ -7,6 +7,7 @@ import kr.hhplus.be.server.api.response.UserResponse;
 import kr.hhplus.be.server.api.response.PointResponse;
 import kr.hhplus.be.server.domain.coupon.UserCouponEntity;
 import kr.hhplus.be.server.domain.coupon.UserCouponRepository;
+import kr.hhplus.be.server.exeption.customExceptions.ExistUserException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidPointException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidUserException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class UserService {
 
     public UserResponse createUser(UserRequest userRequest) {
         if (userRepository.findByUserName(userRequest.getName()).isPresent()) {
-            throw new InvalidUserException("이미 등록된 유저입니다.");
+            throw new ExistUserException("이미 등록된 유저입니다.");
         }
         UserEntity userEntity = new UserEntity(userRequest.getName());
         UserEntity savedUser = userRepository.save(userEntity);

@@ -42,7 +42,7 @@ public class OrderService {
         OrderEntity orderEntity = new OrderEntity(userId);
         Long orderId = orderRepository.save(orderEntity).getOrderId();
 
-        ArrayList<OrderResponse> orderResponseList = new ArrayList<>();
+        List<OrderResponse> orderResponseList = new ArrayList<>();
         for (OrderRequest orderRequests:orderRequestList){
             if (goodsRepository.findByGoodsId(orderRequests.getGoodsId()).isEmpty()){
                 throw new InvalidGoodsException("상품정보를 찾을 수 없습니다.");

@@ -71,7 +71,7 @@ public class CouponService {
                 getCouponRequest.getCouponId(),
                 coupon.getCouponName(),
                 coupon.getDiscountRate(),
-                coupon.getCapacity() - 1,
+                coupon.getCapacity(),
                 coupon.getDueDate()
         );
     }

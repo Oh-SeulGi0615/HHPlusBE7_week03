@@ -13,57 +13,74 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 })
 public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidUserException.class)
-    public ResponseEntity<Object> handleInvalidUserException(InvalidUserException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleInvalidUserException(InvalidUserException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("InvalidUserException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(ExistUserException.class)
+    public ResponseEntity<ErrorResponse> handleExistUserException(ExistUserException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("ExistUserException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidPointException.class)
-    public ResponseEntity<Object> handleInvalidPointException(InvalidPointException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleInvalidPointException(InvalidPointException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("InvalidPointException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidPaymentException.class)
-    public ResponseEntity<Object> handleInvalidPaymentException(InvalidPaymentException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleInvalidPaymentException(InvalidPaymentException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("InvalidPaymentException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidOrderException.class)
-    public ResponseEntity<Object> handleInvalidOrderException(InvalidOrderException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleInvalidOrderException(InvalidOrderException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("InvalidOrderException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidGoodsException.class)
-    public ResponseEntity<Object> handleInvalidGoodsException(InvalidGoodsException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleInvalidGoodsException(InvalidGoodsException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("InvalidGoodsException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidCouponException.class)
-    public ResponseEntity<Object> handleInvalidCouponException(InvalidCouponException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleInvalidCouponException(InvalidCouponException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("InvalidCouponException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(InsufficientPointException.class)
-    public ResponseEntity<Object> handleInsufficientPointException(InsufficientPointException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleInsufficientPointException(InsufficientPointException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("InsufficientPointException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(GoodsOutOfStockException.class)
-    public ResponseEntity<Object> handleGoodsOutOfStockException(GoodsOutOfStockException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleGoodsOutOfStockException(GoodsOutOfStockException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("GoodsOutOfStockException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(ExpiredCouponException.class)
-    public ResponseEntity<Object> handleExpiredCouponException(ExpiredCouponException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleExpiredCouponException(ExpiredCouponException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("ExpiredCouponException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(CouponOutOfStockException.class)
-    public ResponseEntity<Object> handleCouponOutOfStockException(CouponOutOfStockException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleCouponOutOfStockException(CouponOutOfStockException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("CouponOutOfStockException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGenericException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        ErrorResponse errorResponse = new ErrorResponse("Exception", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

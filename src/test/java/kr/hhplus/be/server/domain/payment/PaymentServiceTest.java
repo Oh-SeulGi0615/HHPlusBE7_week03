@@ -2,7 +2,9 @@ package kr.hhplus.be.server.domain.payment;
 
 import kr.hhplus.be.server.api.request.PaymentRequest;
 import kr.hhplus.be.server.api.response.PaymentResponse;
+import kr.hhplus.be.server.domain.coupon.CouponEntity;
 import kr.hhplus.be.server.domain.coupon.CouponRepository;
+import kr.hhplus.be.server.domain.coupon.UserCouponEntity;
 import kr.hhplus.be.server.domain.coupon.UserCouponRepository;
 import kr.hhplus.be.server.domain.goods.*;
 import kr.hhplus.be.server.domain.order.OrderDetailEntity;
@@ -11,6 +13,7 @@ import kr.hhplus.be.server.domain.order.OrderEntity;
 import kr.hhplus.be.server.domain.order.OrderRepository;
 import kr.hhplus.be.server.domain.user.UserEntity;
 import kr.hhplus.be.server.domain.user.UserRepository;
+import kr.hhplus.be.server.enums.OrderStatus;
 import kr.hhplus.be.server.enums.PaymentStatus;
 import kr.hhplus.be.server.exeption.customExceptions.*;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,7 +63,7 @@ class PaymentServiceTest {
     private PaymentService paymentService;
 
     @Test
-    void 결제생성_성공케이스() {
+    void 결제생성_쿠폰없음_성공케이스() {
         // given
         Long userId = 1L;
         String userName = "test";
@@ -90,6 +94,48 @@ class PaymentServiceTest {
         assertNotNull(response);
         assertEquals(orderId, response.getOrderId());
         assertEquals(price, response.getTotalPrice());
+    }
+
+    @Test
+    void 결제생성_쿠폰있음_성공케이스() {
+        // given
+        Long userId = 1L;
+        String userName = "test";
+        Long orderId = 1L;
+        Long goodsId = 1L;
+        String goodsName = "test goods";
+        Long goodsPrice = 1000L;
+        Long quantity = 1L;
+
+        Long couponId = 1L;
+        Long discountRate = 10L;
+        Long afterDiscountPrice = 900L;
+
+        PaymentRequest paymentRequest = new PaymentRequest(userId, orderId, couponId);
+
+        UserEntity userEntity = new UserEntity(userName);
+        OrderEntity orderEntity = new OrderEntity(userId);
+        GoodsEntity goodsEntity = new GoodsEntity(goodsName, goodsPrice);
+        OrderDetailEntity orderDetail = new OrderDetailEntity(orderId, goodsId, quantity);
+        PaymentEntity paymentEntity = new PaymentEntity(orderId, goodsPrice);
+        CouponEntity couponEntity = new CouponEntity("test", discountRate, 10L, LocalDate.now().plusDays(10));
+        UserCouponEntity userCouponEntity = new UserCouponEntity(userId, couponId);
+
+        when(userRepository.findByUserId(userId)).thenReturn(Optional.of(userEntity));
+        when(orderRepository.findByOrderId(orderId)).thenReturn(Optional.of(orderEntity));
+        when(orderDetailRepository.findAllByOrderId(orderId)).thenReturn(List.of(orderDetail));
+        when(goodsRepository.findByGoodsId(goodsId)).thenReturn(Optional.of(goodsEntity));
+        when(paymentRepository.save(any(PaymentEntity.class))).thenReturn(paymentEntity);
+        when(couponRepository.findByCouponId(couponId)).thenReturn(Optional.of(couponEntity));
+        when(userCouponRepository.findByCouponIdAndUserId(couponId, userId)).thenReturn(Optional.of(userCouponEntity));
+
+        // when
+        PaymentResponse response = paymentService.createPayment(paymentRequest);
+
+        // then
+        assertNotNull(response);
+        assertEquals(orderId, response.getOrderId());
+        assertEquals(afterDiscountPrice, response.getTotalPrice());
     }
 
     @Test
@@ -156,10 +202,14 @@ class PaymentServiceTest {
         UserEntity userEntity = new UserEntity(userName);
         userEntity.setPoint(3000L);
         userEntity.setUserId(userId);
+
         GoodsStockEntity goodsStockEntity = new GoodsStockEntity(goodsId, quantity);
         PaymentEntity paymentEntity = new PaymentEntity(orderId, totalPrice);
         paymentEntity.setPaymentId(paymentId);
         paymentEntity.setStatus(PaymentStatus.WAITING);
+
+        OrderEntity orderEntity = new OrderEntity(userId);
+        orderEntity.setStatus(OrderStatus.PAID);
 
         PaymentEntity paidEntity = new PaymentEntity(orderId, totalPrice);
         paidEntity.setPaymentId(paymentId);
@@ -171,7 +221,7 @@ class PaymentServiceTest {
         when(paymentRepository.findByPaymentId(paymentId)).thenReturn(Optional.of(paymentEntity));
         when(orderDetailRepository.findAllByOrderId(orderId)).thenReturn(List.of(orderDetailEntity));
         when(goodsStockRepository.findByGoodsId(goodsId)).thenReturn(Optional.of(goodsStockEntity));
-        when(paymentRepository.updatePaymentStatus(paymentId, PaymentStatus.PAID)).thenReturn(paidEntity);
+        when(orderRepository.findByOrderId(orderId)).thenReturn(Optional.of(orderEntity));
 
         // when
         PaymentResponse response = paymentService.completePayment(userId, paymentId);
@@ -309,12 +359,16 @@ class PaymentServiceTest {
         UserEntity userEntity = new UserEntity(userName);
         PaymentEntity paymentEntity = new PaymentEntity(orderId, totalPrice);
         paymentEntity.setStatus(PaymentStatus.WAITING);
+
         PaymentEntity canceledPaymentEntity = new PaymentEntity(orderId, totalPrice);
         canceledPaymentEntity.setStatus(PaymentStatus.CANCELED);
 
+        OrderEntity orderEntity = new OrderEntity(userId);
+        orderEntity.setStatus(OrderStatus.CANCELED);
+
         when(userRepository.findByUserId(userId)).thenReturn(Optional.of(userEntity));
         when(paymentRepository.findByPaymentId(paymentId)).thenReturn(Optional.of(paymentEntity));
-        when(paymentRepository.updatePaymentStatus(paymentId, PaymentStatus.CANCELED)).thenReturn(canceledPaymentEntity);
+        when(orderRepository.findByOrderId(orderId)).thenReturn(Optional.of(orderEntity));
 
         // when
         PaymentResponse response = paymentService.cancelPayment(userId, paymentId);
