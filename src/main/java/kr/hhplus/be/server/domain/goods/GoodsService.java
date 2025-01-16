@@ -2,6 +2,7 @@ package kr.hhplus.be.server.domain.goods;
 
 import kr.hhplus.be.server.api.request.GoodsRequest;
 import kr.hhplus.be.server.api.response.GoodsResponse;
+import kr.hhplus.be.server.exeption.customExceptions.ExistGoodsException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +29,7 @@ public class GoodsService {
 
     public GoodsResponse createGoods(GoodsRequest goodsRequest) {
         if (goodsRepository.findByGoodsName(goodsRequest.getGoodsName()).isPresent()) {
-            throw new InvalidGoodsException("이미 등록된 상품입니다.");
+            throw new ExistGoodsException("이미 등록된 상품입니다.");
         }
         GoodsEntity goodsEntity = new GoodsEntity(goodsRequest.getGoodsName(), goodsRequest.getPrice());
         Long goodsId = goodsRepository.save(goodsEntity).getGoodsId();

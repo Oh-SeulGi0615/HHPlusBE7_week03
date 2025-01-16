@@ -289,7 +289,7 @@ class PaymentServiceTest {
         when(paymentRepository.findByPaymentId(paymentId)).thenReturn(Optional.of(paymentEntity));
 
         // when & then
-        assertThrows(InvalidPaymentException.class, () -> paymentService.completePayment(userId, paymentId));
+        assertThrows(AlreadyProcessedPaymentException.class, () -> paymentService.completePayment(userId, paymentId));
     }
 
     @Test
@@ -425,6 +425,6 @@ class PaymentServiceTest {
         when(paymentRepository.findByPaymentId(paymentId)).thenReturn(Optional.of(paymentEntity));
 
         // when & then
-        assertThrows(InvalidPaymentException.class, () -> paymentService.completePayment(userId, paymentId));
+        assertThrows(AlreadyProcessedPaymentException.class, () -> paymentService.completePayment(userId, paymentId));
     }
 }

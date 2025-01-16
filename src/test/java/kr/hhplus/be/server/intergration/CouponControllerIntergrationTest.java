@@ -2,7 +2,7 @@ package kr.hhplus.be.server.intergration;
 
 import io.restassured.http.ContentType;
 import kr.hhplus.be.server.api.request.CreateCouponRequest;
-import kr.hhplus.be.server.config.IntegrationTest;
+import kr.hhplus.be.server.config.IntergrationTest;
 import kr.hhplus.be.server.domain.coupon.CouponEntity;
 import kr.hhplus.be.server.domain.coupon.UserCouponEntity;
 import kr.hhplus.be.server.domain.user.UserEntity;
@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 @ActiveProfiles("test")
-class CouponControllerIntergrationTest extends IntegrationTest {
+class CouponControllerIntergrationTest extends IntergrationTest {
     @Test
     @DisplayName("[POST] /api/coupons/create - 쿠폰 생성 성공 케이스")
     void createCoupon1() {
@@ -38,7 +38,7 @@ class CouponControllerIntergrationTest extends IntegrationTest {
                 .body("couponName", equalTo("test"))
                 .body("discountRate", equalTo(10))
                 .body("capacity", equalTo(10))
-                .body("dueDate", equalTo("2025-01-26"));
+                .body("dueDate", equalTo("2025-01-27"));
     }
 
     @Test

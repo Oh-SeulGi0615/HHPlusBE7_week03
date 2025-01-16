@@ -25,7 +25,7 @@ public class GoodsController {
     }
 
     @GetMapping("/goods")
-    public List<GoodsResponse> findAllGoods() {
+    public List<GoodsResponse> getAllGoods() {
         return goodsService.getAllGoods();
     }
 

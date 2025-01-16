@@ -1,33 +1,21 @@
 package kr.hhplus.be.server.intergration;
 
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import kr.hhplus.be.server.api.request.UserRequest;
-import kr.hhplus.be.server.config.IntegrationTest;
-import kr.hhplus.be.server.domain.coupon.CouponEntity;
-import kr.hhplus.be.server.domain.coupon.CouponRepository;
+import kr.hhplus.be.server.config.IntergrationTest;
 import kr.hhplus.be.server.domain.coupon.UserCouponEntity;
-import kr.hhplus.be.server.domain.coupon.UserCouponRepository;
 import kr.hhplus.be.server.domain.user.UserEntity;
-import kr.hhplus.be.server.domain.user.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.time.LocalDate;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 
 @ActiveProfiles("test")
-class UserControllerIntegrationTest extends IntegrationTest {
+class UserControllerIntergrationTest extends IntergrationTest {
     @Test
     @DisplayName("[POST] /api/user/create - 유저 생성 성공 케이스")
     void createUser1() {

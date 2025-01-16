@@ -42,10 +42,28 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(AlreadyProcessedOrderException.class)
+    public ResponseEntity<ErrorResponse> handleAlreadyProcessedOrderException(AlreadyProcessedOrderException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("AlreadyProcessedOrderException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(AlreadyProcessedPaymentException.class)
+    public ResponseEntity<ErrorResponse> handleAlreadyProcessedPaymentException(AlreadyProcessedPaymentException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("AlreadyProcessedPaymentException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
     @ExceptionHandler(InvalidGoodsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidGoodsException(InvalidGoodsException ex) {
         ErrorResponse errorResponse = new ErrorResponse("InvalidGoodsException", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(ExistGoodsException.class)
+    public ResponseEntity<ErrorResponse> handleExistGoodsException(ExistGoodsException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("ExistGoodsException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(InvalidCouponException.class)
@@ -55,8 +73,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ExistCouponException.class)
-    public ResponseEntity<ErrorResponse> handleExistCouponExceptionException(ExistCouponException ex) {
+    public ResponseEntity<ErrorResponse> handleExistCouponException(ExistCouponException ex) {
         ErrorResponse errorResponse = new ErrorResponse("ExistCouponException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(CannotUseCouponException.class)
+    public ResponseEntity<ErrorResponse> handleCannotUseCouponException(CannotUseCouponException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("CannotUseCouponException", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 

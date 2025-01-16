@@ -17,7 +17,7 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/orders")
+    @PostMapping("/orders/create")
     public ResponseEntity<Object> orderGoods(@RequestBody OrderCreateRequest request) {
         List<OrderResponse> response = orderService.createOrder(request.getUserId(), request.getOrders());
         return ResponseEntity.ok(response);
@@ -35,8 +35,8 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/orders/{userId}/cancel")
-    public ResponseEntity<Object> cancelOrder(@PathVariable("userId") Long userId, Long orderId) {
+    @PostMapping("/orders/{userId}/{orderId}/cancel")
+    public ResponseEntity<Object> cancelOrder(@PathVariable("userId") Long userId, @PathVariable("orderId") Long orderId) {
         OrderResponse response = orderService.cancelOrder(userId, orderId);
         return ResponseEntity.ok(response);
     }

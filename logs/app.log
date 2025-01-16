@@ -43,3 +43,203 @@
 2025-01-16 05:37:29 [Test worker] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
 2025-01-16 16:28:10 [HangHaePlusDataSource housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HangHaePlusDataSource - Retrograde clock change detected (housekeeper delta=28s245ms), soft-evicting connections from pool.
 2025-01-16 17:43:41 [HangHaePlusDataSource housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HangHaePlusDataSource - Retrograde clock change detected (housekeeper delta=28s107ms), soft-evicting connections from pool.
+2025-01-16 20:17:56 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 20:18:05 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/users/create
+2025-01-16 20:18:05 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/users/5/points/check
+2025-01-16 20:18:05 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/users/5/coupons
+2025-01-16 20:18:05 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/users/5/points/charge
+2025-01-16 20:18:05 [http-nio-auto-1-exec-9] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/users/6/points/charge
+2025-01-16 20:18:06 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/users/7/points/charge
+2025-01-16 20:18:06 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/users/8/points/charge
+2025-01-16 20:18:40 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 20:18:47 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/coupons/create
+2025-01-16 20:18:48 [http-nio-auto-1-exec-5] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/coupons/1/get
+2025-01-16 20:18:48 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/coupons/6/get
+2025-01-16 20:18:48 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/coupons/7/get
+2025-01-16 20:44:52 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 20:45:57 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 20:46:03 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/goods/create
+2025-01-16 21:18:36 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 21:18:41 [http-nio-auto-1-exec-1] WARN  o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'POST' is not supported]
+2025-01-16 21:18:41 [http-nio-auto-1-exec-1] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=405, URI=/api/goods
+2025-01-16 21:27:25 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 21:28:34 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 21:34:57 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 21:41:09 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 21:49:23 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 21:57:56 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 21:58:03 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/goods/999
+2025-01-16 21:58:04 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/goods/create
+2025-01-16 21:58:49 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 21:58:56 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/goods/999
+2025-01-16 21:58:56 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/goods/create
+2025-01-16 22:27:45 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 22:30:37 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 22:37:00 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 22:37:07 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-16 22:37:08 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-16 22:37:08 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/orders/create
+2025-01-16 22:45:35 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 22:45:41 [http-nio-auto-1-exec-1] WARN  o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'POST' is not supported]
+2025-01-16 22:45:41 [http-nio-auto-1-exec-1] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=405, URI=/api/orders/1
+2025-01-16 22:46:25 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 22:46:31 [http-nio-auto-1-exec-1] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/1
+2025-01-16 22:47:16 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 22:59:08 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 22:59:16 [http-nio-auto-1-exec-5] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/1
+2025-01-16 22:59:16 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/4
+2025-01-16 22:59:16 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-16 22:59:16 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-16 22:59:16 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/orders/create
+2025-01-16 23:00:47 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 23:00:51 [main] WARN  com.zaxxer.hikari.pool.PoolBase - HangHaePlusDataSource - Failed to validate connection com.mysql.cj.jdbc.ConnectionImpl@422b8349 (No operations allowed after connection closed.). Possibly consider using a shorter maxLifetime value.
+2025-01-16 23:00:51 [main] WARN  com.zaxxer.hikari.pool.PoolBase - HangHaePlusDataSource - Failed to validate connection com.mysql.cj.jdbc.ConnectionImpl@67a6faf2 (No operations allowed after connection closed.). Possibly consider using a shorter maxLifetime value.
+2025-01-16 23:00:51 [main] WARN  com.zaxxer.hikari.pool.PoolBase - HangHaePlusDataSource - Failed to validate connection com.mysql.cj.jdbc.ConnectionImpl@79091c84 (No operations allowed after connection closed.). Possibly consider using a shorter maxLifetime value.
+2025-01-16 23:01:24 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 23:01:32 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/1
+2025-01-16 23:01:32 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/4
+2025-01-16 23:01:33 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-16 23:01:33 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-16 23:01:33 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/orders/create
+2025-01-16 23:03:26 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 23:06:54 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 23:17:10 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 23:23:28 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 23:23:34 [http-nio-auto-1-exec-2] WARN  o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported]
+2025-01-16 23:23:34 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=405, URI=/api/orders/1/1/cancel
+2025-01-16 23:23:35 [http-nio-auto-1-exec-3] WARN  o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported]
+2025-01-16 23:23:35 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=405, URI=/api/orders/2/1/cancel
+2025-01-16 23:23:35 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/1/1
+2025-01-16 23:23:35 [http-nio-auto-1-exec-9] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/4/1
+2025-01-16 23:23:35 [http-nio-auto-1-exec-1] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/1
+2025-01-16 23:23:35 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/6
+2025-01-16 23:23:36 [http-nio-auto-1-exec-10] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-16 23:23:36 [http-nio-auto-1-exec-1] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-16 23:23:36 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/orders/create
+2025-01-16 23:25:31 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 23:25:38 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/1/1/cancel
+2025-01-16 23:25:38 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/2/1/cancel
+2025-01-16 23:25:38 [http-nio-auto-1-exec-5] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/1/1
+2025-01-16 23:25:38 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/4/1
+2025-01-16 23:25:38 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/1
+2025-01-16 23:25:38 [http-nio-auto-1-exec-9] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/6
+2025-01-16 23:25:39 [http-nio-auto-1-exec-9] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-16 23:25:39 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-16 23:25:39 [http-nio-auto-1-exec-10] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/orders/create
+2025-01-16 23:34:39 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 23:38:33 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 23:55:57 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-16 23:56:04 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/payments/create
+2025-01-16 23:56:05 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-16 23:56:05 [http-nio-auto-1-exec-5] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-16 23:56:05 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-16 23:56:05 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-16 23:56:05 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-17 00:00:45 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:00:52 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/payments/create
+2025-01-17 00:00:53 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:00:53 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:00:53 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-17 00:00:53 [http-nio-auto-1-exec-9] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:00:53 [http-nio-auto-1-exec-10] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-17 00:02:12 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:02:19 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/payments/create
+2025-01-17 00:04:34 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:04:40 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/payments/create
+2025-01-17 00:06:56 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:07:02 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/payments/create
+2025-01-17 00:07:39 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:09:06 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:09:48 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:09:54 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/payments/create
+2025-01-17 00:11:40 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:11:46 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/payments/create
+2025-01-17 00:12:15 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:12:21 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/payments/create
+2025-01-17 00:15:16 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:15:22 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/payments/create
+2025-01-17 00:15:23 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:15:23 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:15:23 [http-nio-auto-1-exec-5] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-17 00:15:23 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:15:24 [http-nio-auto-1-exec-9] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-17 00:17:30 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:17:36 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/payments/create
+2025-01-17 00:19:00 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:19:06 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/payments/create
+2025-01-17 00:20:59 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:21:32 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:21:39 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:21:39 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:21:39 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-17 00:21:39 [http-nio-auto-1-exec-5] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:21:39 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-17 00:30:30 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:30:36 [http-nio-auto-1-exec-1] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/1
+2025-01-17 00:31:26 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:44:46 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 00:44:53 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:44:53 [http-nio-auto-1-exec-5] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:44:54 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-17 00:44:54 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 00:44:54 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-17 00:44:54 [http-nio-auto-1-exec-10] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/1
+2025-01-17 00:44:54 [http-nio-auto-1-exec-1] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/1
+2025-01-17 00:44:54 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/4
+2025-01-17 00:44:55 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/5
+2025-01-17 00:44:55 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/6
+2025-01-17 00:56:39 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 01:01:31 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 01:01:39 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 01:01:39 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 01:01:39 [http-nio-auto-1-exec-5] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-17 01:01:39 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/create
+2025-01-17 01:01:39 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/create
+2025-01-17 01:01:39 [http-nio-auto-1-exec-9] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/1/cancel
+2025-01-17 01:01:40 [http-nio-auto-1-exec-10] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/1/cancel
+2025-01-17 01:01:40 [http-nio-auto-1-exec-1] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/4/cancel
+2025-01-17 01:01:40 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/1
+2025-01-17 01:01:40 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/payments/1
+2025-01-17 01:01:40 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/6
+2025-01-17 01:01:41 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/7
+2025-01-17 01:01:41 [http-nio-auto-1-exec-10] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/payments/8
+2025-01-17 01:02:30 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 01:02:38 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/1/1/cancel
+2025-01-17 01:02:38 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/2/1/cancel
+2025-01-17 01:02:38 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/1/1
+2025-01-17 01:02:38 [http-nio-auto-1-exec-9] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/4/1
+2025-01-17 01:02:38 [http-nio-auto-1-exec-1] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/1
+2025-01-17 01:02:38 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/6
+2025-01-17 01:02:39 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-17 01:02:39 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/orders/create
+2025-01-17 01:02:39 [http-nio-auto-1-exec-5] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/orders/create
+2025-01-17 01:03:16 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 01:03:23 [http-nio-auto-1-exec-3] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/goods/999
+2025-01-17 01:03:24 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/goods/create
+2025-01-17 01:03:59 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 01:04:07 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/coupons/create
+2025-01-17 01:04:07 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/coupons/1/get
+2025-01-17 01:04:07 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/coupons/6/get
+2025-01-17 01:04:07 [http-nio-auto-1-exec-10] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/coupons/7/get
+2025-01-17 01:06:20 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 01:07:37 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 01:07:44 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/coupons/create
+2025-01-17 01:07:44 [http-nio-auto-1-exec-5] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/coupons/1/get
+2025-01-17 01:07:45 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/coupons/6/get
+2025-01-17 01:07:45 [http-nio-auto-1-exec-7] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/coupons/7/get
+2025-01-17 01:08:12 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 01:08:19 [http-nio-auto-1-exec-2] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/users/create
+2025-01-17 01:08:20 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/users/5/points/check
+2025-01-17 01:08:20 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/users/5/coupons
+2025-01-17 01:08:20 [http-nio-auto-1-exec-8] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=404, URI=/api/users/5/points/charge
+2025-01-17 01:08:20 [http-nio-auto-1-exec-4] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/users/6/points/charge
+2025-01-17 01:08:20 [http-nio-auto-1-exec-5] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/users/7/points/charge
+2025-01-17 01:08:20 [http-nio-auto-1-exec-6] WARN  k.h.b.s.filter.CustomLoggingFilter - Client error: status=400, URI=/api/users/8/points/charge
+2025-01-17 01:23:50 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-01-17 01:23:56 [http-nio-auto-1-exec-10] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/coupons/1/get
+2025-01-17 01:23:56 [http-nio-auto-1-exec-4] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/coupons/1/get
+2025-01-17 01:23:56 [http-nio-auto-1-exec-9] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/coupons/1/get
+2025-01-17 01:23:56 [http-nio-auto-1-exec-3] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/coupons/1/get
+2025-01-17 01:23:56 [http-nio-auto-1-exec-8] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/coupons/1/get
+2025-01-17 01:23:56 [http-nio-auto-1-exec-7] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/coupons/1/get
+2025-01-17 01:23:56 [http-nio-auto-1-exec-1] ERROR k.h.b.s.filter.CustomLoggingFilter - Server error: status=500, URI=/api/coupons/1/get

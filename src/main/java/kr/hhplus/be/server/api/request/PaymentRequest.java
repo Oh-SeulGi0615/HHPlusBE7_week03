@@ -16,7 +16,7 @@ public class PaymentRequest {
     public PaymentRequest(Long userId, Long orderId) {
         this.userId = userId;
         this.orderId = orderId;
-        this.couponId = null;
+        this.couponId = 0L;
     }
 
     public Long getUserId() {

@@ -24,13 +24,13 @@ public class PaymentController {
     }
 
     @PostMapping("/payments/{paymentId}")
-    public ResponseEntity<Object> completePayment(@PathVariable("paymentId") Long paymentId, Long userId) {
+    public ResponseEntity<Object> completePayment(@PathVariable("paymentId") Long paymentId, @RequestBody Long userId) {
         PaymentResponse response = paymentService.completePayment(userId, paymentId);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/payments/{paymentId}/cancel")
-    public ResponseEntity<Object> cancelPayment(@PathVariable("paymentId") Long paymentId, Long userId) {
+    public ResponseEntity<Object> cancelPayment(@PathVariable("paymentId") Long paymentId, @RequestBody Long userId) {
         PaymentResponse response = paymentService.cancelPayment(userId, paymentId);
         return ResponseEntity.ok(response);
     }

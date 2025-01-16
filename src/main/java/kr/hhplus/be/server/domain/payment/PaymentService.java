@@ -57,13 +57,18 @@ public class PaymentService {
             throw new InvalidOrderException("주문 정보를 찾을 수 없습니다.");
         }
         if (orderEntity.get().getStatus() != OrderStatus.WAITING){
-            throw new InvalidOrderException("이미 처리된 주문입니다.");
+            throw new AlreadyProcessedOrderException("이미 처리된 주문입니다.");
         }
 
-        if ((paymentRequest.getCouponId() != null && paymentRequest.getCouponId() != 0) && userCouponRepository.findByCouponIdAndUserId(
+        if (paymentRequest.getCouponId() != 0L  && userCouponRepository.findByCouponIdAndUserId(
                 paymentRequest.getCouponId(), paymentRequest.getUserId()
                 ).isEmpty()){
             throw new InvalidCouponException("쿠폰 정보를 찾을 수 없습니다.");
+        }
+        if (paymentRequest.getCouponId() != 0L && userCouponRepository.findByCouponIdAndUserId(
+                paymentRequest.getCouponId(), paymentRequest.getUserId()
+        ).get().isStatus() != UserCouponStatus.AVAILABLE){
+            throw new CannotUseCouponException("사용할 수 없는 쿠폰입니다.");
         }
 
         List<OrderDetailEntity> orderList = orderDetailRepository.findAllByOrderId(paymentRequest.getOrderId());
@@ -74,7 +79,7 @@ public class PaymentService {
             totalPrice += (Long) (price * quantity);
         }
 
-        if (paymentRequest.getCouponId() != null) {
+        if (paymentRequest.getCouponId() != 0L) {
             Long discountRate = couponRepository.findByCouponId(paymentRequest.getCouponId()).get().getDiscountRate();
             totalPrice = (Long) (totalPrice * (100 - discountRate) / 100);
             PaymentEntity paymentEntity = new PaymentEntity(paymentRequest.getOrderId(), paymentRequest.getCouponId(), totalPrice);
@@ -100,7 +105,7 @@ public class PaymentService {
                 .orElseThrow(() -> new InvalidPaymentException("결제 정보를 찾을 수 없습니다."));
 
         if (paymentEntity.getStatus() != PaymentStatus.WAITING) {
-            throw new InvalidPaymentException("이미 처리 완료된 결제입니다.");
+            throw new AlreadyProcessedPaymentException("이미 처리 완료된 결제입니다.");
         }
 
         if (userEntity.getPoint() < paymentEntity.getTotalPrice()) {
@@ -147,7 +152,7 @@ public class PaymentService {
                 .orElseThrow(() -> new InvalidPaymentException("결제 정보를 찾을 수 없습니다."));
 
         if (paymentEntity.getStatus() != PaymentStatus.WAITING) {
-            throw new InvalidPaymentException("이미 처리 완료된 결제입니다.");
+            throw new AlreadyProcessedPaymentException("이미 처리 완료된 결제입니다.");
         }
 
         Optional<OrderEntity> orderEntity = orderRepository.findByOrderId(paymentEntity.getOrderId());
