@@ -7,6 +7,7 @@ import kr.hhplus.be.server.api.response.UserCouponResponse;
 import kr.hhplus.be.server.domain.coupon.*;
 import kr.hhplus.be.server.enums.UserCouponStatus;
 import kr.hhplus.be.server.exeption.customExceptions.CouponOutOfStockException;
+import kr.hhplus.be.server.exeption.customExceptions.ExistCouponException;
 import kr.hhplus.be.server.exeption.customExceptions.ExpiredCouponException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidCouponException;
 import org.junit.jupiter.api.Test;
@@ -61,7 +62,7 @@ class CouponServiceTest {
         when(couponRepository.findByCouponName(request.getCouponName())).thenReturn(Optional.of(existingCoupon));
 
         // when
-        Exception exception = assertThrows(InvalidCouponException.class, () -> couponService.createCoupon(request));
+        Exception exception = assertThrows(ExistCouponException.class, () -> couponService.createCoupon(request));
 
         // then
         assertEquals("이미 등록된 쿠폰입니다.", exception.getMessage());
@@ -82,7 +83,7 @@ class CouponServiceTest {
     }
 
     @Test
-    void 쿠폰정보조회_성공케이스() {
+    void 쿠폰발급_성공케이스() {
         // given
         GetCouponRequest request = new GetCouponRequest(1L, 100L);
         CouponEntity coupon = new CouponEntity("TestCoupon", 10L, 5L, LocalDate.now().plusDays(5));
@@ -99,7 +100,7 @@ class CouponServiceTest {
     }
 
     @Test
-    void 쿠폰정보조회_재고소진_실패케이스() {
+    void 쿠폰발급_재고소진_실패케이스() {
         // given
         GetCouponRequest request = new GetCouponRequest(1L, 100L);
         CouponEntity coupon = new CouponEntity("TestCoupon", 10L, 0L, LocalDate.now().plusDays(5));

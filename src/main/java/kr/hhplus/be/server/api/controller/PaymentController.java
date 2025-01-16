@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-public class PaymentsController {
+public class PaymentController {
     private final PaymentService paymentService;
 
     @Autowired
-    public PaymentsController(PaymentService paymentService) {
+    public PaymentController(PaymentService paymentService) {
         this.paymentService = paymentService;
     }
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice(annotations = {RestController.class}, basePackageClasses = {
-        UserController.class, PaymentsController.class, OrderController.class, GoodsController.class, CouponController.class
+        UserController.class, PaymentController.class, OrderController.class, GoodsController.class, CouponController.class
 })
 public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidUserException.class)
@@ -52,6 +52,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInvalidCouponException(InvalidCouponException ex) {
         ErrorResponse errorResponse = new ErrorResponse("InvalidCouponException", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(ExistCouponException.class)
+    public ResponseEntity<ErrorResponse> handleExistCouponExceptionException(ExistCouponException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("ExistCouponException", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
     @ExceptionHandler(InsufficientPointException.class)

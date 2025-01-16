@@ -6,6 +6,7 @@ import kr.hhplus.be.server.api.response.CouponResponse;
 import kr.hhplus.be.server.api.response.UserCouponResponse;
 import kr.hhplus.be.server.enums.UserCouponStatus;
 import kr.hhplus.be.server.exeption.customExceptions.CouponOutOfStockException;
+import kr.hhplus.be.server.exeption.customExceptions.ExistCouponException;
 import kr.hhplus.be.server.exeption.customExceptions.ExpiredCouponException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidCouponException;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class CouponService {
 
     public CouponResponse createCoupon(CreateCouponRequest createCouponRequest) {
         if (couponRepository.findByCouponName(createCouponRequest.getCouponName()).isPresent()) {
-            throw new InvalidCouponException("이미 등록된 쿠폰입니다.");
+            throw new ExistCouponException("이미 등록된 쿠폰입니다.");
         }
         CouponEntity couponEntity = new CouponEntity(
                 createCouponRequest.getCouponName(),
@@ -56,7 +57,7 @@ public class CouponService {
                 .orElseThrow(() -> new InvalidCouponException("존재하지 않는 쿠폰입니다."));
 
         if (userCouponRepository.findByCouponIdAndUserId(getCouponRequest.getCouponId(), getCouponRequest.getUserId()).isPresent()){
-            throw new InvalidCouponException("이미 발급받은 쿠폰입니다.");
+            throw new ExistCouponException("이미 발급받은 쿠폰입니다.");
         }
 
         if (coupon.getCapacity() < 1) {
