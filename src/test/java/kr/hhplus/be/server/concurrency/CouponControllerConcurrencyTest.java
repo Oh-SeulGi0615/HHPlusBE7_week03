@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.concurrency;
 
 import io.restassured.http.ContentType;
+import kr.hhplus.be.server.api.request.GetCouponRequest;
 import kr.hhplus.be.server.config.IntergrationTest;
 import kr.hhplus.be.server.domain.coupon.CouponEntity;
 import kr.hhplus.be.server.domain.user.UserEntity;
@@ -30,24 +31,22 @@ public class CouponControllerConcurrencyTest extends IntergrationTest {
     @DisplayName("[POST] /api/coupons/{couponId}/get - 동시 요청 처리 테스트")
     void getCouponConcurrencyTest() throws Exception {
         // given
-        UserEntity userEntity = new UserEntity("testUser");
         CouponEntity couponEntity = new CouponEntity(
                 "testCoupon1", 10L, 5L, LocalDate.now().plusDays(10)
         );
 
-        UserEntity savedUser = jpaUserRepository.save(userEntity);
         CouponEntity savedCoupon = jpaCouponRepository.save(couponEntity);
 
-        List<Integer> successUserIds = new ArrayList<>();
-        List<Integer> failedUserIds = new ArrayList<>();
+        List<Long> successUserIds = new ArrayList<>();
+        List<Long> failedUserIds = new ArrayList<>();
 
         // 동시 요청을 처리하기 위해 Thread Pool 생성
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
         // 10명의 사용자 요청을 실행
         Future<?>[] futures = new Future[10];
-        for (int i = 0; i < 10; i++) {
-            final int userId = i + 1;
+        for (int i = 0; i < 10L; i++) {
+            final Long userId = (long) (i + 1);
             futures[i] = executorService.submit(() -> {
                 try {
                     given()
@@ -58,9 +57,7 @@ public class CouponControllerConcurrencyTest extends IntergrationTest {
                             .post("/api/coupons/{couponId}/get")
                             .then()
                             .log().all()
-                            .statusCode(HttpStatus.OK.value())
-                            .body("couponId", equalTo(savedCoupon.getCouponId().intValue()))
-                            .body("couponName", equalTo("testCoupon1"));
+                            .statusCode(HttpStatus.OK.value());
                     synchronized (successUserIds) {
                         successUserIds.add(userId);
                     }

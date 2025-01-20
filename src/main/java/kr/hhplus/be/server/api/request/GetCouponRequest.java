@@ -18,4 +18,12 @@ public class GetCouponRequest {
     public Long getCouponId() {
         return couponId;
     }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public void setCouponId(Long couponId) {
+        this.couponId = couponId;
+    }
 }
