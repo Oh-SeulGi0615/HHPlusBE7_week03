@@ -24,6 +24,7 @@ import java.util.concurrent.Future;
 
 import static org.hamcrest.Matchers.equalTo;
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 public class CouponControllerConcurrencyTest extends IntergrationTest {
@@ -34,21 +35,18 @@ public class CouponControllerConcurrencyTest extends IntergrationTest {
     @DisplayName("[POST] /api/coupons/{couponId}/get - 동시 요청 처리 테스트")
     void getCouponConcurrencyTest() {
         // given
-        Long conponCapacity = 3L;
+        Long couponCapacity = 8L;
         CouponEntity couponEntity = new CouponEntity(
-                "testCoupon1", 10L, conponCapacity, LocalDate.now().plusDays(10)
+                "testCoupon1", 10L, couponCapacity, LocalDate.now().plusDays(10)
         );
 
         CouponEntity savedCoupon = jpaCouponRepository.save(couponEntity);
 
         List<Long> successUserIds = new ArrayList<>();
         List<Long> failedUserIds = new ArrayList<>();
-        List<Long> remainCouponsQuantity = new ArrayList<>();
 
-        // 동시 요청을 처리하기 위해 Thread Pool 생성
         ExecutorService executorService = Executors.newFixedThreadPool(10);
 
-        // 10명의 사용자 요청을 실행
         Future<?>[] futures = new Future[10];
         for (int i = 0; i < 10L; i++) {
             final Long userId = (long) (i + 1);
@@ -66,12 +64,10 @@ public class CouponControllerConcurrencyTest extends IntergrationTest {
                                     .extract();
                     int statusCode = response.statusCode();
                     if (statusCode == 200) {
-                        // 성공 처리
                         CouponResponse couponResp = response.as(CouponResponse.class);
 
                         synchronized (successUserIds) {
                             successUserIds.add(userId);
-                            remainCouponsQuantity.add(couponResp.getCapacity());
                         }
                     } else if (statusCode == 400) {
                         synchronized (failedUserIds) {
@@ -90,7 +86,6 @@ public class CouponControllerConcurrencyTest extends IntergrationTest {
             });
         }
 
-        // 모든 요청 완료 대기
         for (Future<?> future : futures) {
             try {
                 future.get();
@@ -101,17 +96,13 @@ public class CouponControllerConcurrencyTest extends IntergrationTest {
 
         executorService.shutdown();
 
-        System.out.println("성공한 사용자 ID: " + successUserIds);
-        System.out.println("실패한 사용자 ID: " + failedUserIds);
-        System.out.println("남은 쿠폰 수량: " + remainCouponsQuantity);
-
-        // 최종 DB에서 capacity 재확인
         long finalCapacity = jpaCouponRepository.findById(savedCoupon.getCouponId())
                 .map(CouponEntity::getCapacity)
                 .orElseThrow()
                 .longValue();
 
-        System.out.println("DB 상 최종 쿠폰 capacity: " + finalCapacity);
-        Assertions.assertEquals(conponCapacity, successUserIds.size());
+        assertEquals(0, finalCapacity);
+        assertEquals(couponCapacity, successUserIds.size());
+        assertEquals(10 - couponCapacity, failedUserIds.size());
     }
 }
