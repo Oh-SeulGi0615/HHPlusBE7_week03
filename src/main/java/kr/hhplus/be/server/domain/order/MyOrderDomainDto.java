@@ -1,61 +1,52 @@
 package kr.hhplus.be.server.domain.order;
 
-import jakarta.persistence.*;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import kr.hhplus.be.server.enums.OrderStatus;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "order_table")
-public class OrderEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class MyOrderDomainDto {
     private Long orderId;
-
-    @Column(nullable = false)
     private Long userId;
-
-    @Column(nullable = false)
     private LocalDate dueDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private OrderStatus status;
 
-    protected OrderEntity(){}
-
-    public OrderEntity(Long userId) {
+    public MyOrderDomainDto(Long orderId, Long userId, LocalDate dueDate, OrderStatus status) {
+        this.orderId = orderId;
         this.userId = userId;
-        this.dueDate = LocalDate.now().plusDays(3);
-        this.status = OrderStatus.WAITING;
+        this.dueDate = dueDate;
+        this.status = status;
     }
 
     public Long getOrderId() {
         return orderId;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public LocalDate getDueDate() {
-        return dueDate;
-    }
-
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 
     public void setUserId(Long userId) {
         this.userId = userId;
     }
 
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
     }
 
     public void setStatus(OrderStatus status) {

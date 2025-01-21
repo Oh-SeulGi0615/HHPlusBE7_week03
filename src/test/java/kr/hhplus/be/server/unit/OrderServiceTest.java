@@ -6,10 +6,7 @@ import kr.hhplus.be.server.domain.goods.GoodsEntity;
 import kr.hhplus.be.server.domain.goods.GoodsRepository;
 import kr.hhplus.be.server.domain.goods.GoodsStockEntity;
 import kr.hhplus.be.server.domain.goods.GoodsStockRepository;
-import kr.hhplus.be.server.domain.order.OrderDetailRepository;
-import kr.hhplus.be.server.domain.order.OrderEntity;
-import kr.hhplus.be.server.domain.order.OrderRepository;
-import kr.hhplus.be.server.domain.order.OrderService;
+import kr.hhplus.be.server.domain.order.*;
 import kr.hhplus.be.server.domain.user.UserEntity;
 import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.enums.OrderStatus;
@@ -76,7 +73,7 @@ class OrderServiceTest {
                 .thenReturn(Optional.of(goodsStockEntity));
 
         // when
-        List<OrderResponse> responses = orderService.createOrder(userId, orderRequests);
+        List<OrderDomainDto> responses = orderService.createOrder(userId, orderRequests);
 
         // then
         assertNotNull(responses);
@@ -145,7 +142,7 @@ class OrderServiceTest {
         when(orderRepository.findAllByUserId(userId)).thenReturn(orderList);
 
         // when
-        List<OrderEntity> responses = orderService.getMyAllOrder(userId);
+        List<MyOrderDomainDto> responses = orderService.getMyAllOrder(userId);
 
         // then
         assertNotNull(responses);
@@ -174,7 +171,7 @@ class OrderServiceTest {
         when(orderRepository.findByOrderId(orderId)).thenReturn(Optional.of(new OrderEntity(userId)));
 
         // when
-        OrderResponse response = orderService.cancelOrder(userId, orderId);
+        OrderDomainDto response = orderService.cancelOrder(userId, orderId);
 
         // then
         assertNotNull(response);

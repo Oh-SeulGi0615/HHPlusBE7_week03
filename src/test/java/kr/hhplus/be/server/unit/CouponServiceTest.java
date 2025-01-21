@@ -1,6 +1,5 @@
 package kr.hhplus.be.server.unit;
 
-import kr.hhplus.be.server.api.request.CreateCouponRequest;
 import kr.hhplus.be.server.api.request.GetCouponRequest;
 import kr.hhplus.be.server.api.response.CouponResponse;
 import kr.hhplus.be.server.api.response.UserCouponResponse;
@@ -36,14 +35,18 @@ class CouponServiceTest {
     @Test
     void 신규쿠폰생성_성공케이스() {
         // given
-        CreateCouponRequest request = new CreateCouponRequest("TestCoupon", 20L, 100L, LocalDate.now().plusDays(10));
-        CouponEntity couponEntity = new CouponEntity("TestCoupon", 20L, 100L, LocalDate.now().plusDays(10));
+        String couponName = "TestCoupon";
+        Long discountRate = 20L;
+        Long capacity = 100L;
+        LocalDate dueDate = LocalDate.now().plusDays(10);
 
-        when(couponRepository.findByCouponName(request.getCouponName())).thenReturn(Optional.empty());
+        CouponEntity couponEntity = new CouponEntity(couponName, discountRate, capacity, dueDate);
+
+        when(couponRepository.findByCouponName(couponName)).thenReturn(Optional.empty());
         when(couponRepository.save(any(CouponEntity.class))).thenReturn(couponEntity);
 
         // when
-        CouponResponse response = couponService.createCoupon(request);
+        CouponDomainDto response = couponService.createCoupon(couponName, discountRate, capacity, dueDate);
 
         // then
         assertEquals("TestCoupon", response.getCouponName());
@@ -54,13 +57,16 @@ class CouponServiceTest {
     @Test
     void 신규쿠폰생성_중복쿠폰_실패케이스() {
         // given
-        CreateCouponRequest request = new CreateCouponRequest("DuplicateCoupon", 20L, 100L, LocalDate.now().plusDays(10));
-        CouponEntity existingCoupon = new CouponEntity("DuplicateCoupon", 20L, 100L, LocalDate.now().plusDays(10));
+        String couponName = "DuplicateCoupon";
+        Long discountRate = 20L;
+        Long capacity = 100L;
+        LocalDate dueDate = LocalDate.now().plusDays(10);
+        CouponEntity existingCoupon = new CouponEntity(couponName, discountRate, capacity, dueDate);
 
-        when(couponRepository.findByCouponName(request.getCouponName())).thenReturn(Optional.of(existingCoupon));
+        when(couponRepository.findByCouponName(couponName)).thenReturn(Optional.of(existingCoupon));
 
         // when
-        Exception exception = assertThrows(ExistCouponException.class, () -> couponService.createCoupon(request));
+        Exception exception = assertThrows(ExistCouponException.class, () -> couponService.createCoupon(couponName, discountRate, capacity, dueDate));
 
         // then
         assertEquals("이미 등록된 쿠폰입니다.", exception.getMessage());
@@ -74,7 +80,7 @@ class CouponServiceTest {
         when(couponRepository.findAll()).thenReturn(List.of(coupon1, coupon2));
 
         // when
-        List<CouponEntity> result = couponService.allCouponList();
+        List<CouponDomainDto> result = couponService.allCouponList();
 
         // then
         assertEquals(2, result.size());
@@ -90,7 +96,7 @@ class CouponServiceTest {
         when(userCouponRepository.save(any(UserCouponEntity.class))).thenReturn(new UserCouponEntity(1L, 100L));
 
         // when
-        CouponResponse response = couponService.getCoupon(request.getUserId(), request.getUserId());
+        CouponDomainDto response = couponService.issueCoupon(request.getUserId(), request.getUserId());
 
         // then
         assertEquals("TestCoupon", response.getCouponName());
@@ -106,7 +112,7 @@ class CouponServiceTest {
         when(couponRepository.findByCouponId(request.getCouponId())).thenReturn(Optional.of(coupon));
 
         // when
-        Exception exception = assertThrows(CouponOutOfStockException.class, () -> couponService.getCoupon(request.getUserId(), request.getUserId()));
+        Exception exception = assertThrows(CouponOutOfStockException.class, () -> couponService.issueCoupon(request.getUserId(), request.getUserId()));
 
         // then
         assertEquals("쿠폰이 모두 소진되었습니다.", exception.getMessage());

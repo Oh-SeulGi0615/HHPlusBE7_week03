@@ -1,14 +1,15 @@
 package kr.hhplus.be.server.api.controller;
 
 import kr.hhplus.be.server.api.request.CreateCouponRequest;
-import kr.hhplus.be.server.api.request.GetCouponRequest;
 import kr.hhplus.be.server.api.response.CouponResponse;
+import kr.hhplus.be.server.domain.coupon.CouponDomainDto;
 import kr.hhplus.be.server.domain.coupon.CouponEntity;
 import kr.hhplus.be.server.domain.coupon.CouponService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -21,18 +22,50 @@ public class CouponController {
 
     @PostMapping("/coupons/create")
     public ResponseEntity<Object> createCoupon(@RequestBody CreateCouponRequest createCouponRequest) {
-        CouponResponse response = couponService.createCoupon(createCouponRequest);
-        return ResponseEntity.ok(response);
+
+        CouponDomainDto response = couponService.createCoupon(
+                createCouponRequest.getCouponName(),
+                createCouponRequest.getDiscountRate(),
+                createCouponRequest.getCapacity(),
+                createCouponRequest.getDueDate()
+        );
+
+        CouponResponse couponResponse = new  CouponResponse(
+                response.getCouponId(),
+                response.getCouponName(),
+                response.getDiscountRate(),
+                response.getCapacity(),
+                response.getDueDate()
+        );
+
+        return ResponseEntity.ok(couponResponse);
     }
 
     @GetMapping("/coupons")
-    public List<CouponEntity> allCouponList() {
-        return couponService.allCouponList();
+    public List<CouponResponse> allCouponList() {
+        List<CouponDomainDto> couponList = couponService.allCouponList();
+        return couponList.stream()
+                .map(coupon -> new CouponResponse(
+                        coupon.getCouponId(),
+                        coupon.getCouponName(),
+                        coupon.getDiscountRate(),
+                        coupon.getCapacity(),
+                        coupon.getDueDate()
+                ))
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/coupons/{couponId}/get")
-    public ResponseEntity<Object> getCoupon(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
-        CouponResponse response = couponService.getCoupon(userId, couponId);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Object> issueCoupon(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
+        CouponDomainDto response = couponService.issueCoupon(userId, couponId);
+
+        CouponResponse couponResponse = new  CouponResponse(
+                response.getCouponId(),
+                response.getCouponName(),
+                response.getDiscountRate(),
+                response.getCapacity(),
+                response.getDueDate()
+        );
+        return ResponseEntity.ok(couponResponse);
     }
 }

@@ -4,9 +4,7 @@ import kr.hhplus.be.server.api.request.PointRequest;
 import kr.hhplus.be.server.api.request.UserRequest;
 import kr.hhplus.be.server.api.response.PointResponse;
 import kr.hhplus.be.server.api.response.UserResponse;
-import kr.hhplus.be.server.domain.user.UserEntity;
-import kr.hhplus.be.server.domain.user.UserRepository;
-import kr.hhplus.be.server.domain.user.UserService;
+import kr.hhplus.be.server.domain.user.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,7 +32,6 @@ class UserServiceTest {
     void 신규유저_생성시_성공케이스() {
         //given
         final String userName = "test";
-        UserRequest userRequest = new UserRequest(userName);
 
         UserEntity userEntity = new UserEntity(userName);
         userEntity.setUserId(1L);
@@ -44,7 +41,7 @@ class UserServiceTest {
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
         //when
-        UserResponse response = userService.createUser(userRequest);
+        UserDomainDto response = userService.createUser(userName);
 
         //then
         assertThat(response).isNotNull();
@@ -57,14 +54,13 @@ class UserServiceTest {
     void 신규유저_생성시_중복가입_오류케이스() {
         // given
         final String userName = "testUser";
-        UserRequest userRequest = new UserRequest(userName);
         when(userRepository.findByUserName(userName)).thenReturn(Optional.of(new UserEntity(userName)));
 
         // when, then
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    UserResponse response = userService.createUser(userRequest);
+                    UserDomainDto response = userService.createUser(userName);
                 }
         );
 
@@ -95,13 +91,11 @@ class UserServiceTest {
         userEntity.setUserId(1L);
         userEntity.setPoint(1000L);
 
-        PointRequest pointRequest = new PointRequest(1L, 500L);
-
         when(userRepository.findByUserId(1L)).thenReturn(Optional.of(userEntity));
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
         //when
-        PointResponse response = userService.chargePoint(pointRequest);
+        PointDomainDto response = userService.chargePoint(1L, 500L);
 
         //then
         assertNotNull(response);
@@ -112,14 +106,13 @@ class UserServiceTest {
     @Test
     void 포인트충전_유저조회불가_실패케이스() {
         //given
-        PointRequest pointRequest = new PointRequest(1L, 500L);
         when(userRepository.findByUserId(1L)).thenReturn(Optional.empty());
 
         //when
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointResponse response = userService.chargePoint(pointRequest);
+                    PointDomainDto response = userService.chargePoint(1L, 500L);
                 }
         );
 
@@ -134,15 +127,13 @@ class UserServiceTest {
         userEntity.setUserId(1L);
         userEntity.setPoint(1000L);
 
-        PointRequest pointRequest = new PointRequest(userEntity.getUserId(), -10L);
-
         when(userRepository.findByUserId(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
 
         //when
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointResponse response = userService.chargePoint(pointRequest);
+                    PointDomainDto response = userService.chargePoint(userEntity.getUserId(), -10L);
                 }
         );
 
@@ -157,15 +148,13 @@ class UserServiceTest {
         userEntity.setUserId(1L);
         userEntity.setPoint(1000L);
 
-        PointRequest pointRequest = new PointRequest(userEntity.getUserId(), 13L);
-
         when(userRepository.findByUserId(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
 
         //when
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointResponse response = userService.chargePoint(pointRequest);
+                    PointDomainDto response = userService.chargePoint(userEntity.getUserId(), 13L);
                 }
         );
 
@@ -180,15 +169,13 @@ class UserServiceTest {
         userEntity.setUserId(1L);
         userEntity.setPoint(1000L);
 
-        PointRequest pointRequest = new PointRequest(userEntity.getUserId(), 100_000_000L);
-
         when(userRepository.findByUserId(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
 
         //when
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointResponse response = userService.chargePoint(pointRequest);
+                    PointDomainDto response = userService.chargePoint(userEntity.getUserId(), 100_000_000L);
                 }
         );
 
@@ -203,15 +190,13 @@ class UserServiceTest {
         userEntity.setUserId(1L);
         userEntity.setPoint(9_900_000L);
 
-        PointRequest pointRequest = new PointRequest(userEntity.getUserId(), 1_000_000L);
-
         when(userRepository.findByUserId(userEntity.getUserId())).thenReturn(Optional.of(userEntity));
 
         //when
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointResponse response = userService.chargePoint(pointRequest);
+                    PointDomainDto response = userService.chargePoint(userEntity.getUserId(), 1_000_000L);
                 }
         );
 
@@ -229,7 +214,7 @@ class UserServiceTest {
         when(userRepository.findByUserId(1L)).thenReturn(Optional.of(userEntity));
 
         //when
-        PointResponse response = userService.checkPoint(1L);
+        PointDomainDto response = userService.checkPoint(1L);
 
         //then
         assertNotNull(response);
@@ -244,7 +229,7 @@ class UserServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointResponse response = userService.checkPoint(1L);
+                    PointDomainDto response = userService.checkPoint(1L);
                 }
         );
 

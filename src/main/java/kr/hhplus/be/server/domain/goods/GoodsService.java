@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class GoodsService {
@@ -27,49 +28,49 @@ public class GoodsService {
         this.goodsStockRepository = goodsStockRepository;
     }
 
-    public GoodsResponse createGoods(GoodsRequest goodsRequest) {
-        if (goodsRepository.findByGoodsName(goodsRequest.getGoodsName()).isPresent()) {
+    public GoodsDomainDto createGoods(String goodsName, Long price, Long quantity) {
+        if (goodsRepository.findByGoodsName(goodsName).isPresent()) {
             throw new ExistGoodsException("이미 등록된 상품입니다.");
         }
-        GoodsEntity goodsEntity = new GoodsEntity(goodsRequest.getGoodsName(), goodsRequest.getPrice());
+        GoodsEntity goodsEntity = new GoodsEntity(goodsName, price);
         Long goodsId = goodsRepository.save(goodsEntity).getGoodsId();
 
-        GoodsStockEntity goodsStockEntity = new GoodsStockEntity(goodsId, goodsRequest.getQuantity());
+        GoodsStockEntity goodsStockEntity = new GoodsStockEntity(goodsId, quantity);
         goodsStockRepository.save(goodsStockEntity);
-        return new GoodsResponse(
+        return new GoodsDomainDto(
                 goodsId,
-                goodsRequest.getGoodsName(),
-                goodsRequest.getPrice(),
-                goodsRequest.getQuantity()
+                goodsName,
+                price,
+                quantity
         );
     }
 
-    public List<GoodsResponse> getAllGoods() {
+    public List<GoodsDomainDto> getAllGoods() {
         List<GoodsEntity> allGoodsList = goodsRepository.findAll();
 
-        List<GoodsResponse> goodsResponseList = new ArrayList<>();
+        List<GoodsDomainDto> goodsDomainDtoList = new ArrayList<>();
         for (GoodsEntity goods : allGoodsList) {
             Optional<GoodsStockEntity> goodsStockEntity = goodsStockRepository.findByGoodsId(goods.getGoodsId());
 
             Long quantity = goodsStockEntity.map(GoodsStockEntity::getQuantity).orElse(0L);
-            GoodsResponse response = new GoodsResponse(
+            GoodsDomainDto response = new GoodsDomainDto(
                     goods.getGoodsId(),
                     goods.getGoodsName(),
                     goods.getPrice(),
                     quantity
             );
-            goodsResponseList.add(response);
+            goodsDomainDtoList.add(response);
         }
-        return goodsResponseList;
+        return goodsDomainDtoList;
     }
 
-    public GoodsResponse getOneGoodsInfo(Long goodsId) {
+    public GoodsDomainDto getOneGoodsInfo(Long goodsId) {
         if (goodsRepository.findByGoodsId(goodsId).isEmpty()){
             throw new InvalidGoodsException("상품 정보를 찾을 수 없습니다.");
         }
         Optional<GoodsEntity> goodsEntity = goodsRepository.findByGoodsId(goodsId);
         Long quantity = goodsStockRepository.findByGoodsId(goodsId).get().getQuantity();
-        return new  GoodsResponse(
+        return new  GoodsDomainDto(
                 goodsId,
                 goodsEntity.get().getGoodsName(),
                 goodsEntity.get().getPrice(),
@@ -77,7 +78,7 @@ public class GoodsService {
         );
     }
 
-    public List<SalesHistoryEntity> getBest10Goods() {
+    public List<SalesHistoryDomainDto> getBest10Goods() {
         LocalDateTime endDate = LocalDateTime.now().toLocalDate().atStartOfDay();
         LocalDateTime startDate = endDate.minusDays(3);
 
@@ -87,6 +88,10 @@ public class GoodsService {
                 startDate, endDate, topTen
         );
 
-        return result;
+        List<SalesHistoryDomainDto> salesHistoryDomainDtoList = result.stream().map(salesHistoryEntity -> new SalesHistoryDomainDto(
+                salesHistoryEntity.getSalesHistoryId(), salesHistoryEntity.getGoodsId(), salesHistoryEntity.getUserId(), salesHistoryEntity.getQuantity()
+        )).collect(Collectors.toList());
+
+        return salesHistoryDomainDtoList;
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -35,14 +36,14 @@ public class OrderService {
         this.orderDetailRepository = orderDetailRepository;
     }
 
-    public List<OrderResponse> createOrder(Long userId, List<OrderRequest> orderRequestList) {
+    public List<OrderDomainDto> createOrder(Long userId, List<OrderRequest> orderRequestList) {
         if (userRepository.findByUserId(userId).isEmpty()){
             throw new InvalidUserException("유저를 찾을 수 없습니다.");
         }
         OrderEntity orderEntity = new OrderEntity(userId);
         Long orderId = orderRepository.save(orderEntity).getOrderId();
 
-        List<OrderResponse> orderResponseList = new ArrayList<>();
+        List<OrderDomainDto> orderResponseList = new ArrayList<>();
         for (OrderRequest orderRequests:orderRequestList){
             if (goodsRepository.findByGoodsId(orderRequests.getGoodsId()).isEmpty()){
                 throw new InvalidGoodsException("상품정보를 찾을 수 없습니다.");
@@ -52,13 +53,13 @@ public class OrderService {
             }
 
             orderDetailRepository.save(new OrderDetailEntity(orderId, orderRequests.getGoodsId(), orderRequests.getQuantity()));
-            OrderResponse orderResponse = new OrderResponse(orderId, userId, orderRequests.getGoodsId(), orderRequests.getQuantity());
+            OrderDomainDto orderResponse = new OrderDomainDto(orderId, userId, orderRequests.getGoodsId(), orderRequests.getQuantity());
             orderResponseList.add(orderResponse);
         }
         return orderResponseList;
     }
 
-    public List<OrderEntity> getMyAllOrder(Long userId) {
+    public List<MyOrderDomainDto> getMyAllOrder(Long userId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
 
@@ -67,19 +68,22 @@ public class OrderService {
             throw new InvalidOrderException("주문 정보를 찾을 수 없습니다.");
         }
 
-        return allMyOrderList;
+        List<MyOrderDomainDto> myOrderDomainDtoList = allMyOrderList.stream().map(orderEntity -> new MyOrderDomainDto(
+                orderEntity.getOrderId(), orderEntity.getUserId(), orderEntity.getDueDate(), orderEntity.getStatus()
+        )).collect(Collectors.toList());
+        return myOrderDomainDtoList;
     }
 
-    public List<OrderResponse> getMyDetailOrder(Long userId, Long orderId) {
+    public List<OrderDomainDto> getMyDetailOrder(Long userId, Long orderId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
         OrderEntity orderEntity = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new InvalidOrderException("주문 정보를 찾을 수 없습니다."));
 
-        List<OrderResponse> myOrderList = new ArrayList<>();
+        List<OrderDomainDto> myOrderList = new ArrayList<>();
         List<OrderDetailEntity> OrderList = orderDetailRepository.findAllByOrderId(orderId);
         for (OrderDetailEntity myOrder: OrderList){
-            OrderResponse orderResponse = new OrderResponse(
+            OrderDomainDto orderResponse = new OrderDomainDto(
                     orderId, userId, myOrder.getGoodsId(), myOrder.getQuantity()
             );
             myOrderList.add(orderResponse);
@@ -88,13 +92,13 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse cancelOrder(Long userId, Long orderId) {
+    public OrderDomainDto cancelOrder(Long userId, Long orderId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
         OrderEntity orderEntity = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new InvalidOrderException("주문 정보를 찾을 수 없습니다."));
 
         orderEntity.setStatus(OrderStatus.CANCELED);
-        return new OrderResponse(orderId, userId, orderRepository.findByOrderId(orderId).get().getStatus());
+        return new OrderDomainDto(orderId, userId, orderRepository.findByOrderId(orderId).get().getStatus());
     }
 }

@@ -36,7 +36,9 @@ class GoodsServiceTest {
     @Test
     void 상품정보생성_성공케이스() {
         // given
-        GoodsRequest goodsRequest = new GoodsRequest("Test Goods", 1000L, 10L);
+        String goodsName = "Test Goods";
+        Long price = 1000L;
+        Long quantity = 10L;
         GoodsEntity savedGoods = new GoodsEntity("Test Goods", 1000L);
         GoodsStockEntity savedGoodsStock = new GoodsStockEntity(1L, 1000L);
 
@@ -45,7 +47,7 @@ class GoodsServiceTest {
         when(goodsStockRepository.save(any(GoodsStockEntity.class))).thenReturn(savedGoodsStock);
 
         // when
-        GoodsResponse response = goodsService.createGoods(goodsRequest);
+        GoodsDomainDto response = goodsService.createGoods(goodsName, price, quantity);
 
         // then
         assertNotNull(response);
@@ -57,13 +59,15 @@ class GoodsServiceTest {
     @Test
     void 상품정보생성_중복상품_실패케이스() {
         // given
-        GoodsRequest goodsRequest = new GoodsRequest("Duplicate Goods", 1500L, 5L);
+        String goodsName = "Duplicate Goods";
+        Long price = 1500L;
+        Long quantity = 5L;
         GoodsEntity existingGoods = new GoodsEntity("Duplicate Goods", 1500L);
 
         when(goodsRepository.findByGoodsName("Duplicate Goods")).thenReturn(Optional.of(existingGoods));
 
         // when & then
-        Exception exception = assertThrows(ExistGoodsException.class, () -> goodsService.createGoods(goodsRequest));
+        Exception exception = assertThrows(ExistGoodsException.class, () -> goodsService.createGoods(goodsName, price, quantity));
         assertEquals("이미 등록된 상품입니다.", exception.getMessage());
     }
 
@@ -75,7 +79,7 @@ class GoodsServiceTest {
         when(goodsRepository.findAll()).thenReturn(Arrays.asList(goods1, goods2));
 
         // when
-        List<GoodsResponse> responses = goodsService.getAllGoods();
+        List<GoodsDomainDto> responses = goodsService.getAllGoods();
 
         // then
         assertNotNull(responses);
@@ -94,7 +98,7 @@ class GoodsServiceTest {
         when(goodsStockRepository.findByGoodsId(goodsId)).thenReturn(Optional.of(stock));
 
         // when
-        GoodsResponse response = goodsService.getOneGoodsInfo(goodsId);
+        GoodsDomainDto response = goodsService.getOneGoodsInfo(goodsId);
 
         // then
         assertNotNull(response);
@@ -127,7 +131,7 @@ class GoodsServiceTest {
         ));
 
         // when
-        List<SalesHistoryEntity> result = goodsService.getBest10Goods();
+        List<SalesHistoryDomainDto> result = goodsService.getBest10Goods();
 
         // then
         assertNotNull(result);
