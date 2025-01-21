@@ -32,8 +32,7 @@ public class CouponController {
 
     @PostMapping("/coupons/{couponId}/get")
     public ResponseEntity<Object> getCoupon(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
-        GetCouponRequest getCouponRequest = new GetCouponRequest(userId, couponId);
-        CouponResponse response = couponService.getCoupon(getCouponRequest);
+        CouponResponse response = couponService.getCoupon(userId, couponId);
         return ResponseEntity.ok(response);
     }
 }

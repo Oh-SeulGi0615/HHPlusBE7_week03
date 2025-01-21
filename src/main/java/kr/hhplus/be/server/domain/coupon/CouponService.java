@@ -1,5 +1,7 @@
 package kr.hhplus.be.server.domain.coupon;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import kr.hhplus.be.server.api.request.CreateCouponRequest;
 import kr.hhplus.be.server.api.request.GetCouponRequest;
 import kr.hhplus.be.server.api.response.CouponResponse;
@@ -12,6 +14,7 @@ import kr.hhplus.be.server.exeption.customExceptions.InvalidCouponException;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -24,6 +27,9 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
     private final RedissonClient redissonClient;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public CouponService(CouponRepository couponRepository, UserCouponRepository userCouponRepository, RedissonClient redissonClient) {
         this.couponRepository = couponRepository;
@@ -57,16 +63,42 @@ public class CouponService {
     }
 
     @Transactional
-    public CouponResponse getCoupon(GetCouponRequest getCouponRequest) {
-        String lockKey = "coupon_lock_" + getCouponRequest.getCouponId();
+    public CouponResponse getCoupon(Long userId, Long couponId) {
+        CouponEntity coupon = couponRepository.findByCouponId(couponId)
+                .orElseThrow(() -> new InvalidCouponException("존재하지 않는 쿠폰입니다."));
+
+        if (userCouponRepository.findByCouponIdAndUserId(couponId, userId).isPresent()) {
+            throw new ExistCouponException("이미 발급받은 쿠폰입니다.");
+        }
+
+        if (coupon.getCapacity() < 1) {
+            throw new CouponOutOfStockException("쿠폰이 모두 소진되었습니다.");
+        }
+        coupon.setCapacity(coupon.getCapacity() - 1);
+
+        UserCouponEntity userCoupon = new UserCouponEntity(userId, couponId);
+        userCouponRepository.save(userCoupon);
+
+        return new CouponResponse(
+                couponId,
+                coupon.getCouponName(),
+                coupon.getDiscountRate(),
+                coupon.getCapacity(),
+                coupon.getDueDate());
+    }
+
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
+    public CouponResponse getCouponWithRedis(Long userId, Long couponId) {
+        String lockKey = "coupon_lock_" + couponId;
         RLock lock = redissonClient.getLock(lockKey);
 
         try {
             if (lock.tryLock(10, 30, TimeUnit.SECONDS)) {
-                CouponEntity coupon = couponRepository.findByCouponId(getCouponRequest.getCouponId())
+                CouponEntity coupon = couponRepository.findByCouponId(couponId)
                         .orElseThrow(() -> new InvalidCouponException("존재하지 않는 쿠폰입니다."));
 
-                if (userCouponRepository.findByCouponIdAndUserId(getCouponRequest.getCouponId(), getCouponRequest.getUserId()).isPresent()) {
+                if (userCouponRepository.findByCouponIdAndUserId(couponId, userId).isPresent()) {
                     throw new ExistCouponException("이미 발급받은 쿠폰입니다.");
                 }
 
@@ -74,12 +106,14 @@ public class CouponService {
                     throw new CouponOutOfStockException("쿠폰이 모두 소진되었습니다.");
                 }
                 coupon.setCapacity(coupon.getCapacity() - 1);
+//                entityManager.flush();
+//                entityManager.clear();
 
-                UserCouponEntity userCoupon = new UserCouponEntity(getCouponRequest.getUserId(), getCouponRequest.getCouponId());
+                UserCouponEntity userCoupon = new UserCouponEntity(userId, couponId);
                 userCouponRepository.save(userCoupon);
 
                 return new CouponResponse(
-                        getCouponRequest.getCouponId(),
+                        couponId,
                         coupon.getCouponName(),
                         coupon.getDiscountRate(),
                         coupon.getCapacity(),

@@ -90,7 +90,7 @@ class CouponServiceTest {
         when(userCouponRepository.save(any(UserCouponEntity.class))).thenReturn(new UserCouponEntity(1L, 100L));
 
         // when
-        CouponResponse response = couponService.getCoupon(request);
+        CouponResponse response = couponService.getCoupon(request.getUserId(), request.getUserId());
 
         // then
         assertEquals("TestCoupon", response.getCouponName());
@@ -106,7 +106,7 @@ class CouponServiceTest {
         when(couponRepository.findByCouponId(request.getCouponId())).thenReturn(Optional.of(coupon));
 
         // when
-        Exception exception = assertThrows(CouponOutOfStockException.class, () -> couponService.getCoupon(request));
+        Exception exception = assertThrows(CouponOutOfStockException.class, () -> couponService.getCoupon(request.getUserId(), request.getUserId()));
 
         // then
         assertEquals("쿠폰이 모두 소진되었습니다.", exception.getMessage());
