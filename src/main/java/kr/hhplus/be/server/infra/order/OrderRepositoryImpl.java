@@ -1,8 +1,7 @@
 package kr.hhplus.be.server.infra.order;
 
-import kr.hhplus.be.server.domain.order.OrderEntity;
-import kr.hhplus.be.server.domain.order.OrderRepository;
-import kr.hhplus.be.server.enums.OrderStatus;
+import kr.hhplus.be.server.domain.order.entity.OrderEntity;
+import kr.hhplus.be.server.domain.order.repository.OrderRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

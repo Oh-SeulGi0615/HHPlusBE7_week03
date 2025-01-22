@@ -3,9 +3,9 @@ package kr.hhplus.be.server.api.controller;
 import kr.hhplus.be.server.api.request.GoodsRequest;
 import kr.hhplus.be.server.api.response.GoodsResponse;
 import kr.hhplus.be.server.api.response.SalesHistoryResponse;
-import kr.hhplus.be.server.domain.goods.GoodsServiceDto;
-import kr.hhplus.be.server.domain.goods.GoodsService;
-import kr.hhplus.be.server.domain.goods.SalesHistoryServiceDto;
+import kr.hhplus.be.server.domain.goods.dto.GoodsServiceDto;
+import kr.hhplus.be.server.domain.goods.service.GoodsService;
+import kr.hhplus.be.server.domain.goods.dto.SalesHistoryServiceDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

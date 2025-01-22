@@ -2,11 +2,11 @@ package kr.hhplus.be.server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
-import kr.hhplus.be.server.domain.coupon.CouponService;
-import kr.hhplus.be.server.domain.goods.GoodsService;
-import kr.hhplus.be.server.domain.order.OrderService;
-import kr.hhplus.be.server.domain.payment.PaymentService;
-import kr.hhplus.be.server.domain.user.UserService;
+import kr.hhplus.be.server.domain.coupon.service.CouponService;
+import kr.hhplus.be.server.domain.goods.service.GoodsService;
+import kr.hhplus.be.server.domain.order.service.OrderService;
+import kr.hhplus.be.server.domain.payment.service.PaymentService;
+import kr.hhplus.be.server.domain.user.service.UserService;
 import kr.hhplus.be.server.infra.coupon.JpaCouponRepository;
 import kr.hhplus.be.server.infra.goods.JpaGoodsRepository;
 import kr.hhplus.be.server.infra.goods.JpaGoodsStockRepository;

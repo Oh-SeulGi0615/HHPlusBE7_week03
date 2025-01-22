@@ -1,13 +1,18 @@
 package kr.hhplus.be.server.unit;
 
 import kr.hhplus.be.server.api.request.OrderRequest;
-import kr.hhplus.be.server.domain.goods.GoodsEntity;
-import kr.hhplus.be.server.domain.goods.GoodsRepository;
-import kr.hhplus.be.server.domain.goods.GoodsStockEntity;
-import kr.hhplus.be.server.domain.goods.GoodsStockRepository;
-import kr.hhplus.be.server.domain.order.*;
-import kr.hhplus.be.server.domain.user.UserEntity;
-import kr.hhplus.be.server.domain.user.UserRepository;
+import kr.hhplus.be.server.domain.goods.entity.GoodsEntity;
+import kr.hhplus.be.server.domain.goods.repository.GoodsRepository;
+import kr.hhplus.be.server.domain.goods.entity.GoodsStockEntity;
+import kr.hhplus.be.server.domain.goods.repository.GoodsStockRepository;
+import kr.hhplus.be.server.domain.order.dto.MyOrderServiceDto;
+import kr.hhplus.be.server.domain.order.dto.OrderServiceDto;
+import kr.hhplus.be.server.domain.order.entity.OrderEntity;
+import kr.hhplus.be.server.domain.order.repository.OrderDetailRepository;
+import kr.hhplus.be.server.domain.order.repository.OrderRepository;
+import kr.hhplus.be.server.domain.order.service.OrderService;
+import kr.hhplus.be.server.domain.user.entity.UserEntity;
+import kr.hhplus.be.server.domain.user.repository.UserRepository;
 import kr.hhplus.be.server.enums.OrderStatus;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidOrderException;

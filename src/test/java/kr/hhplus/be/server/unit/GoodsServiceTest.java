@@ -1,6 +1,14 @@
 package kr.hhplus.be.server.unit;
 
-import kr.hhplus.be.server.domain.goods.*;
+import kr.hhplus.be.server.domain.goods.dto.GoodsServiceDto;
+import kr.hhplus.be.server.domain.goods.dto.SalesHistoryServiceDto;
+import kr.hhplus.be.server.domain.goods.entity.GoodsEntity;
+import kr.hhplus.be.server.domain.goods.entity.GoodsStockEntity;
+import kr.hhplus.be.server.domain.goods.entity.SalesHistoryEntity;
+import kr.hhplus.be.server.domain.goods.repository.GoodsRepository;
+import kr.hhplus.be.server.domain.goods.repository.GoodsStockRepository;
+import kr.hhplus.be.server.domain.goods.repository.SalesHistoryRepository;
+import kr.hhplus.be.server.domain.goods.service.GoodsService;
 import kr.hhplus.be.server.exeption.customExceptions.ExistGoodsException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
 import org.junit.jupiter.api.Test;

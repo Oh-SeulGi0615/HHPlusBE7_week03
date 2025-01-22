@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -145,14 +146,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
         log.error("IllegalStateException 발생: {}", ex.getMessage(), ex);
-        ErrorResponse errorResponse = new ErrorResponse("IllegalStateException", "예상치 못한 오류가 발생했습니다.");
+        ErrorResponse errorResponse = new ErrorResponse("IllegalStateException", "다른 프로세스에서 이미 락을 사용 중입니다.");
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         log.error("Exception 발생: {}", ex.getMessage(), ex);
-        ErrorResponse errorResponse = new ErrorResponse("Exception", "다른 프로세스에서 이미 락을 사용 중입니다.");
+        ErrorResponse errorResponse = new ErrorResponse("Exception", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleObjectOptimisticLockingFailureException(ObjectOptimisticLockingFailureException ex) {
+        log.error("ObjectOptimisticLockingFailureException 발생: {}", ex.getMessage(), ex);
+        ErrorResponse errorResponse = new ErrorResponse("ObjectOptimisticLockingFailureException", "동시성 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

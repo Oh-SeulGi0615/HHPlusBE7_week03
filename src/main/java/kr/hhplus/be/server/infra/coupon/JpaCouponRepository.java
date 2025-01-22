@@ -1,10 +1,11 @@
 package kr.hhplus.be.server.infra.coupon;
 
 import jakarta.persistence.LockModeType;
-import kr.hhplus.be.server.domain.coupon.CouponEntity;
+import kr.hhplus.be.server.domain.coupon.entity.CouponEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -15,11 +16,11 @@ import java.util.Optional;
 public interface JpaCouponRepository extends JpaRepository<CouponEntity, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select c from CouponEntity c where c.couponId = :couponId")
-    Optional<CouponEntity> findByCouponIdPessimistic(Long couponId);
+    Optional<CouponEntity> findByCouponIdPessimistic(@Param("couponId") Long couponId);
 
     @Lock(LockModeType.OPTIMISTIC)
     @Query("select c from CouponEntity c where c.couponId = :couponId")
-    Optional<CouponEntity> findByCouponIdOptimistic(Long couponId);
+    Optional<CouponEntity> findByCouponIdOptimistic(@Param("couponId") Long couponId);
 
     Optional<CouponEntity> findByCouponId(Long couponId);
 

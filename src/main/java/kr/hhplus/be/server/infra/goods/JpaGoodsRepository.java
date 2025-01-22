@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.infra.goods;
 
-import kr.hhplus.be.server.domain.goods.GoodsEntity;
+import kr.hhplus.be.server.domain.goods.entity.GoodsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

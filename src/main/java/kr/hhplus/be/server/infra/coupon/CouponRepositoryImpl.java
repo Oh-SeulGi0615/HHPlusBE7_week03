@@ -2,9 +2,8 @@ package kr.hhplus.be.server.infra.coupon;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
-import kr.hhplus.be.server.domain.coupon.CouponEntity;
-import kr.hhplus.be.server.domain.coupon.CouponRepository;
+import kr.hhplus.be.server.domain.coupon.entity.CouponEntity;
+import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;

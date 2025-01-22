@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.infra.goods;
 
-import kr.hhplus.be.server.domain.goods.SalesHistoryEntity;
+import kr.hhplus.be.server.domain.goods.entity.SalesHistoryEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

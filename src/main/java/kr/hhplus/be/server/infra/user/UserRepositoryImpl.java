@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.infra.user;
 
-import kr.hhplus.be.server.domain.user.UserEntity;
-import kr.hhplus.be.server.domain.user.UserRepository;
+import kr.hhplus.be.server.domain.user.entity.UserEntity;
+import kr.hhplus.be.server.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

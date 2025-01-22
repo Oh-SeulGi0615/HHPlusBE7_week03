@@ -4,10 +4,10 @@ import kr.hhplus.be.server.api.request.UserRequest;
 import kr.hhplus.be.server.api.response.UserCouponResponse;
 import kr.hhplus.be.server.api.response.UserResponse;
 import kr.hhplus.be.server.api.response.PointResponse;
-import kr.hhplus.be.server.domain.coupon.UserCouponServiceDto;
-import kr.hhplus.be.server.domain.user.PointServiceDto;
-import kr.hhplus.be.server.domain.user.UserServiceDto;
-import kr.hhplus.be.server.domain.user.UserService;
+import kr.hhplus.be.server.domain.coupon.dto.UserCouponServiceDto;
+import kr.hhplus.be.server.domain.user.dto.PointServiceDto;
+import kr.hhplus.be.server.domain.user.dto.UserServiceDto;
+import kr.hhplus.be.server.domain.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

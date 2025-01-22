@@ -1,8 +1,7 @@
 package kr.hhplus.be.server.infra.payment;
 
-import kr.hhplus.be.server.domain.payment.PaymentEntity;
-import kr.hhplus.be.server.domain.payment.PaymentRepository;
-import kr.hhplus.be.server.enums.PaymentStatus;
+import kr.hhplus.be.server.domain.payment.entity.PaymentEntity;
+import kr.hhplus.be.server.domain.payment.repository.PaymentRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

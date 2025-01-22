@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.infra.goods;
 
-import kr.hhplus.be.server.domain.goods.GoodsStockEntity;
-import kr.hhplus.be.server.domain.goods.GoodsStockRepository;
+import kr.hhplus.be.server.domain.goods.entity.GoodsStockEntity;
+import kr.hhplus.be.server.domain.goods.repository.GoodsStockRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,6 +23,16 @@ public class GoodsStockRepositoryImpl implements GoodsStockRepository {
     @Override
     public Optional<GoodsStockEntity> findByGoodsId(Long goodsId) {
         return jpaGoodsStockRepository.findByGoodsId(goodsId);
+    }
+
+    @Override
+    public Optional<GoodsStockEntity> findByGoodsIdOptimistic(Long goodsId) {
+        return jpaGoodsStockRepository.findByGoodsIdOptimistic(goodsId);
+    }
+
+    @Override
+    public Optional<GoodsStockEntity> findByGoodsIdPessimistic(Long goodsId) {
+        return jpaGoodsStockRepository.findByGoodsIdPessimistic(goodsId);
     }
 
     @Override
