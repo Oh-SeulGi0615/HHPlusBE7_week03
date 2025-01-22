@@ -14,6 +14,7 @@ import kr.hhplus.be.server.domain.order.OrderRepository;
 import kr.hhplus.be.server.domain.payment.PaymentEntity;
 import kr.hhplus.be.server.domain.payment.PaymentRepository;
 import kr.hhplus.be.server.domain.payment.PaymentService;
+import kr.hhplus.be.server.domain.payment.PaymentServiceDto;
 import kr.hhplus.be.server.domain.user.UserEntity;
 import kr.hhplus.be.server.domain.user.UserRepository;
 import kr.hhplus.be.server.enums.OrderStatus;
@@ -91,7 +92,7 @@ class PaymentServiceTest {
         when(paymentRepository.save(any(PaymentEntity.class))).thenReturn(paymentEntity);
 
         // when
-        PaymentResponse response = paymentService.createPayment(paymentRequest);
+        PaymentServiceDto response = paymentService.createPayment(paymentRequest.getUserId(), paymentRequest.getOrderId(), paymentRequest.getCouponId());
 
         // then
         assertNotNull(response);
@@ -133,7 +134,7 @@ class PaymentServiceTest {
         when(userCouponRepository.findByCouponIdAndUserId(couponId, userId)).thenReturn(Optional.of(userCouponEntity));
 
         // when
-        PaymentResponse response = paymentService.createPayment(paymentRequest);
+        PaymentServiceDto response = paymentService.createPayment(paymentRequest.getUserId(), paymentRequest.getOrderId(), paymentRequest.getCouponId());
 
         // then
         assertNotNull(response);
@@ -151,7 +152,7 @@ class PaymentServiceTest {
         when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(InvalidUserException.class, () -> paymentService.createPayment(paymentRequest));
+        assertThrows(InvalidUserException.class, () -> paymentService.createPayment(paymentRequest.getUserId(), paymentRequest.getOrderId(), paymentRequest.getCouponId()));
     }
 
     @Test
@@ -167,7 +168,7 @@ class PaymentServiceTest {
         when(userRepository.findByUserId(userId)).thenReturn(Optional.of(userEntity));
 
         // when & then
-        assertThrows(InvalidOrderException.class, () -> paymentService.createPayment(paymentRequest));
+        assertThrows(InvalidOrderException.class, () -> paymentService.createPayment(paymentRequest.getUserId(), paymentRequest.getOrderId(), paymentRequest.getCouponId()));
     }
 
     @Test
@@ -188,7 +189,7 @@ class PaymentServiceTest {
                 .thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(InvalidCouponException.class, () -> paymentService.createPayment(paymentRequest));
+        assertThrows(InvalidCouponException.class, () -> paymentService.createPayment(paymentRequest.getUserId(), paymentRequest.getOrderId(), paymentRequest.getCouponId()));
     }
 
     @Test
@@ -227,7 +228,7 @@ class PaymentServiceTest {
         when(orderRepository.findByOrderId(orderId)).thenReturn(Optional.of(orderEntity));
 
         // when
-        PaymentResponse response = paymentService.completePayment(userId, paymentId);
+        PaymentServiceDto response = paymentService.confirmPayment(userId, paymentId);
 
         // then
         assertNotNull(response);
@@ -248,7 +249,7 @@ class PaymentServiceTest {
         when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(InvalidUserException.class, () -> paymentService.completePayment(userId, paymentId));
+        assertThrows(InvalidUserException.class, () -> paymentService.confirmPayment(userId, paymentId));
     }
 
     @Test
@@ -266,7 +267,7 @@ class PaymentServiceTest {
         when(paymentRepository.findByPaymentId(paymentId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(InvalidPaymentException.class, () -> paymentService.completePayment(userId, paymentId));
+        assertThrows(InvalidPaymentException.class, () -> paymentService.confirmPayment(userId, paymentId));
     }
 
     @Test
@@ -289,7 +290,7 @@ class PaymentServiceTest {
         when(paymentRepository.findByPaymentId(paymentId)).thenReturn(Optional.of(paymentEntity));
 
         // when & then
-        assertThrows(AlreadyProcessedPaymentException.class, () -> paymentService.completePayment(userId, paymentId));
+        assertThrows(AlreadyProcessedPaymentException.class, () -> paymentService.confirmPayment(userId, paymentId));
     }
 
     @Test
@@ -312,7 +313,7 @@ class PaymentServiceTest {
         when(paymentRepository.findByPaymentId(paymentId)).thenReturn(Optional.of(paymentEntity));
 
         // when & then
-        assertThrows(InsufficientPointException.class, () -> paymentService.completePayment(userId, paymentId));
+        assertThrows(InsufficientPointException.class, () -> paymentService.confirmPayment(userId, paymentId));
     }
 
     @Test
@@ -347,7 +348,7 @@ class PaymentServiceTest {
         when(goodsStockRepository.findByGoodsId(goodsId)).thenReturn(Optional.of(goodsStockEntity));
 
         // when & then
-        assertThrows(GoodsOutOfStockException.class, () -> paymentService.completePayment(userId, paymentId));
+        assertThrows(GoodsOutOfStockException.class, () -> paymentService.confirmPayment(userId, paymentId));
     }
 
     @Test
@@ -374,7 +375,7 @@ class PaymentServiceTest {
         when(orderRepository.findByOrderId(orderId)).thenReturn(Optional.of(orderEntity));
 
         // when
-        PaymentResponse response = paymentService.cancelPayment(userId, paymentId);
+        PaymentServiceDto response = paymentService.cancelPayment(userId, paymentId);
 
         // then
         assertNotNull(response);
@@ -390,7 +391,7 @@ class PaymentServiceTest {
         when(userRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(InvalidUserException.class, () -> paymentService.completePayment(userId, paymentId));
+        assertThrows(InvalidUserException.class, () -> paymentService.confirmPayment(userId, paymentId));
     }
 
     @Test
@@ -405,7 +406,7 @@ class PaymentServiceTest {
         when(paymentRepository.findByPaymentId(paymentId)).thenReturn(Optional.empty());
 
         // when & then
-        assertThrows(InvalidPaymentException.class, () -> paymentService.completePayment(userId, paymentId));
+        assertThrows(InvalidPaymentException.class, () -> paymentService.confirmPayment(userId, paymentId));
     }
 
     @Test
@@ -425,6 +426,6 @@ class PaymentServiceTest {
         when(paymentRepository.findByPaymentId(paymentId)).thenReturn(Optional.of(paymentEntity));
 
         // when & then
-        assertThrows(AlreadyProcessedPaymentException.class, () -> paymentService.completePayment(userId, paymentId));
+        assertThrows(AlreadyProcessedPaymentException.class, () -> paymentService.confirmPayment(userId, paymentId));
     }
 }

@@ -2,14 +2,14 @@ package kr.hhplus.be.server.domain.coupon;
 
 import java.time.LocalDate;
 
-public class CouponDomainDto {
+public class CouponServiceDto {
     private Long couponId;
     private String couponName;
     private Long discountRate;
     private Long capacity;
     private LocalDate dueDate;
 
-    public CouponDomainDto(Long couponId, String couponName, Long discountRate, Long capacity, LocalDate dueDate) {
+    public CouponServiceDto(Long couponId, String couponName, Long discountRate, Long capacity, LocalDate dueDate) {
         this.couponId = couponId;
         this.couponName = couponName;
         this.discountRate = discountRate;

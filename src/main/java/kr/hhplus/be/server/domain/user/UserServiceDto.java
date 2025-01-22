@@ -1,11 +1,11 @@
 package kr.hhplus.be.server.domain.user;
 
-public class UserDomainDto {
+public class UserServiceDto {
     private Long userId;
     private String userName;
     private Long point;
 
-    public UserDomainDto(Long userId, String userName, Long point) {
+    public UserServiceDto(Long userId, String userName, Long point) {
         this.userId = userId;
         this.userName = userName;
         this.point = point;

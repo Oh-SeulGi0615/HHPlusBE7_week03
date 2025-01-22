@@ -2,8 +2,7 @@ package kr.hhplus.be.server.api.controller;
 
 import kr.hhplus.be.server.api.request.CreateCouponRequest;
 import kr.hhplus.be.server.api.response.CouponResponse;
-import kr.hhplus.be.server.domain.coupon.CouponDomainDto;
-import kr.hhplus.be.server.domain.coupon.CouponEntity;
+import kr.hhplus.be.server.domain.coupon.CouponServiceDto;
 import kr.hhplus.be.server.domain.coupon.CouponService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,7 @@ public class CouponController {
     @PostMapping("/coupons/create")
     public ResponseEntity<Object> createCoupon(@RequestBody CreateCouponRequest createCouponRequest) {
 
-        CouponDomainDto response = couponService.createCoupon(
+        CouponServiceDto response = couponService.createCoupon(
                 createCouponRequest.getCouponName(),
                 createCouponRequest.getDiscountRate(),
                 createCouponRequest.getCapacity(),
@@ -43,7 +42,7 @@ public class CouponController {
 
     @GetMapping("/coupons")
     public List<CouponResponse> allCouponList() {
-        List<CouponDomainDto> couponList = couponService.allCouponList();
+        List<CouponServiceDto> couponList = couponService.allCouponList();
         return couponList.stream()
                 .map(coupon -> new CouponResponse(
                         coupon.getCouponId(),
@@ -57,7 +56,7 @@ public class CouponController {
 
     @PostMapping("/coupons/{couponId}/get")
     public ResponseEntity<Object> issueCoupon(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
-        CouponDomainDto response = couponService.issueCoupon(userId, couponId);
+        CouponServiceDto response = couponService.issueCoupon(userId, couponId);
 
         CouponResponse couponResponse = new  CouponResponse(
                 response.getCouponId(),

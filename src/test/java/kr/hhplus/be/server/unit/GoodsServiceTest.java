@@ -1,7 +1,5 @@
 package kr.hhplus.be.server.unit;
 
-import kr.hhplus.be.server.api.request.GoodsRequest;
-import kr.hhplus.be.server.api.response.GoodsResponse;
 import kr.hhplus.be.server.domain.goods.*;
 import kr.hhplus.be.server.exeption.customExceptions.ExistGoodsException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
@@ -47,7 +45,7 @@ class GoodsServiceTest {
         when(goodsStockRepository.save(any(GoodsStockEntity.class))).thenReturn(savedGoodsStock);
 
         // when
-        GoodsDomainDto response = goodsService.createGoods(goodsName, price, quantity);
+        GoodsServiceDto response = goodsService.createGoods(goodsName, price, quantity);
 
         // then
         assertNotNull(response);
@@ -79,7 +77,7 @@ class GoodsServiceTest {
         when(goodsRepository.findAll()).thenReturn(Arrays.asList(goods1, goods2));
 
         // when
-        List<GoodsDomainDto> responses = goodsService.getAllGoods();
+        List<GoodsServiceDto> responses = goodsService.getAllGoods();
 
         // then
         assertNotNull(responses);
@@ -98,7 +96,7 @@ class GoodsServiceTest {
         when(goodsStockRepository.findByGoodsId(goodsId)).thenReturn(Optional.of(stock));
 
         // when
-        GoodsDomainDto response = goodsService.getOneGoodsInfo(goodsId);
+        GoodsServiceDto response = goodsService.getOneGoodsInfo(goodsId);
 
         // then
         assertNotNull(response);
@@ -131,7 +129,7 @@ class GoodsServiceTest {
         ));
 
         // when
-        List<SalesHistoryDomainDto> result = goodsService.getBest10Goods();
+        List<SalesHistoryServiceDto> result = goodsService.getBest10Goods();
 
         // then
         assertNotNull(result);

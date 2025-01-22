@@ -2,7 +2,6 @@ package kr.hhplus.be.server.domain.order;
 
 import jakarta.transaction.Transactional;
 import kr.hhplus.be.server.api.request.OrderRequest;
-import kr.hhplus.be.server.api.response.OrderResponse;
 import kr.hhplus.be.server.domain.goods.GoodsRepository;
 import kr.hhplus.be.server.domain.goods.GoodsStockRepository;
 import kr.hhplus.be.server.domain.user.UserEntity;
@@ -36,14 +35,14 @@ public class OrderService {
         this.orderDetailRepository = orderDetailRepository;
     }
 
-    public List<OrderDomainDto> createOrder(Long userId, List<OrderRequest> orderRequestList) {
+    public List<OrderServiceDto> createOrder(Long userId, List<OrderRequest> orderRequestList) {
         if (userRepository.findByUserId(userId).isEmpty()){
             throw new InvalidUserException("유저를 찾을 수 없습니다.");
         }
         OrderEntity orderEntity = new OrderEntity(userId);
         Long orderId = orderRepository.save(orderEntity).getOrderId();
 
-        List<OrderDomainDto> orderResponseList = new ArrayList<>();
+        List<OrderServiceDto> orderResponseList = new ArrayList<>();
         for (OrderRequest orderRequests:orderRequestList){
             if (goodsRepository.findByGoodsId(orderRequests.getGoodsId()).isEmpty()){
                 throw new InvalidGoodsException("상품정보를 찾을 수 없습니다.");
@@ -53,13 +52,13 @@ public class OrderService {
             }
 
             orderDetailRepository.save(new OrderDetailEntity(orderId, orderRequests.getGoodsId(), orderRequests.getQuantity()));
-            OrderDomainDto orderResponse = new OrderDomainDto(orderId, userId, orderRequests.getGoodsId(), orderRequests.getQuantity());
+            OrderServiceDto orderResponse = new OrderServiceDto(orderId, userId, orderRequests.getGoodsId(), orderRequests.getQuantity());
             orderResponseList.add(orderResponse);
         }
         return orderResponseList;
     }
 
-    public List<MyOrderDomainDto> getMyAllOrder(Long userId) {
+    public List<MyOrderServiceDto> getMyAllOrder(Long userId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
 
@@ -68,22 +67,22 @@ public class OrderService {
             throw new InvalidOrderException("주문 정보를 찾을 수 없습니다.");
         }
 
-        List<MyOrderDomainDto> myOrderDomainDtoList = allMyOrderList.stream().map(orderEntity -> new MyOrderDomainDto(
+        List<MyOrderServiceDto> myOrderServiceDtoList = allMyOrderList.stream().map(orderEntity -> new MyOrderServiceDto(
                 orderEntity.getOrderId(), orderEntity.getUserId(), orderEntity.getDueDate(), orderEntity.getStatus()
         )).collect(Collectors.toList());
-        return myOrderDomainDtoList;
+        return myOrderServiceDtoList;
     }
 
-    public List<OrderDomainDto> getMyDetailOrder(Long userId, Long orderId) {
+    public List<OrderServiceDto> getMyDetailOrder(Long userId, Long orderId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
         OrderEntity orderEntity = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new InvalidOrderException("주문 정보를 찾을 수 없습니다."));
 
-        List<OrderDomainDto> myOrderList = new ArrayList<>();
+        List<OrderServiceDto> myOrderList = new ArrayList<>();
         List<OrderDetailEntity> OrderList = orderDetailRepository.findAllByOrderId(orderId);
         for (OrderDetailEntity myOrder: OrderList){
-            OrderDomainDto orderResponse = new OrderDomainDto(
+            OrderServiceDto orderResponse = new OrderServiceDto(
                     orderId, userId, myOrder.getGoodsId(), myOrder.getQuantity()
             );
             myOrderList.add(orderResponse);
@@ -92,13 +91,13 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDomainDto cancelOrder(Long userId, Long orderId) {
+    public OrderServiceDto cancelOrder(Long userId, Long orderId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
         OrderEntity orderEntity = orderRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new InvalidOrderException("주문 정보를 찾을 수 없습니다."));
 
         orderEntity.setStatus(OrderStatus.CANCELED);
-        return new OrderDomainDto(orderId, userId, orderRepository.findByOrderId(orderId).get().getStatus());
+        return new OrderServiceDto(orderId, userId, orderRepository.findByOrderId(orderId).get().getStatus());
     }
 }

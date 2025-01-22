@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.unit;
 
 import kr.hhplus.be.server.api.request.GetCouponRequest;
-import kr.hhplus.be.server.api.response.CouponResponse;
 import kr.hhplus.be.server.api.response.UserCouponResponse;
 import kr.hhplus.be.server.domain.coupon.*;
 import kr.hhplus.be.server.exeption.customExceptions.CouponOutOfStockException;
@@ -46,7 +45,7 @@ class CouponServiceTest {
         when(couponRepository.save(any(CouponEntity.class))).thenReturn(couponEntity);
 
         // when
-        CouponDomainDto response = couponService.createCoupon(couponName, discountRate, capacity, dueDate);
+        CouponServiceDto response = couponService.createCoupon(couponName, discountRate, capacity, dueDate);
 
         // then
         assertEquals("TestCoupon", response.getCouponName());
@@ -80,7 +79,7 @@ class CouponServiceTest {
         when(couponRepository.findAll()).thenReturn(List.of(coupon1, coupon2));
 
         // when
-        List<CouponDomainDto> result = couponService.allCouponList();
+        List<CouponServiceDto> result = couponService.allCouponList();
 
         // then
         assertEquals(2, result.size());
@@ -96,7 +95,7 @@ class CouponServiceTest {
         when(userCouponRepository.save(any(UserCouponEntity.class))).thenReturn(new UserCouponEntity(1L, 100L));
 
         // when
-        CouponDomainDto response = couponService.issueCoupon(request.getUserId(), request.getUserId());
+        CouponServiceDto response = couponService.issueCoupon(request.getUserId(), request.getUserId());
 
         // then
         assertEquals("TestCoupon", response.getCouponName());

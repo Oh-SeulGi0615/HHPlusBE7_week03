@@ -1,9 +1,5 @@
 package kr.hhplus.be.server.unit;
 
-import kr.hhplus.be.server.api.request.PointRequest;
-import kr.hhplus.be.server.api.request.UserRequest;
-import kr.hhplus.be.server.api.response.PointResponse;
-import kr.hhplus.be.server.api.response.UserResponse;
 import kr.hhplus.be.server.domain.user.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,7 +37,7 @@ class UserServiceTest {
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
         //when
-        UserDomainDto response = userService.createUser(userName);
+        UserServiceDto response = userService.createUser(userName);
 
         //then
         assertThat(response).isNotNull();
@@ -60,7 +56,7 @@ class UserServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    UserDomainDto response = userService.createUser(userName);
+                    UserServiceDto response = userService.createUser(userName);
                 }
         );
 
@@ -95,7 +91,7 @@ class UserServiceTest {
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
         //when
-        PointDomainDto response = userService.chargePoint(1L, 500L);
+        PointServiceDto response = userService.chargePoint(1L, 500L);
 
         //then
         assertNotNull(response);
@@ -112,7 +108,7 @@ class UserServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointDomainDto response = userService.chargePoint(1L, 500L);
+                    PointServiceDto response = userService.chargePoint(1L, 500L);
                 }
         );
 
@@ -133,7 +129,7 @@ class UserServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointDomainDto response = userService.chargePoint(userEntity.getUserId(), -10L);
+                    PointServiceDto response = userService.chargePoint(userEntity.getUserId(), -10L);
                 }
         );
 
@@ -154,7 +150,7 @@ class UserServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointDomainDto response = userService.chargePoint(userEntity.getUserId(), 13L);
+                    PointServiceDto response = userService.chargePoint(userEntity.getUserId(), 13L);
                 }
         );
 
@@ -175,7 +171,7 @@ class UserServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointDomainDto response = userService.chargePoint(userEntity.getUserId(), 100_000_000L);
+                    PointServiceDto response = userService.chargePoint(userEntity.getUserId(), 100_000_000L);
                 }
         );
 
@@ -196,7 +192,7 @@ class UserServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointDomainDto response = userService.chargePoint(userEntity.getUserId(), 1_000_000L);
+                    PointServiceDto response = userService.chargePoint(userEntity.getUserId(), 1_000_000L);
                 }
         );
 
@@ -214,7 +210,7 @@ class UserServiceTest {
         when(userRepository.findByUserId(1L)).thenReturn(Optional.of(userEntity));
 
         //when
-        PointDomainDto response = userService.checkPoint(1L);
+        PointServiceDto response = userService.checkPoint(1L);
 
         //then
         assertNotNull(response);
@@ -229,7 +225,7 @@ class UserServiceTest {
         Exception exception = assertThrows(
                 Exception.class,
                 () -> {
-                    PointDomainDto response = userService.checkPoint(1L);
+                    PointServiceDto response = userService.checkPoint(1L);
                 }
         );
 

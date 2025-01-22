@@ -3,21 +3,18 @@ package kr.hhplus.be.server.domain.coupon;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import kr.hhplus.be.server.api.request.GetCouponRequest;
-import kr.hhplus.be.server.api.response.CouponResponse;
 import kr.hhplus.be.server.api.response.UserCouponResponse;
 import kr.hhplus.be.server.enums.UserCouponStatus;
 import kr.hhplus.be.server.exeption.customExceptions.CouponOutOfStockException;
 import kr.hhplus.be.server.exeption.customExceptions.ExistCouponException;
 import kr.hhplus.be.server.exeption.customExceptions.ExpiredCouponException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidCouponException;
-import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +32,7 @@ public class CouponService {
         this.redissonClient = redissonClient;
     }
 
-    public CouponDomainDto createCoupon(String couponName, Long discountRate, Long capacity, LocalDate dueDate) {
+    public CouponServiceDto createCoupon(String couponName, Long discountRate, Long capacity, LocalDate dueDate) {
         if (couponRepository.findByCouponName(couponName).isPresent()) {
             throw new ExistCouponException("이미 등록된 쿠폰입니다.");
         }
@@ -43,20 +40,20 @@ public class CouponService {
                 couponName, discountRate, capacity, dueDate
         );
         CouponEntity savedCoupon = couponRepository.save(couponEntity);
-        CouponDomainDto couponDomainDto = new CouponDomainDto(
+        CouponServiceDto couponServiceDto = new CouponServiceDto(
                 savedCoupon.getCouponId(),
                 savedCoupon.getCouponName(),
                 savedCoupon.getDiscountRate(),
                 savedCoupon.getCapacity(),
                 savedCoupon.getDueDate()
         );
-        return couponDomainDto;
+        return couponServiceDto;
     }
 
-    public List<CouponDomainDto> allCouponList() {
+    public List<CouponServiceDto> allCouponList() {
         List<CouponEntity> couponList = couponRepository.findAll();
         return couponList.stream()
-                .map(coupon -> new CouponDomainDto(
+                .map(coupon -> new CouponServiceDto(
                         coupon.getCouponId(),
                         coupon.getCouponName(),
                         coupon.getDiscountRate(),
@@ -67,7 +64,7 @@ public class CouponService {
     }
 
     @Transactional
-    public CouponDomainDto issueCoupon(Long userId, Long couponId) {
+    public CouponServiceDto issueCoupon(Long userId, Long couponId) {
         CouponEntity coupon = couponRepository.findByCouponId(couponId)
                 .orElseThrow(() -> new InvalidCouponException("존재하지 않는 쿠폰입니다."));
 
@@ -83,7 +80,7 @@ public class CouponService {
         UserCouponEntity userCoupon = new UserCouponEntity(userId, couponId);
         userCouponRepository.save(userCoupon);
 
-        return new CouponDomainDto(
+        return new CouponServiceDto(
                 couponId,
                 coupon.getCouponName(),
                 coupon.getDiscountRate(),

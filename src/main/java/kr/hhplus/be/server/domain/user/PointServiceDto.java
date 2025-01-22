@@ -1,10 +1,10 @@
 package kr.hhplus.be.server.domain.user;
 
-public class PointDomainDto {
+public class PointServiceDto {
     private Long userId;
     private Long point;
 
-    public PointDomainDto(Long userId, Long point) {
+    public PointServiceDto(Long userId, Long point) {
         this.userId = userId;
         this.point = point;
     }

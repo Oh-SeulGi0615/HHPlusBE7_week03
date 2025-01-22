@@ -1,14 +1,12 @@
 package kr.hhplus.be.server.domain.goods;
 
-import jakarta.persistence.Column;
-
-public class SalesHistoryDomainDto {
+public class SalesHistoryServiceDto {
     private Long salesHistoryId;
     private Long goodsId;
     private Long userId;
     private Long quantity;
 
-    public SalesHistoryDomainDto(Long salesHistoryId, Long goodsId, Long userId, Long quantity) {
+    public SalesHistoryServiceDto(Long salesHistoryId, Long goodsId, Long userId, Long quantity) {
         this.salesHistoryId = salesHistoryId;
         this.goodsId = goodsId;
         this.userId = userId;

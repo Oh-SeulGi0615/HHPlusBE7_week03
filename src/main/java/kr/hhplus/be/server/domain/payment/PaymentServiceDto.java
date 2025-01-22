@@ -1,10 +1,10 @@
-package kr.hhplus.be.server.api.response;
+package kr.hhplus.be.server.domain.payment;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import kr.hhplus.be.server.enums.PaymentStatus;
 
-public class PaymentResponse {
+public class PaymentServiceDto {
     private Long paymentId;
     private Long orderId;
     private Long couponId;
@@ -12,9 +12,7 @@ public class PaymentResponse {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
-    public PaymentResponse(){}
-
-    public PaymentResponse(Long paymentId, Long orderId, Long couponId, Long totalPrice, PaymentStatus status) {
+    public PaymentServiceDto(Long paymentId, Long orderId, Long couponId, Long totalPrice, PaymentStatus status) {
         this.paymentId = paymentId;
         this.orderId = orderId;
         this.couponId = couponId;
@@ -22,7 +20,7 @@ public class PaymentResponse {
         this.status = status;
     }
 
-    public PaymentResponse(Long paymentId, Long orderId, Long couponId, Long totalPrice) {
+    public PaymentServiceDto(Long paymentId, Long orderId, Long couponId, Long totalPrice) {
         this.paymentId = paymentId;
         this.orderId = orderId;
         this.couponId = couponId;
@@ -30,7 +28,7 @@ public class PaymentResponse {
         this.status = PaymentStatus.WAITING;
     }
 
-    public PaymentResponse(Long paymentId, Long orderId, Long totalPrice) {
+    public PaymentServiceDto(Long paymentId, Long orderId, Long totalPrice) {
         this.paymentId = paymentId;
         this.orderId = orderId;
         this.couponId = 0L;
@@ -42,19 +40,39 @@ public class PaymentResponse {
         return paymentId;
     }
 
+    public void setPaymentId(Long paymentId) {
+        this.paymentId = paymentId;
+    }
+
     public Long getOrderId() {
         return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public Long getCouponId() {
         return couponId;
     }
 
+    public void setCouponId(Long couponId) {
+        this.couponId = couponId;
+    }
+
     public Long getTotalPrice() {
         return totalPrice;
     }
 
+    public void setTotalPrice(Long totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
     public PaymentStatus getStatus() {
         return status;
+    }
+
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
     }
 }

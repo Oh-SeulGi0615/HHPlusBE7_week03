@@ -1,12 +1,12 @@
 package kr.hhplus.be.server.domain.goods;
 
-public class GoodsDomainDto {
+public class GoodsServiceDto {
     private Long goodsId;
     private String goodsName;
     private Long price;
     private Long quantity;
 
-    public GoodsDomainDto(Long goodsId, String goodsName, Long price, Long quantity) {
+    public GoodsServiceDto(Long goodsId, String goodsName, Long price, Long quantity) {
         this.goodsId = goodsId;
         this.goodsName = goodsName;
         this.price = price;

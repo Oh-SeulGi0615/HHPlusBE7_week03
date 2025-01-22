@@ -48,11 +48,11 @@ public class PaymentService {
         this.userCouponRepository = userCouponRepository;
     }
 
-    public PaymentResponse createPayment(PaymentRequest paymentRequest) {
-        UserEntity userEntity = userRepository.findByUserId(paymentRequest.getUserId())
+    public PaymentServiceDto createPayment(Long userId, Long orderId, Long couponId) {
+        UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
 
-        Optional<OrderEntity> orderEntity = orderRepository.findByOrderId(paymentRequest.getOrderId());
+        Optional<OrderEntity> orderEntity = orderRepository.findByOrderId(orderId);
         if (orderEntity.isEmpty()){
             throw new InvalidOrderException("주문 정보를 찾을 수 없습니다.");
         }
@@ -60,18 +60,18 @@ public class PaymentService {
             throw new AlreadyProcessedOrderException("이미 처리된 주문입니다.");
         }
 
-        if (paymentRequest.getCouponId() != 0L  && userCouponRepository.findByCouponIdAndUserId(
-                paymentRequest.getCouponId(), paymentRequest.getUserId()
+        if (couponId != 0L  && userCouponRepository.findByCouponIdAndUserId(
+                couponId, userId
                 ).isEmpty()){
             throw new InvalidCouponException("쿠폰 정보를 찾을 수 없습니다.");
         }
-        if (paymentRequest.getCouponId() != 0L && userCouponRepository.findByCouponIdAndUserId(
-                paymentRequest.getCouponId(), paymentRequest.getUserId()
+        if (couponId != 0L && userCouponRepository.findByCouponIdAndUserId(
+                couponId, userId
         ).get().isStatus() != UserCouponStatus.AVAILABLE){
             throw new CannotUseCouponException("사용할 수 없는 쿠폰입니다.");
         }
 
-        List<OrderDetailEntity> orderList = orderDetailRepository.findAllByOrderId(paymentRequest.getOrderId());
+        List<OrderDetailEntity> orderList = orderDetailRepository.findAllByOrderId(orderId);
         Long totalPrice = 0L;
         for (OrderDetailEntity order: orderList) {
             Long price = goodsRepository.findByGoodsId(order.getGoodsId()).get().getPrice();
@@ -79,26 +79,26 @@ public class PaymentService {
             totalPrice += (Long) (price * quantity);
         }
 
-        if (paymentRequest.getCouponId() != 0L) {
-            Long discountRate = couponRepository.findByCouponId(paymentRequest.getCouponId()).get().getDiscountRate();
+        if (couponId != 0L) {
+            Long discountRate = couponRepository.findByCouponId(couponId).get().getDiscountRate();
             totalPrice = (Long) (totalPrice * (100 - discountRate) / 100);
-            PaymentEntity paymentEntity = new PaymentEntity(paymentRequest.getOrderId(), paymentRequest.getCouponId(), totalPrice);
+            PaymentEntity paymentEntity = new PaymentEntity(orderId, couponId, totalPrice);
             PaymentEntity savedPayment = paymentRepository.save(paymentEntity);
 
-            return new PaymentResponse(
+            return new PaymentServiceDto(
                     savedPayment.getPaymentId(), savedPayment.getOrderId(), savedPayment.getCouponId(), totalPrice
             );
         } else {
-            PaymentEntity paymentEntity = new PaymentEntity(paymentRequest.getOrderId(), totalPrice);
+            PaymentEntity paymentEntity = new PaymentEntity(orderId, totalPrice);
             PaymentEntity savedPayment = paymentRepository.save(paymentEntity);
-            return new PaymentResponse(
+            return new PaymentServiceDto(
                     savedPayment.getPaymentId(), savedPayment.getOrderId(), totalPrice
             );
         }
     }
 
     @Transactional
-    public PaymentResponse completePayment(Long userId, Long paymentId) {
+    public PaymentServiceDto confirmPayment(Long userId, Long paymentId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
         PaymentEntity paymentEntity = paymentRepository.findByPaymentId(paymentId)
@@ -135,7 +135,7 @@ public class PaymentService {
         orderEntity.get().setStatus(OrderStatus.PAID);
 
         paymentEntity.setStatus(PaymentStatus.PAID);
-        return new PaymentResponse(
+        return new PaymentServiceDto(
                 paymentEntity.getPaymentId(),
                 paymentEntity.getOrderId(),
                 paymentEntity.getCouponId(),
@@ -145,7 +145,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentResponse cancelPayment(Long userId, Long paymentId) {
+    public PaymentServiceDto cancelPayment(Long userId, Long paymentId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
         PaymentEntity paymentEntity = paymentRepository.findByPaymentId(paymentId)
@@ -159,7 +159,7 @@ public class PaymentService {
         orderEntity.get().setStatus(OrderStatus.CANCELED);
 
         paymentEntity.setStatus(PaymentStatus.CANCELED);
-        return new PaymentResponse(
+        return new PaymentServiceDto(
                 paymentEntity.getPaymentId(),
                 paymentEntity.getOrderId(),
                 paymentEntity.getCouponId(),

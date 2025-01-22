@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.unit;
 
 import kr.hhplus.be.server.api.request.OrderRequest;
-import kr.hhplus.be.server.api.response.OrderResponse;
 import kr.hhplus.be.server.domain.goods.GoodsEntity;
 import kr.hhplus.be.server.domain.goods.GoodsRepository;
 import kr.hhplus.be.server.domain.goods.GoodsStockEntity;
@@ -73,7 +72,7 @@ class OrderServiceTest {
                 .thenReturn(Optional.of(goodsStockEntity));
 
         // when
-        List<OrderDomainDto> responses = orderService.createOrder(userId, orderRequests);
+        List<OrderServiceDto> responses = orderService.createOrder(userId, orderRequests);
 
         // then
         assertNotNull(responses);
@@ -142,7 +141,7 @@ class OrderServiceTest {
         when(orderRepository.findAllByUserId(userId)).thenReturn(orderList);
 
         // when
-        List<MyOrderDomainDto> responses = orderService.getMyAllOrder(userId);
+        List<MyOrderServiceDto> responses = orderService.getMyAllOrder(userId);
 
         // then
         assertNotNull(responses);
@@ -171,7 +170,7 @@ class OrderServiceTest {
         when(orderRepository.findByOrderId(orderId)).thenReturn(Optional.of(new OrderEntity(userId)));
 
         // when
-        OrderDomainDto response = orderService.cancelOrder(userId, orderId);
+        OrderServiceDto response = orderService.cancelOrder(userId, orderId);
 
         // then
         assertNotNull(response);
