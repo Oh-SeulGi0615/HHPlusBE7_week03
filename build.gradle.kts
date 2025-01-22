@@ -35,12 +35,13 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
+	implementation("org.springframework.boot:spring-boot-starter-aop")
 
 	// DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
 	// Redis
-	implementation ("org.redisson:redisson:3.22.1")
+	implementation ("org.redisson:redisson-spring-boot-starter:3.18.0")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

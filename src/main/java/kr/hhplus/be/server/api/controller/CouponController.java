@@ -67,4 +67,32 @@ public class CouponController {
         );
         return ResponseEntity.ok(couponResponse);
     }
+
+    @PostMapping("/coupons/{couponId}/get/optimistic")
+    public ResponseEntity<Object> issueCouponOptimistic(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
+        CouponServiceDto response = couponService.issueCouponOptimistic(userId, couponId);
+
+        CouponResponse couponResponse = new  CouponResponse(
+                response.getCouponId(),
+                response.getCouponName(),
+                response.getDiscountRate(),
+                response.getCapacity(),
+                response.getDueDate()
+        );
+        return ResponseEntity.ok(couponResponse);
+    }
+
+    @PostMapping("/coupons/{couponId}/get/pessimistic")
+    public ResponseEntity<Object> issueCouponPessimistic(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
+        CouponServiceDto response = couponService.issueCouponPessimistic(userId, couponId);
+
+        CouponResponse couponResponse = new  CouponResponse(
+                response.getCouponId(),
+                response.getCouponName(),
+                response.getDiscountRate(),
+                response.getCapacity(),
+                response.getDueDate()
+        );
+        return ResponseEntity.ok(couponResponse);
+    }
 }

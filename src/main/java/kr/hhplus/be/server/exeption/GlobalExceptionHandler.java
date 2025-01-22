@@ -142,10 +142,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+        log.error("IllegalStateException 발생: {}", ex.getMessage(), ex);
+        ErrorResponse errorResponse = new ErrorResponse("IllegalStateException", "예상치 못한 오류가 발생했습니다.");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         log.error("Exception 발생: {}", ex.getMessage(), ex);
-        ErrorResponse errorResponse = new ErrorResponse("Exception", "예상치 못한 오류가 발생했습니다.");
+        ErrorResponse errorResponse = new ErrorResponse("Exception", "다른 프로세스에서 이미 락을 사용 중입니다.");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }

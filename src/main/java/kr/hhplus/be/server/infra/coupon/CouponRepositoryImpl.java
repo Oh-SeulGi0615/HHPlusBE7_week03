@@ -22,6 +22,16 @@ public class CouponRepositoryImpl implements CouponRepository {
     }
 
     @Override
+    public Optional<CouponEntity> findByCouponIdPessimistic(Long couponId) {
+        return jpaCouponRepository.findByCouponIdPessimistic(couponId);
+    }
+
+    @Override
+    public Optional<CouponEntity> findByCouponIdOptimistic(Long couponId) {
+        return jpaCouponRepository.findByCouponIdOptimistic(couponId);
+    }
+
+    @Override
     public Optional<CouponEntity> findByCouponId(Long couponId) {
         return jpaCouponRepository.findByCouponId(couponId);
     }
