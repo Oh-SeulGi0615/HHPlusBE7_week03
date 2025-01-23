@@ -10,4 +10,5 @@ public interface UserRepository {
     Optional<UserEntity> findByUserName(String userName);
     List<UserEntity> findAll();
     UserEntity save(UserEntity userEntity);
+    UserEntity saveAndFlush(UserEntity userEntity);
 }

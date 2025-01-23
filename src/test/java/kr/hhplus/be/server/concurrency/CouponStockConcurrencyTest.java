@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -92,22 +93,36 @@ public class CouponStockConcurrencyTest extends IntergrationTest {
 
     @Test
     @DisplayName("[POST] /api/coupons/{couponId}/get/optimistic - 쿠폰 발급 요청 동시성 테스트 - 낙관적 락")
-    void issueCouponOptimisticConcurrencyTest() {
-        Long couponCapacity = 8L;
+    void issueCouponOptimisticConcurrencyTest() throws InterruptedException{
+        Long couponCapacity = 3L;
         CouponEntity couponEntity = new CouponEntity(
                 "testCoupon1", 10L, couponCapacity, LocalDate.now().plusDays(10)
         );
 
         CouponEntity savedCoupon = jpaCouponRepository.save(couponEntity);
 
-        List<Long> optimisticLockExceptionList = new ArrayList<>();
+        List<Long> failList = Collections.synchronizedList(new ArrayList<>());
+        List<Long> successList = Collections.synchronizedList(new ArrayList<>());
 
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        int threadCount = 5;
+        CountDownLatch readyLatch = new CountDownLatch(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        CountDownLatch doneLatch = new CountDownLatch(threadCount);
 
-        Future<?>[] futures = new Future[10];
-        for (int i = 0; i < 10L; i++) {
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+
+        for (int i = 0; i < threadCount; i++) {
             final Long userId = (long) (i + 1);
-            futures[i] = executorService.submit(() -> {
+            executorService.submit(() -> {
+                try {
+                    readyLatch.countDown();
+                    try {
+                        startLatch.await();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+
                     var response =
                             given()
                                     .contentType(ContentType.JSON)
@@ -119,28 +134,29 @@ public class CouponStockConcurrencyTest extends IntergrationTest {
                                     .log().all()
                                     .extract()
                                     .response();
-                    String responseBody = response.getBody().asString();
 
-                    if (responseBody.contains("동시성 문제가 발생했습니다. 잠시 후 다시 시도해주세요.")) {
-                        synchronized (optimisticLockExceptionList) {
-                            optimisticLockExceptionList.add(userId);
-                        }
+                    if (response.statusCode() == 200) {
+                        successList.add(userId);
+                    } else {
+                        failList.add(userId);
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    doneLatch.countDown();
+                }
             });
         }
 
-        for (Future<?> future : futures) {
-            try {
-                future.get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        readyLatch.await();
+        startLatch.countDown();
 
+        doneLatch.await();
         executorService.shutdown();
 
-        System.out.println("OptimisticLockException 발생 유저 ID 리스트: " + optimisticLockExceptionList);
-        assertTrue(optimisticLockExceptionList.size() > 0);
+        System.out.println("성공한 유저 IDs: " + successList);
+        System.out.println("실패한 유저 IDs: " + failList);
+        assertTrue(successList.size() == couponCapacity);
     }
 
     @Test

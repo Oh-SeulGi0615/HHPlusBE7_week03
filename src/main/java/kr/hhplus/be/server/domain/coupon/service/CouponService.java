@@ -124,20 +124,20 @@ public class CouponService {
                 coupon.getDueDate());
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public CouponServiceDto issueCouponOptimistic(Long userId, Long couponId) {
         CouponEntity coupon = couponRepository.findByCouponIdOptimistic(couponId)
                 .orElseThrow(() -> new InvalidCouponException("존재하지 않는 쿠폰입니다."));
-
-        if (userCouponRepository.findByCouponIdAndUserId(couponId, userId).isPresent()) {
-            throw new ExistCouponException("이미 발급받은 쿠폰입니다.");
-        }
 
         if (coupon.getCapacity() < 1) {
             throw new CouponOutOfStockException("쿠폰이 모두 소진되었습니다.");
         }
 
         coupon.setCapacity(coupon.getCapacity() - 1);
+
+        if (userCouponRepository.findByCouponIdAndUserId(couponId, userId).isPresent()) {
+            throw new ExistCouponException("이미 발급받은 쿠폰입니다.");
+        }
 
         UserCouponEntity userCoupon = new UserCouponEntity(userId, couponId);
         userCouponRepository.save(userCoupon);

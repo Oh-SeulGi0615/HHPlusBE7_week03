@@ -10,6 +10,8 @@ import kr.hhplus.be.server.domain.user.repository.UserRepository;
 import kr.hhplus.be.server.exeption.customExceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -39,6 +41,7 @@ public class UserService {
         return userList;
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public PointServiceDto chargePoint(Long userId, Long point) {
         UserEntity userEntity = userRepository.findByUserId(userId).orElseThrow(
                 () -> new InvalidUserException("유저를 찾을 수 없습니다.")
@@ -59,7 +62,7 @@ public class UserService {
 
         Long updatedPoint = currentPoint + point;
         userEntity.setPoint(updatedPoint);
-        userRepository.save(userEntity);
+        userRepository.saveAndFlush(userEntity);
         return new PointServiceDto(userId, updatedPoint);
     }
 

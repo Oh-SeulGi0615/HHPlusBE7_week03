@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.payment.service;
 
+import kr.hhplus.be.server.aop.DistributedLock;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
 import kr.hhplus.be.server.domain.coupon.entity.UserCouponEntity;
 import kr.hhplus.be.server.domain.coupon.repository.UserCouponRepository;
@@ -102,7 +103,7 @@ public class PaymentService {
         }
     }
 
-    @Transactional
+    @DistributedLock(key = "CONFIRM_PAYMENT", waitTime = 5, leaseTime = 10)
     public PaymentServiceDto confirmPayment(Long userId, Long paymentId) {
         UserEntity userEntity = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
@@ -124,12 +125,14 @@ public class PaymentService {
             }
             Optional<GoodsStockEntity> goodsInfo = goodsStockRepository.findByGoodsId(order.getGoodsId());
             goodsInfo.get().setQuantity(goodsInfo.get().getQuantity() - order.getQuantity());
+            goodsStockRepository.save(goodsInfo.get());
 
             SalesHistoryEntity salesHistoryEntity = new SalesHistoryEntity(order.getGoodsId(), userId, order.getQuantity());
             salesHistoryRepository.save(salesHistoryEntity);
         }
 
         userEntity.setPoint(userEntity.getPoint() - paymentEntity.getTotalPrice());
+        userRepository.save(userEntity);
 
         if (paymentEntity.getCouponId() != null) {
             Optional<UserCouponEntity> userCouponEntity = userCouponRepository.findByCouponId(paymentEntity.getCouponId());
@@ -138,8 +141,10 @@ public class PaymentService {
 
         Optional<OrderEntity> orderEntity = orderRepository.findByOrderId(paymentEntity.getOrderId());
         orderEntity.get().setStatus(OrderStatus.PAID);
-
+        orderRepository.save(orderEntity.get());
         paymentEntity.setStatus(PaymentStatus.PAID);
+        paymentRepository.save(paymentEntity);
+
         return new PaymentServiceDto(
                 paymentEntity.getPaymentId(),
                 paymentEntity.getOrderId(),

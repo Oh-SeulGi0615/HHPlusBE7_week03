@@ -34,4 +34,9 @@ public class UserRepositoryImpl implements UserRepository {
     public UserEntity save(UserEntity userEntity) {
         return jpaUserRepository.save(userEntity);
     }
+
+    @Override
+    public UserEntity saveAndFlush(UserEntity userEntity) {
+        return jpaUserRepository.saveAndFlush(userEntity);
+    }
 }
