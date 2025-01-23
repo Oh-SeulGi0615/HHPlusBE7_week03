@@ -16,6 +16,8 @@ import kr.hhplus.be.server.exeption.customExceptions.ExistCouponException;
 import kr.hhplus.be.server.exeption.customExceptions.ExpiredCouponException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidCouponException;
 import org.redisson.api.RedissonClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CouponService {
+    private static final Logger log = LoggerFactory.getLogger(CouponService.class);
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
     private final RedissonClient redissonClient;
@@ -70,8 +73,7 @@ public class CouponService {
                 .collect(Collectors.toList());
     }
 
-    @DistributedLock(key = "test-lock", waitTime = 0, leaseTime = 30L)
-    @Transactional
+    @DistributedLock(key = "COUPON_ISSUE", waitTime = 5, leaseTime = 10)
     public CouponServiceDto issueCoupon(Long userId, Long couponId) {
         CouponEntity coupon = couponRepository.findByCouponId(couponId)
                 .orElseThrow(() -> new InvalidCouponException("존재하지 않는 쿠폰입니다."));
@@ -84,6 +86,7 @@ public class CouponService {
             throw new CouponOutOfStockException("쿠폰이 모두 소진되었습니다.");
         }
         coupon.setCapacity(coupon.getCapacity() - 1);
+        couponRepository.save(coupon);
 
         UserCouponEntity userCoupon = new UserCouponEntity(userId, couponId);
         userCouponRepository.save(userCoupon);

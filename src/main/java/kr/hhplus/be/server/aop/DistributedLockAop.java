@@ -1,43 +1,49 @@
 package kr.hhplus.be.server.aop;
+import java.util.concurrent.TimeUnit;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Method;
 
 @Aspect
 @Component
+@EnableAspectJAutoProxy
 public class DistributedLockAop {
-    @Autowired
     private final RedissonClient redissonClient;
 
     public DistributedLockAop(RedissonClient redissonClient) {
-        this.redissonClient = redissonClient;}
+        this.redissonClient = redissonClient;
+    }
 
     @Around("@annotation(distributedLock)")
-    public Object distributedLock(ProceedingJoinPoint joinPoint, DistributedLock distributedLock) throws Throwable {
-        System.out.println("AOP 진입");
-        String lockKey = distributedLock.key();
-        RLock rLock = redissonClient.getLock(lockKey);
+    public Object aroundLock(ProceedingJoinPoint pjp, DistributedLock distributedLock) throws Throwable {
+        System.out.println("AOP start");
 
-        boolean available = false;
+        String key = distributedLock.key();
+        long waitTime = distributedLock.waitTime();
+        long leaseTime = distributedLock.leaseTime();
+        TimeUnit timeUnit = distributedLock.timeUnit();
+
+        RLock lock = redissonClient.getLock(key);
+        boolean acquired = false;
+
         try {
-            available = rLock.tryLock(distributedLock.waitTime(), distributedLock.leaseTime(), distributedLock.timeUnit());
-            System.out.println("Locked");
-            if (!available) {
-                throw new IllegalStateException("다른 프로세스에서 이미 락을 사용 중입니다.");
+            acquired = lock.tryLock(waitTime, leaseTime, timeUnit);
+            if (!acquired) {
+                throw new RuntimeException("락 획득 실패: key=" + key);
             }
+            System.out.println("Locked");
+            return pjp.proceed();
 
-            return joinPoint.proceed();
         } finally {
-            rLock.unlock();
-            System.out.println("Unlocked");
+            if (acquired && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+                System.out.println("Unlocked");
+            }
         }
     }
 }

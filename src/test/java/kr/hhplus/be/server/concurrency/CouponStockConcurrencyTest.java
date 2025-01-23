@@ -139,8 +139,77 @@ public class CouponStockConcurrencyTest extends IntergrationTest {
 
         executorService.shutdown();
 
-        // 결과 검증
         System.out.println("OptimisticLockException 발생 유저 ID 리스트: " + optimisticLockExceptionList);
         assertTrue(optimisticLockExceptionList.size() > 0);
+    }
+
+    @Test
+    @DisplayName("[POST] /api/coupons/{couponId}/get - 쿠폰 발급 요청 동시성 테스트 - 분산 락")
+    void issueCouponDistributedConcurrencyTest() {
+        Long couponCapacity = 8L;
+        CouponEntity couponEntity = new CouponEntity(
+                "testCoupon1", 10L, couponCapacity, LocalDate.now().plusDays(10)
+        );
+
+        CouponEntity savedCoupon = jpaCouponRepository.save(couponEntity);
+
+        List<Long> successUserIds = Collections.synchronizedList(new ArrayList<>());
+        List<Long> failedUserIds = Collections.synchronizedList(new ArrayList<>());
+        List<String> errorMessages = Collections.synchronizedList(new ArrayList<>());
+
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+        Future<?>[] futures = new Future[10];
+        for (int i = 0; i < 10L; i++) {
+            final Long userId = (long) (i + 1);
+            futures[i] = executorService.submit(() -> {
+                try {
+                    var response =
+                            given()
+                                    .contentType(ContentType.JSON)
+                                    .pathParam("couponId", savedCoupon.getCouponId())
+                                    .body(userId)
+                                    .when()
+                                    .post("/api/coupons/{couponId}/get")
+                                    .then()
+                                    .log().all()
+                                    .extract();
+                    int statusCode = response.statusCode();
+                    if (statusCode == 200) {
+                        CouponResponse couponResp = response.as(CouponResponse.class);
+                        successUserIds.add(userId);
+                    } else if (statusCode == 400) {
+                        failedUserIds.add(userId);
+                        String errorMessage = response.body().asString();
+                        errorMessages.add(errorMessage);
+                    } else {
+                        String errorMessage = response.body().asString();
+                        errorMessages.add(errorMessage);
+                        failedUserIds.add(userId);
+                    }
+                } catch (Exception e) {
+                    failedUserIds.add(userId);
+                    errorMessages.add(e.getMessage());
+                }
+            });
+        }
+
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (Exception e) {
+                System.out.println("요청 실패: " + e.getMessage());
+            }
+        }
+
+        executorService.shutdown();
+
+        System.out.println("성공한 유저 IDs: " + successUserIds);
+        System.out.println("실패한 유저 IDs: " + failedUserIds);
+        System.out.println("에러 메시지: " + errorMessages);
+
+        assertTrue(errorMessages.stream().anyMatch(msg -> msg.contains("쿠폰이 모두 소진되었습니다.")));
+        assertEquals(couponCapacity, successUserIds.size());
+        assertEquals(10 - couponCapacity, failedUserIds.size());
     }
 }

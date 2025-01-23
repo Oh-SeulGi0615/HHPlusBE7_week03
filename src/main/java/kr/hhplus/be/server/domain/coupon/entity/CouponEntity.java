@@ -24,8 +24,8 @@ public class CouponEntity extends BaseEntity {
     @Column(nullable = false)
     private LocalDate dueDate;
 
-    @Version
-    private Long version;
+//    @Version
+//    private Long version;
 
     protected CouponEntity(){}
 

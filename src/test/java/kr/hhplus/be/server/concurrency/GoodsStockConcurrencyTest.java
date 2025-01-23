@@ -47,7 +47,6 @@ public class GoodsStockConcurrencyTest extends IntergrationTest {
         CountDownLatch latch = new CountDownLatch(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
-            final Long userId = (long) (i + 1);
             UserEntity userEntity = new UserEntity("test");
             userEntity.setPoint(500000L);
             UserEntity savedUser = jpaUserRepository.save(userEntity);
@@ -69,7 +68,7 @@ public class GoodsStockConcurrencyTest extends IntergrationTest {
                             given()
                                     .contentType(ContentType.JSON)
                                     .pathParam("paymentId", savedPayment.getPaymentId())
-                                    .body(userId)
+                                    .body(savedUser.getUserId())
                                     .when()
                                     .post("/api/payments/{paymentId}/pessimistic")
                                     .then()
@@ -77,14 +76,14 @@ public class GoodsStockConcurrencyTest extends IntergrationTest {
                                     .extract();
                     int statusCode = response.statusCode();
                     if (statusCode == 200) {
-                        successUserIds.add(userId);
+                        successUserIds.add(savedUser.getUserId());
                     } else {
-                        failedUserIds.add(userId);
+                        failedUserIds.add(savedUser.getUserId());
                         String errorMessage = response.body().asString();
                         errorMessages.add(errorMessage);
                     }
                 } catch (Exception e) {
-                    failedUserIds.add(userId);
+                    failedUserIds.add(savedUser.getUserId());
                     errorMessages.add(e.getMessage());
                 } finally {
                     latch.countDown();
@@ -126,7 +125,6 @@ public class GoodsStockConcurrencyTest extends IntergrationTest {
         CountDownLatch latch = new CountDownLatch(threadCount);
 
         for (int i = 0; i < threadCount; i++) {
-            final Long userId = (long) (i + 1);
             UserEntity userEntity = new UserEntity("test");
             userEntity.setPoint(500000L);
             UserEntity savedUser = jpaUserRepository.save(userEntity);
@@ -148,7 +146,7 @@ public class GoodsStockConcurrencyTest extends IntergrationTest {
                             given()
                                     .contentType(ContentType.JSON)
                                     .pathParam("paymentId", savedPayment.getPaymentId())
-                                    .body(userId)
+                                    .body(savedUser.getUserId())
                                     .when()
                                     .post("/api/payments/{paymentId}/optimistic")
                                     .then()
@@ -156,14 +154,14 @@ public class GoodsStockConcurrencyTest extends IntergrationTest {
                                     .extract();
                     int statusCode = response.statusCode();
                     if (statusCode == 200) {
-                        successUserIds.add(userId);
+                        successUserIds.add(savedUser.getUserId());
                     } else {
-                        failedUserIds.add(userId);
+                        failedUserIds.add(savedUser.getUserId());
                         String errorMessage = response.body().asString();
                         errorMessages.add(errorMessage);
                     }
                 } catch (Exception e) {
-                    failedUserIds.add(userId);
+                    failedUserIds.add(savedUser.getUserId());
                     errorMessages.add(e.getMessage());
                 } finally {
                     latch.countDown();

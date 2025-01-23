@@ -13,10 +13,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 public class ReddisonConfig {
     @Bean
     public RedissonClient redissonClient() {
-        RedissonClient redisson = null;
         Config config = new Config();
         config.useSingleServer().setAddress("redis://localhost:6379");
-        redisson = Redisson.create(config);
-        return redisson;
+        return Redisson.create(config);
     }
 }
