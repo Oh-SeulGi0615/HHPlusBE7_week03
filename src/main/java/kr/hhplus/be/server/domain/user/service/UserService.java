@@ -62,7 +62,7 @@ public class UserService {
 
         Long updatedPoint = currentPoint + point;
         userEntity.setPoint(updatedPoint);
-        userRepository.saveAndFlush(userEntity);
+        userRepository.save(userEntity);
         return new PointServiceDto(userId, updatedPoint);
     }
 
