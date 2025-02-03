@@ -162,16 +162,16 @@ public class CouponService {
 
     public CouponEntity checkValidateCoupon(Long couponId) {
         CouponEntity couponEntity = couponRepository.findByCouponId(couponId).orElseThrow(() -> new InvalidCouponException("존재하지 않는 쿠폰입니다."));
-        if (couponRepository.findByCouponId(couponId).get().getDueDate().isBefore(LocalDate.now())) {
+        if (couponEntity.getDueDate().isBefore(LocalDate.now())) {
             throw new ExpiredCouponException("만료된 쿠폰입니다.");
         }
         return couponEntity;
     }
 
-    public boolean checkDuplicateCoupon(Long userId, Long couponId) {
+    public void checkDuplicateCoupon(Long userId, Long couponId) {
         String userCouponKey = "coupon:user:" + userId + ":" + couponId;
         Boolean isNew = redisTemplate.opsForValue().setIfAbsent(userCouponKey, "1", 86400, TimeUnit.SECONDS);
-        if (isNew != null) {
+        if (Boolean.FALSE.equals(isNew)) {
             throw new ExistCouponException("이미 발급받은 쿠폰입니다.");
         }
 
@@ -179,12 +179,12 @@ public class CouponService {
             redisTemplate.delete(userCouponKey);
             throw new ExistCouponException("이미 발급받은 쿠폰입니다.");
         }
-        return true;
     }
 
     @Transactional
     public CouponEntity updateCouponInfo(Long userId, Long couponId) {
-        CouponEntity couponEntity = couponRepository.findByCouponId(couponId).get();
+        CouponEntity couponEntity = couponRepository.findByCouponId(couponId)
+                .orElseThrow(() -> new InvalidCouponException("쿠폰이 존재하지 않습니다."));
         couponEntity.setCapacity(couponEntity.getCapacity() - 1);
 
         UserCouponEntity userCouponEntity = new UserCouponEntity(userId, couponId);

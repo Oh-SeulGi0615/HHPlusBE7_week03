@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain.coupon.service;
 
+import kr.hhplus.be.server.exeption.customExceptions.CouponOutOfStockException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,14 +12,13 @@ public class CouponInventoryService {
         this.redisTemplate = redisTemplate;
     }
 
-    public boolean decreaseCouponStock(Long couponId) {
+    public void decreaseCouponStock(Long couponId) {
         String couponStockKey = "coupon:stock:" + couponId;
         Long stock = redisTemplate.opsForValue().decrement(couponStockKey);
 
-        if (stock == null || stock < 0) {
+        if (stock < 0) {
             redisTemplate.opsForValue().increment(couponStockKey);
-            return false;
+            throw new CouponOutOfStockException("쿠폰이 모두 소진되었습니다.");
         }
-        return true;
     }
 }
