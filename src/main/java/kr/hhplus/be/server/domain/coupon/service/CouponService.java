@@ -1,7 +1,5 @@
 package kr.hhplus.be.server.domain.coupon.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import kr.hhplus.be.server.aop.DistributedLock;
 import kr.hhplus.be.server.api.request.GetCouponRequest;
 import kr.hhplus.be.server.api.response.UserCouponResponse;
@@ -15,15 +13,15 @@ import kr.hhplus.be.server.exeption.customExceptions.CouponOutOfStockException;
 import kr.hhplus.be.server.exeption.customExceptions.ExistCouponException;
 import kr.hhplus.be.server.exeption.customExceptions.ExpiredCouponException;
 import kr.hhplus.be.server.exeption.customExceptions.InvalidCouponException;
-import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,15 +29,12 @@ public class CouponService {
     private static final Logger log = LoggerFactory.getLogger(CouponService.class);
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
-    private final RedissonClient redissonClient;
+    private final StringRedisTemplate redisTemplate;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public CouponService(CouponRepository couponRepository, UserCouponRepository userCouponRepository, RedissonClient redissonClient) {
+    public CouponService(CouponRepository couponRepository, UserCouponRepository userCouponRepository, StringRedisTemplate redisTemplate) {
         this.couponRepository = couponRepository;
         this.userCouponRepository = userCouponRepository;
-        this.redissonClient = redissonClient;
+        this.redisTemplate = redisTemplate;
     }
 
     public CouponServiceDto createCoupon(String couponName, Long discountRate, Long capacity, LocalDate dueDate) {
@@ -163,5 +158,38 @@ public class CouponService {
 
         myCoupon.setStatus(UserCouponStatus.USED);
         return new UserCouponResponse(myCoupon.getUserId(), myCoupon.getCouponId(), myCoupon.isStatus());
+    }
+
+    public CouponEntity checkValidateCoupon(Long couponId) {
+        CouponEntity couponEntity = couponRepository.findByCouponId(couponId).orElseThrow(() -> new InvalidCouponException("존재하지 않는 쿠폰입니다."));
+        if (couponRepository.findByCouponId(couponId).get().getDueDate().isBefore(LocalDate.now())) {
+            throw new ExpiredCouponException("만료된 쿠폰입니다.");
+        }
+        return couponEntity;
+    }
+
+    public boolean checkDuplicateCoupon(Long userId, Long couponId) {
+        String userCouponKey = "coupon:user:" + userId + ":" + couponId;
+        Boolean isNew = redisTemplate.opsForValue().setIfAbsent(userCouponKey, "1", 86400, TimeUnit.SECONDS);
+        if (isNew != null) {
+            throw new ExistCouponException("이미 발급받은 쿠폰입니다.");
+        }
+
+        if (userCouponRepository.findByCouponIdAndUserId(couponId, userId).isPresent()) {
+            redisTemplate.delete(userCouponKey);
+            throw new ExistCouponException("이미 발급받은 쿠폰입니다.");
+        }
+        return true;
+    }
+
+    @Transactional
+    public CouponEntity updateCouponInfo(Long userId, Long couponId) {
+        CouponEntity couponEntity = couponRepository.findByCouponId(couponId).get();
+        couponEntity.setCapacity(couponEntity.getCapacity() - 1);
+
+        UserCouponEntity userCouponEntity = new UserCouponEntity(userId, couponId);
+        userCouponRepository.save(userCouponEntity);
+
+        return couponEntity;
     }
 }
