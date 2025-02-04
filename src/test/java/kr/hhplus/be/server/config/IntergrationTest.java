@@ -20,6 +20,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+import java.util.Objects;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class IntergrationTest {
@@ -71,6 +74,9 @@ public class IntergrationTest {
     @Autowired
     protected CouponService couponService;
 
+    @Autowired
+    protected StringRedisTemplate redisTemplate;
+
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
@@ -87,5 +93,6 @@ public class IntergrationTest {
         jpaOrderDetailRepository.deleteAllInBatch();
         jpaUserCouponRepository.deleteAllInBatch();
         jpaUserRepository.deleteAllInBatch();
+        redisTemplate.getConnectionFactory().getConnection().flushDb();
     }
 }

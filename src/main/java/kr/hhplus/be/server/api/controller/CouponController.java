@@ -4,6 +4,7 @@ import kr.hhplus.be.server.api.request.CreateCouponRequest;
 import kr.hhplus.be.server.api.response.CouponResponse;
 import kr.hhplus.be.server.domain.coupon.dto.CouponServiceDto;
 import kr.hhplus.be.server.domain.coupon.service.CouponService;
+import kr.hhplus.be.server.facade.CouponFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +15,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class CouponController {
     private final CouponService couponService;
+    private final CouponFacade couponFacade;
 
-    public CouponController(CouponService couponService) {
+    public CouponController(CouponService couponService, CouponFacade couponFacade) {
         this.couponService = couponService;
+        this.couponFacade = couponFacade;
     }
 
     @PostMapping("/coupons/create")
@@ -56,37 +59,9 @@ public class CouponController {
 
     @PostMapping("/coupons/{couponId}/get")
     public ResponseEntity<Object> issueCoupon(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
-        CouponServiceDto response = couponService.issueCoupon(userId, couponId);
+        CouponServiceDto response = couponFacade.issueCoupon(userId, couponId);
 
-        CouponResponse couponResponse = new  CouponResponse(
-                response.getCouponId(),
-                response.getCouponName(),
-                response.getDiscountRate(),
-                response.getCapacity(),
-                response.getDueDate()
-        );
-        return ResponseEntity.ok(couponResponse);
-    }
-
-    @PostMapping("/coupons/{couponId}/get/optimistic")
-    public ResponseEntity<Object> issueCouponOptimistic(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
-        CouponServiceDto response = couponService.issueCouponOptimistic(userId, couponId);
-
-        CouponResponse couponResponse = new  CouponResponse(
-                response.getCouponId(),
-                response.getCouponName(),
-                response.getDiscountRate(),
-                response.getCapacity(),
-                response.getDueDate()
-        );
-        return ResponseEntity.ok(couponResponse);
-    }
-
-    @PostMapping("/coupons/{couponId}/get/pessimistic")
-    public ResponseEntity<Object> issueCouponPessimistic(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
-        CouponServiceDto response = couponService.issueCouponPessimistic(userId, couponId);
-
-        CouponResponse couponResponse = new  CouponResponse(
+        CouponResponse couponResponse = new CouponResponse(
                 response.getCouponId(),
                 response.getCouponName(),
                 response.getDiscountRate(),
