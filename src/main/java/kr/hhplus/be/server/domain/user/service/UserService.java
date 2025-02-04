@@ -18,12 +18,10 @@ import java.util.List;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final UserCouponRepository userCouponRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserCouponRepository userCouponRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.userCouponRepository = userCouponRepository;
     }
 
     public UserServiceDto createUser(String userName) {
@@ -34,11 +32,6 @@ public class UserService {
         UserEntity savedUser = userRepository.save(userEntity);
 
         return new UserServiceDto(savedUser.getUserId(), savedUser.getUserName(), savedUser.getPoint());
-    }
-
-    public List<UserEntity> getAllUser() {
-        List<UserEntity> userList = userRepository.findAll();
-        return userList;
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -74,15 +67,9 @@ public class UserService {
         return new PointServiceDto(userId, currentPoint);
     }
 
-    public List<UserCouponServiceDto> checkAllMyCoupon(Long userId) {
+    public void checkValidateUser(Long userId) {
         UserEntity userEntity = userRepository.findByUserId(userId).orElseThrow(
                 () -> new InvalidUserException("유저를 찾을 수 없습니다.")
         );
-        List<UserCouponEntity> myCouponList = userCouponRepository.findAllByUserId(userEntity.getUserId());
-        return myCouponList.stream().map(userCouponEntity -> new UserCouponServiceDto(
-                userCouponEntity.getUserId(),
-                userCouponEntity.getCouponId(),
-                userCouponEntity.isStatus()
-        )).toList();
     }
 }

@@ -26,7 +26,7 @@ public class CouponStockConcurrencyTest extends IntergrationTest {
     @Test
     @DisplayName("[POST] /api/coupons/{couponId}/get - 쿠폰 발급 요청 동시성 테스트")
     void issueCouponDistributedConcurrencyTest() {
-        Long couponCapacity = 8L;
+        Long couponCapacity = 7L;
         CouponEntity couponEntity = new CouponEntity(
                 "testCoupon1", 10L, couponCapacity, LocalDate.now().plusDays(10)
         );
