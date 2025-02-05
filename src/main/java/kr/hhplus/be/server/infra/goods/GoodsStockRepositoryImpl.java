@@ -26,16 +26,6 @@ public class GoodsStockRepositoryImpl implements GoodsStockRepository {
     }
 
     @Override
-    public Optional<GoodsStockEntity> findByGoodsIdOptimistic(Long goodsId) {
-        return jpaGoodsStockRepository.findByGoodsIdOptimistic(goodsId);
-    }
-
-    @Override
-    public Optional<GoodsStockEntity> findByGoodsIdPessimistic(Long goodsId) {
-        return jpaGoodsStockRepository.findByGoodsIdPessimistic(goodsId);
-    }
-
-    @Override
     public List<GoodsStockEntity> findAll() {
         return jpaGoodsStockRepository.findAll();
     }

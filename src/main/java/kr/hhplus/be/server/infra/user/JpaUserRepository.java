@@ -15,7 +15,5 @@ import java.util.Optional;
 public interface JpaUserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByUserName(String userName);
 
-    @Lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT)
-    @Query("select u from UserEntity u where u.userId = :userId")
     Optional<UserEntity> findByUserId(@Param("userId") Long userId);
 }

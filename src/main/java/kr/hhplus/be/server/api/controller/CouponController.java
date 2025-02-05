@@ -14,18 +14,16 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 public class CouponController {
-    private final CouponService couponService;
     private final CouponFacade couponFacade;
 
-    public CouponController(CouponService couponService, CouponFacade couponFacade) {
-        this.couponService = couponService;
+    public CouponController(CouponFacade couponFacade) {
         this.couponFacade = couponFacade;
     }
 
     @PostMapping("/coupons/create")
     public ResponseEntity<Object> createCoupon(@RequestBody CreateCouponRequest createCouponRequest) {
 
-        CouponServiceDto response = couponService.createCoupon(
+        CouponServiceDto response = couponFacade.createCoupon(
                 createCouponRequest.getCouponName(),
                 createCouponRequest.getDiscountRate(),
                 createCouponRequest.getCapacity(),
@@ -45,7 +43,7 @@ public class CouponController {
 
     @GetMapping("/coupons")
     public List<CouponResponse> allCouponList() {
-        List<CouponServiceDto> couponList = couponService.allCouponList();
+        List<CouponServiceDto> couponList = couponFacade.allCouponList();
         return couponList.stream()
                 .map(coupon -> new CouponResponse(
                         coupon.getCouponId(),
@@ -58,8 +56,8 @@ public class CouponController {
     }
 
     @PostMapping("/coupons/{couponId}/get")
-    public ResponseEntity<Object> issueCoupon(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
-        CouponServiceDto response = couponFacade.issueCoupon(userId, couponId);
+    public ResponseEntity<Object> requestCoupon(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
+        CouponServiceDto response = couponFacade.requestCoupon(userId, couponId);
 
         CouponResponse couponResponse = new CouponResponse(
                 response.getCouponId(),

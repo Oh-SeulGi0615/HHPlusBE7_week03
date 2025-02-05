@@ -6,6 +6,7 @@ import kr.hhplus.be.server.api.response.SalesHistoryResponse;
 import kr.hhplus.be.server.domain.goods.dto.GoodsServiceDto;
 import kr.hhplus.be.server.domain.goods.service.GoodsService;
 import kr.hhplus.be.server.domain.goods.dto.SalesHistoryServiceDto;
+import kr.hhplus.be.server.facade.GoodsFacade;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,34 +16,34 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 public class GoodsController {
-    private final GoodsService goodsService;
+    private final GoodsFacade goodsFacade;
 
-    public GoodsController(GoodsService goodsService) {
-        this.goodsService = goodsService;
+    public GoodsController(GoodsFacade goodsFacade) {
+        this.goodsFacade = goodsFacade;
     }
 
     @PostMapping("/goods/create")
     public ResponseEntity<Object> createGoods(@RequestBody GoodsRequest goodsRequest) {
-        GoodsServiceDto response = goodsService.createGoods(goodsRequest.getGoodsName(), goodsRequest.getPrice(), goodsRequest.getQuantity());
+        GoodsServiceDto response = goodsFacade.createGoods(goodsRequest.getGoodsName(), goodsRequest.getPrice(), goodsRequest.getQuantity());
         GoodsResponse goodsResponse = new GoodsResponse(response.getGoodsId(), response.getGoodsName(), response.getPrice(), response.getQuantity());
         return ResponseEntity.ok(goodsResponse);
     }
 
     @GetMapping("/goods")
     public List<GoodsServiceDto> getAllGoods() {
-        return goodsService.getAllGoods();
+        return goodsFacade.getAllGoods();
     }
 
     @GetMapping("/goods/{goodsId}")
     public ResponseEntity<Object> getOneGoodsInfo(@PathVariable("goodsId") Long goodsId) {
-        GoodsServiceDto response = goodsService.getOneGoodsInfo(goodsId);
+        GoodsServiceDto response = goodsFacade.getOneGoodsInfo(goodsId);
         GoodsResponse goodsResponse = new GoodsResponse(response.getGoodsId(), response.getGoodsName(), response.getPrice(), response.getQuantity());
         return ResponseEntity.ok(goodsResponse);
     }
 
     @GetMapping("/goods/best")
     public List<SalesHistoryResponse> getBestGoods() {
-        List<SalesHistoryServiceDto> best10Goods = goodsService.getBest10Goods();
+        List<SalesHistoryServiceDto> best10Goods = goodsFacade.getBest10Goods();
         return best10Goods.stream().map(salesHistoryServiceDto -> new SalesHistoryResponse(
                 salesHistoryServiceDto.getSalesHistoryId(), salesHistoryServiceDto.getGoodsId(), salesHistoryServiceDto.getUserId(), salesHistoryServiceDto.getQuantity()
         )).collect(Collectors.toList());

@@ -2,10 +2,13 @@ package kr.hhplus.be.server.facade;
 
 import kr.hhplus.be.server.domain.coupon.dto.CouponServiceDto;
 import kr.hhplus.be.server.domain.coupon.entity.CouponEntity;
+import kr.hhplus.be.server.domain.coupon.entity.UserCouponEntity;
 import kr.hhplus.be.server.domain.coupon.service.CouponInventoryService;
 import kr.hhplus.be.server.domain.coupon.service.CouponService;
-import kr.hhplus.be.server.exeption.customExceptions.CouponOutOfStockException;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class CouponFacade {
@@ -17,17 +20,24 @@ public class CouponFacade {
         this.couponInventoryService = couponInventoryService;
     }
 
-    public CouponServiceDto issueCoupon(Long userId, Long couponId) {
+    public CouponServiceDto createCoupon(String couponName, Long discountRate, Long capacity, LocalDate dueDate) {
+        return couponService.createCoupon(couponName, discountRate, capacity, dueDate);
+    }
+
+    public List<CouponServiceDto> allCouponList() {
+        return couponService.allCouponList();
+    }
+
+    public CouponServiceDto requestCoupon(Long userId, Long couponId) {
         CouponEntity couponEntity = couponService.checkValidateCoupon(couponId);
         couponService.checkDuplicateCoupon(userId, couponId);
-        couponInventoryService.issueCoupon(couponId, couponEntity.getCapacity(), userId);
-        CouponEntity issuedCoupon = couponService.updateCouponInfo(userId, couponId);
+        couponInventoryService.enqueueUser(couponId, userId);
         return new CouponServiceDto(
                 couponId,
-                issuedCoupon.getCouponName(),
-                issuedCoupon.getDiscountRate(),
-                issuedCoupon.getCapacity(),
-                issuedCoupon.getDueDate()
+                couponEntity.getCouponName(),
+                couponEntity.getDiscountRate(),
+                couponEntity.getCapacity(),
+                couponEntity.getDueDate()
         );
     }
 }

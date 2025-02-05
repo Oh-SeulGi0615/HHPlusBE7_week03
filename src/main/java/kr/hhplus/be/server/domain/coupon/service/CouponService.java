@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CouponService {
-    private static final Logger log = LoggerFactory.getLogger(CouponService.class);
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
     private final StringRedisTemplate redisTemplate;
@@ -66,21 +65,6 @@ public class CouponService {
                         coupon.getDueDate()
                 ))
                 .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public UserCouponResponse useCoupon(GetCouponRequest getCouponRequest) {
-       UserCouponEntity myCoupon = userCouponRepository.findByCouponIdAndUserId(
-                getCouponRequest.getCouponId(), getCouponRequest.getUserId()
-        ).orElseThrow(() -> new InvalidCouponException("존재하지 않는 쿠폰입니다."));
-
-       if (couponRepository.findByCouponId(myCoupon.getCouponId()).get().getDueDate().isBefore(LocalDate.now())) {
-           myCoupon.setStatus(UserCouponStatus.EXPIRED);
-           throw new ExpiredCouponException("만료된 쿠폰입니다.");
-       }
-
-        myCoupon.setStatus(UserCouponStatus.USED);
-        return new UserCouponResponse(myCoupon.getUserId(), myCoupon.getCouponId(), myCoupon.isStatus());
     }
 
     public CouponEntity checkValidateCoupon(Long couponId) {

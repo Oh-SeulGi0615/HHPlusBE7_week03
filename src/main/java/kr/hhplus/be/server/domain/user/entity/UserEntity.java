@@ -16,9 +16,6 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false)
     private Long point;
 
-    @Version
-    private Long version;
-
     protected UserEntity(){}
 
     public UserEntity(String name) {

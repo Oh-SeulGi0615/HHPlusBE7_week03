@@ -8,8 +8,6 @@ import java.util.Optional;
 public interface GoodsStockRepository {
     Optional<GoodsStockEntity> findByGoodsStockId(Long goodsStockId);
     Optional<GoodsStockEntity> findByGoodsId(Long goodsId);
-    Optional<GoodsStockEntity> findByGoodsIdOptimistic(Long goodsId);
-    Optional<GoodsStockEntity> findByGoodsIdPessimistic(Long goodsId);
     List<GoodsStockEntity> findAll();
     GoodsStockEntity save(GoodsStockEntity goodsStockEntity);
 }
