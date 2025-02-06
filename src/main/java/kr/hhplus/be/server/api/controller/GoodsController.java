@@ -4,6 +4,7 @@ import kr.hhplus.be.server.api.request.GoodsRequest;
 import kr.hhplus.be.server.api.response.GoodsResponse;
 import kr.hhplus.be.server.api.response.SalesHistoryResponse;
 import kr.hhplus.be.server.domain.goods.dto.GoodsServiceDto;
+import kr.hhplus.be.server.domain.goods.entity.SalesHistoryEntity;
 import kr.hhplus.be.server.domain.goods.service.GoodsService;
 import kr.hhplus.be.server.domain.goods.dto.SalesHistoryServiceDto;
 import kr.hhplus.be.server.facade.GoodsFacade;
@@ -43,7 +44,7 @@ public class GoodsController {
 
     @GetMapping("/goods/best")
     public List<SalesHistoryResponse> getBestGoods() {
-        List<SalesHistoryServiceDto> best10Goods = goodsFacade.getBest10Goods();
+        List<SalesHistoryEntity> best10Goods = goodsFacade.getCachedBest10Goods();
         return best10Goods.stream().map(salesHistoryServiceDto -> new SalesHistoryResponse(
                 salesHistoryServiceDto.getSalesHistoryId(), salesHistoryServiceDto.getGoodsId(), salesHistoryServiceDto.getUserId(), salesHistoryServiceDto.getQuantity()
         )).collect(Collectors.toList());

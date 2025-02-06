@@ -2,7 +2,9 @@ package kr.hhplus.be.server.facade;
 
 import kr.hhplus.be.server.domain.goods.dto.GoodsServiceDto;
 import kr.hhplus.be.server.domain.goods.dto.SalesHistoryServiceDto;
+import kr.hhplus.be.server.domain.goods.entity.SalesHistoryEntity;
 import kr.hhplus.be.server.domain.goods.service.GoodsService;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +29,13 @@ public class GoodsFacade {
         return goodsService.getOneGoodsInfo(goodsId);
     }
 
-    public List<SalesHistoryServiceDto> getBest10Goods() {
-        return goodsService.getBest10Goods();
+    public List<SalesHistoryEntity> getCachedBest10Goods() {
+        return goodsService.getCachedBest10Goods();
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void cacheBest10Goods() {
+        List<SalesHistoryEntity> best10Goods = goodsService.getBest10Goods();
+        goodsService.cacheBest10Goods(best10Goods);
     }
 }

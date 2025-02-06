@@ -13,12 +13,14 @@ import kr.hhplus.be.server.exeption.customExceptions.InvalidGoodsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,12 +28,14 @@ public class GoodsService {
     private final GoodsRepository goodsRepository;
     private final SalesHistoryRepository salesHistoryRepository;
     private final GoodsStockRepository goodsStockRepository;
+    private final RedisTemplate<String, List<SalesHistoryEntity>> redisTemplate;
 
     @Autowired
-    public GoodsService(GoodsRepository goodsRepository, SalesHistoryRepository salesHistoryRepository, GoodsStockRepository goodsStockRepository) {
+    public GoodsService(GoodsRepository goodsRepository, SalesHistoryRepository salesHistoryRepository, GoodsStockRepository goodsStockRepository, RedisTemplate<String, List<SalesHistoryServiceDto>> redisTemplate, RedisTemplate<String, List<SalesHistoryEntity>> redisTemplate1) {
         this.goodsRepository = goodsRepository;
         this.salesHistoryRepository = salesHistoryRepository;
         this.goodsStockRepository = goodsStockRepository;
+        this.redisTemplate = redisTemplate1;
     }
 
     public GoodsServiceDto createGoods(String goodsName, Long price, Long quantity) {
@@ -84,7 +88,7 @@ public class GoodsService {
         );
     }
 
-    public List<SalesHistoryServiceDto> getBest10Goods() {
+    public List<SalesHistoryEntity> getBest10Goods() {
         LocalDateTime endDate = LocalDateTime.now().toLocalDate().atStartOfDay();
         LocalDateTime startDate = endDate.minusDays(3);
 
@@ -94,10 +98,19 @@ public class GoodsService {
                 startDate, endDate, topTen
         );
 
-        List<SalesHistoryServiceDto> salesHistoryServiceDtoList = result.stream().map(salesHistoryEntity -> new SalesHistoryServiceDto(
-                salesHistoryEntity.getSalesHistoryId(), salesHistoryEntity.getGoodsId(), salesHistoryEntity.getUserId(), salesHistoryEntity.getQuantity()
-        )).collect(Collectors.toList());
+        return result;
+    }
 
-        return salesHistoryServiceDtoList;
+    public void cacheBest10Goods(List<SalesHistoryEntity> goodsList) {
+        redisTemplate.opsForValue().set("BEST_10_GOODS", goodsList, 24L, TimeUnit.HOURS);
+    }
+
+    public List<SalesHistoryEntity> getCachedBest10Goods() {
+        List<SalesHistoryEntity> cachedBestGoods = redisTemplate.opsForValue().get("BEST_10_GOODS");
+        if (cachedBestGoods == null) {
+            cachedBestGoods = getBest10Goods();
+            redisTemplate.opsForValue().set("BEST_10_GOODS", cachedBestGoods, 24L, TimeUnit.HOURS);
+        }
+        return cachedBestGoods;
     }
 }
