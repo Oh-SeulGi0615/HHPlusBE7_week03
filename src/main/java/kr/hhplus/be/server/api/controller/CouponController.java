@@ -2,6 +2,7 @@ package kr.hhplus.be.server.api.controller;
 
 import kr.hhplus.be.server.api.request.CreateCouponRequest;
 import kr.hhplus.be.server.api.response.CouponResponse;
+import kr.hhplus.be.server.api.response.CouponStatusResponse;
 import kr.hhplus.be.server.domain.coupon.dto.CouponServiceDto;
 import kr.hhplus.be.server.domain.coupon.service.CouponService;
 import kr.hhplus.be.server.facade.CouponFacade;
@@ -55,7 +56,7 @@ public class CouponController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/coupons/{couponId}/get")
+    @PostMapping("/coupons/{couponId}/request")
     public ResponseEntity<Object> requestCoupon(@PathVariable("couponId") Long couponId, @RequestBody Long userId) {
         CouponServiceDto response = couponFacade.requestCoupon(userId, couponId);
 
@@ -67,5 +68,13 @@ public class CouponController {
                 response.getDueDate()
         );
         return ResponseEntity.ok(couponResponse);
+    }
+
+    @GetMapping("/coupons/{couponId}/status")
+    public ResponseEntity<CouponStatusResponse> getCouponStatus(@PathVariable Long couponId,
+                                                                @PathVariable Long userId) {
+        boolean issued = couponFacade.isCouponIssued(userId, couponId);
+        CouponStatusResponse response = new CouponStatusResponse(userId, couponId, issued);
+        return ResponseEntity.ok(response);
     }
 }

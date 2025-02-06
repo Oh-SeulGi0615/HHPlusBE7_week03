@@ -40,4 +40,8 @@ public class CouponFacade {
                 couponEntity.getDueDate()
         );
     }
+
+    public boolean isCouponIssued(Long userId, Long couponId) {
+        return couponService.isCouponIssued(userId, couponId);
+    }
 }

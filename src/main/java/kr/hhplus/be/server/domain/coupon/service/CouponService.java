@@ -88,6 +88,10 @@ public class CouponService {
         }
     }
 
+    public boolean isCouponIssued(Long userId, Long couponId) {
+        return userCouponRepository.findByCouponIdAndUserId(couponId, userId).isPresent();
+    }
+
     @Transactional
     public CouponEntity updateCouponInfo(Long userId, Long couponId) {
         CouponEntity couponEntity = couponRepository.findByCouponId(couponId)

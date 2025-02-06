@@ -135,7 +135,7 @@ public class PaymentService {
         userRepository.save(userEntity);
 
         if (paymentEntity.getCouponId() != null) {
-            Optional<UserCouponEntity> userCouponEntity = userCouponRepository.findByCouponId(paymentEntity.getCouponId());
+            Optional<UserCouponEntity> userCouponEntity = userCouponRepository.findByCouponIdAndUserId(paymentEntity.getCouponId(), userId);
             userCouponEntity.get().setStatus(UserCouponStatus.USED);
         }
 
