@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.concurrency;
 
 import io.restassured.http.ContentType;
-import kr.hhplus.be.server.api.response.CouponResponse;
 import kr.hhplus.be.server.config.IntergrationTest;
 import kr.hhplus.be.server.domain.coupon.entity.CouponEntity;
 import kr.hhplus.be.server.domain.coupon.entity.UserCouponEntity;
@@ -15,7 +14,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.*;
 

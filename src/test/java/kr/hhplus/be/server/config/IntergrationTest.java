@@ -2,6 +2,7 @@ package kr.hhplus.be.server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
+import kr.hhplus.be.server.domain.coupon.service.CouponInventoryService;
 import kr.hhplus.be.server.domain.coupon.service.CouponService;
 import kr.hhplus.be.server.domain.goods.service.GoodsService;
 import kr.hhplus.be.server.domain.order.service.OrderService;
@@ -73,6 +74,9 @@ public class IntergrationTest {
 
     @Autowired
     protected CouponService couponService;
+
+    @Autowired
+    protected CouponInventoryService couponInventoryService;
 
     @Autowired
     protected StringRedisTemplate redisTemplate;

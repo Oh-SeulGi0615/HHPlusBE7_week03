@@ -110,7 +110,7 @@ public class CouponInventoryService {
         return capacity;
     }
 
-    @Scheduled(fixedRate = 300)
+    @Scheduled(fixedRate = 1000)
     public void processCouponQueue() {
         Set<String> couponKeys = redisTemplate.keys("coupon:queue:*");
         if (couponKeys != null) {

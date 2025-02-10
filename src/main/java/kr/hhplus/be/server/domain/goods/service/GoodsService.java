@@ -1,5 +1,8 @@
 package kr.hhplus.be.server.domain.goods.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hhplus.be.server.domain.goods.dto.GoodsServiceDto;
 import kr.hhplus.be.server.domain.goods.dto.SalesHistoryServiceDto;
 import kr.hhplus.be.server.domain.goods.entity.GoodsEntity;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,14 +32,16 @@ public class GoodsService {
     private final GoodsRepository goodsRepository;
     private final SalesHistoryRepository salesHistoryRepository;
     private final GoodsStockRepository goodsStockRepository;
-    private final RedisTemplate<String, List<SalesHistoryEntity>> redisTemplate;
+    private final StringRedisTemplate redisTemplate;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public GoodsService(GoodsRepository goodsRepository, SalesHistoryRepository salesHistoryRepository, GoodsStockRepository goodsStockRepository, RedisTemplate<String, List<SalesHistoryServiceDto>> redisTemplate, RedisTemplate<String, List<SalesHistoryEntity>> redisTemplate1) {
+    public GoodsService(GoodsRepository goodsRepository, SalesHistoryRepository salesHistoryRepository, GoodsStockRepository goodsStockRepository, StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
         this.goodsRepository = goodsRepository;
         this.salesHistoryRepository = salesHistoryRepository;
         this.goodsStockRepository = goodsStockRepository;
-        this.redisTemplate = redisTemplate1;
+        this.redisTemplate = redisTemplate;
+        this.objectMapper = objectMapper;
     }
 
     public GoodsServiceDto createGoods(String goodsName, Long price, Long quantity) {
@@ -102,15 +108,28 @@ public class GoodsService {
     }
 
     public void cacheBest10Goods(List<SalesHistoryEntity> goodsList) {
-        redisTemplate.opsForValue().set("BEST_10_GOODS", goodsList, 24L, TimeUnit.HOURS);
+        try {
+            String json = objectMapper.writeValueAsString(goodsList);
+            redisTemplate.opsForValue().set("BEST_10_GOODS", json, 24L, TimeUnit.HOURS);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     public List<SalesHistoryEntity> getCachedBest10Goods() {
-        List<SalesHistoryEntity> cachedBestGoods = redisTemplate.opsForValue().get("BEST_10_GOODS");
-        if (cachedBestGoods == null) {
-            cachedBestGoods = getBest10Goods();
-            redisTemplate.opsForValue().set("BEST_10_GOODS", cachedBestGoods, 24L, TimeUnit.HOURS);
+        String json = redisTemplate.opsForValue().get("BEST_10_GOODS");
+        if (json == null) {
+            List<SalesHistoryEntity> bestGoods = getBest10Goods();
+            cacheBest10Goods(bestGoods);
+            return bestGoods;
         }
-        return cachedBestGoods;
+        try {
+            return objectMapper.readValue(json, new TypeReference<List<SalesHistoryEntity>>() {});
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            List<SalesHistoryEntity> bestGoods = getBest10Goods();
+            cacheBest10Goods(bestGoods);
+            return bestGoods;
+        }
     }
 }
