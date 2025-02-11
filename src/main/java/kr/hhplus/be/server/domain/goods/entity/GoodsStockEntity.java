@@ -16,9 +16,6 @@ public class GoodsStockEntity extends BaseEntity {
     @Column(nullable = false)
     private Long quantity;
 
-    @Version
-    private Long version;
-
     protected GoodsStockEntity(){}
 
     public GoodsStockEntity(Long goodsId, Long quantity) {

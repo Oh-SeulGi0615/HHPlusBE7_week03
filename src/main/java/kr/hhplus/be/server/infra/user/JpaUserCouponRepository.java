@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface JpaUserCouponRepository extends JpaRepository<UserCouponEntity, Long> {
-    Optional<UserCouponEntity> findByCouponId(Long couponId);
+    List<UserCouponEntity> findByCouponId(Long couponId);
     List<UserCouponEntity> findAllByUserId(Long userId);
     Optional<UserCouponEntity> findByCouponIdAndUserId(Long couponId, Long userId);
 }

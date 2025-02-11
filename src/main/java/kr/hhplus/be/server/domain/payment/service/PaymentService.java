@@ -135,7 +135,7 @@ public class PaymentService {
         userRepository.save(userEntity);
 
         if (paymentEntity.getCouponId() != null) {
-            Optional<UserCouponEntity> userCouponEntity = userCouponRepository.findByCouponId(paymentEntity.getCouponId());
+            Optional<UserCouponEntity> userCouponEntity = userCouponRepository.findByCouponIdAndUserId(paymentEntity.getCouponId(), userId);
             userCouponEntity.get().setStatus(UserCouponStatus.USED);
         }
 
@@ -145,100 +145,6 @@ public class PaymentService {
         paymentEntity.setStatus(PaymentStatus.PAID);
         paymentRepository.save(paymentEntity);
 
-        return new PaymentServiceDto(
-                paymentEntity.getPaymentId(),
-                paymentEntity.getOrderId(),
-                paymentEntity.getCouponId(),
-                paymentEntity.getTotalPrice(),
-                paymentEntity.getStatus()
-        );
-    }
-
-    @Transactional
-    public PaymentServiceDto confirmPaymentOptimistic(Long userId, Long paymentId) {
-        UserEntity userEntity = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
-        PaymentEntity paymentEntity = paymentRepository.findByPaymentId(paymentId)
-                .orElseThrow(() -> new InvalidPaymentException("결제 정보를 찾을 수 없습니다."));
-
-        if (paymentEntity.getStatus() != PaymentStatus.WAITING) {
-            throw new AlreadyProcessedPaymentException("이미 처리 완료된 결제입니다.");
-        }
-
-        if (userEntity.getPoint() < paymentEntity.getTotalPrice()) {
-            throw new InsufficientPointException("잔액이 부족합니다.");
-        }
-
-        List<OrderDetailEntity> orderList = orderDetailRepository.findAllByOrderId(paymentEntity.getOrderId());
-        for (OrderDetailEntity order: orderList) {
-            if (goodsStockRepository.findByGoodsIdOptimistic(order.getGoodsId()).get().getQuantity() < order.getQuantity()) {
-                throw new GoodsOutOfStockException("재고가 부족합니다.");
-            }
-            Optional<GoodsStockEntity> goodsInfo = goodsStockRepository.findByGoodsIdOptimistic(order.getGoodsId());
-            goodsInfo.get().setQuantity(goodsInfo.get().getQuantity() - order.getQuantity());
-
-            SalesHistoryEntity salesHistoryEntity = new SalesHistoryEntity(order.getGoodsId(), userId, order.getQuantity());
-            salesHistoryRepository.save(salesHistoryEntity);
-        }
-
-        userEntity.setPoint(userEntity.getPoint() - paymentEntity.getTotalPrice());
-
-        if (paymentEntity.getCouponId() != null) {
-            Optional<UserCouponEntity> userCouponEntity = userCouponRepository.findByCouponId(paymentEntity.getCouponId());
-            userCouponEntity.get().setStatus(UserCouponStatus.USED);
-        }
-
-        Optional<OrderEntity> orderEntity = orderRepository.findByOrderId(paymentEntity.getOrderId());
-        orderEntity.get().setStatus(OrderStatus.PAID);
-
-        paymentEntity.setStatus(PaymentStatus.PAID);
-        return new PaymentServiceDto(
-                paymentEntity.getPaymentId(),
-                paymentEntity.getOrderId(),
-                paymentEntity.getCouponId(),
-                paymentEntity.getTotalPrice(),
-                paymentEntity.getStatus()
-        );
-    }
-
-    @Transactional
-    public PaymentServiceDto confirmPaymentPessimistic(Long userId, Long paymentId) {
-        UserEntity userEntity = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new InvalidUserException("유저를 찾을 수 없습니다."));
-        PaymentEntity paymentEntity = paymentRepository.findByPaymentId(paymentId)
-                .orElseThrow(() -> new InvalidPaymentException("결제 정보를 찾을 수 없습니다."));
-
-        if (paymentEntity.getStatus() != PaymentStatus.WAITING) {
-            throw new AlreadyProcessedPaymentException("이미 처리 완료된 결제입니다.");
-        }
-
-        if (userEntity.getPoint() < paymentEntity.getTotalPrice()) {
-            throw new InsufficientPointException("잔액이 부족합니다.");
-        }
-
-        List<OrderDetailEntity> orderList = orderDetailRepository.findAllByOrderId(paymentEntity.getOrderId());
-        for (OrderDetailEntity order: orderList) {
-            if (goodsStockRepository.findByGoodsIdPessimistic(order.getGoodsId()).get().getQuantity() < order.getQuantity()) {
-                throw new GoodsOutOfStockException("재고가 부족합니다.");
-            }
-            Optional<GoodsStockEntity> goodsInfo = goodsStockRepository.findByGoodsIdPessimistic(order.getGoodsId());
-            goodsInfo.get().setQuantity(goodsInfo.get().getQuantity() - order.getQuantity());
-
-            SalesHistoryEntity salesHistoryEntity = new SalesHistoryEntity(order.getGoodsId(), userId, order.getQuantity());
-            salesHistoryRepository.save(salesHistoryEntity);
-        }
-
-        userEntity.setPoint(userEntity.getPoint() - paymentEntity.getTotalPrice());
-
-        if (paymentEntity.getCouponId() != null) {
-            Optional<UserCouponEntity> userCouponEntity = userCouponRepository.findByCouponId(paymentEntity.getCouponId());
-            userCouponEntity.get().setStatus(UserCouponStatus.USED);
-        }
-
-        Optional<OrderEntity> orderEntity = orderRepository.findByOrderId(paymentEntity.getOrderId());
-        orderEntity.get().setStatus(OrderStatus.PAID);
-
-        paymentEntity.setStatus(PaymentStatus.PAID);
         return new PaymentServiceDto(
                 paymentEntity.getPaymentId(),
                 paymentEntity.getOrderId(),

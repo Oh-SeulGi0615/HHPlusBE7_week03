@@ -1,231 +1,150 @@
 package kr.hhplus.be.server.concurrency;
 
 import io.restassured.http.ContentType;
-import kr.hhplus.be.server.api.response.CouponResponse;
 import kr.hhplus.be.server.config.IntergrationTest;
 import kr.hhplus.be.server.domain.coupon.entity.CouponEntity;
+import kr.hhplus.be.server.domain.coupon.entity.UserCouponEntity;
+import kr.hhplus.be.server.domain.coupon.repository.UserCouponRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.concurrent.*;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 public class CouponStockConcurrencyTest extends IntergrationTest {
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    @Autowired
+    private UserCouponRepository userCouponRepository;
 
-    @Test
-    @DisplayName("[POST] /api/coupons/{couponId}/get/pessimistic - 쿠폰 발급 요청 동시성 테스트 - 비관적 락")
-    void issueCouponPessimisticConcurrencyTest() {
-        Long couponCapacity = 8L;
-        CouponEntity couponEntity = new CouponEntity(
-                "testCoupon1", 10L, couponCapacity, LocalDate.now().plusDays(10)
-        );
+    static class UserRequestLog {
+        Long userId;
+        LocalDateTime requestTime;
+        String result;
 
-        CouponEntity savedCoupon = jpaCouponRepository.save(couponEntity);
-
-        List<Long> successUserIds = Collections.synchronizedList(new ArrayList<>());
-        List<Long> failedUserIds = Collections.synchronizedList(new ArrayList<>());
-        List<String> errorMessages = Collections.synchronizedList(new ArrayList<>());
-
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-
-        Future<?>[] futures = new Future[10];
-        for (int i = 0; i < 10L; i++) {
-            final Long userId = (long) (i + 1);
-            futures[i] = executorService.submit(() -> {
-                try {
-                    var response =
-                            given()
-                                    .contentType(ContentType.JSON)
-                                    .pathParam("couponId", savedCoupon.getCouponId())
-                                    .body(userId)
-                                    .when()
-                                    .post("/api/coupons/{couponId}/get/pessimistic")
-                                    .then()
-                                    .log().all()
-                                    .extract();
-                    int statusCode = response.statusCode();
-                    if (statusCode == 200) {
-                        CouponResponse couponResp = response.as(CouponResponse.class);
-                        successUserIds.add(userId);
-                    } else if (statusCode == 400) {
-                        failedUserIds.add(userId);
-                        String errorMessage = response.body().asString();
-                        errorMessages.add(errorMessage);
-                    } else {
-                        failedUserIds.add(userId);
-                    }
-                } catch (Exception e) {
-                    failedUserIds.add(userId);
-                    errorMessages.add(e.getMessage());
-                }
-            });
+        UserRequestLog(Long userId, LocalDateTime requestTime, String result) {
+            this.userId = userId;
+            this.requestTime = requestTime;
+            this.result = result;
         }
 
-        for (Future<?> future : futures) {
-            try {
-                future.get();
-            } catch (Exception e) {
-                System.out.println("요청 실패: " + e.getMessage());
-            }
+        @Override
+        public String toString() {
+            return "UserID: " + userId + ", RequestTime: " + requestTime + ", Result: " + result;
         }
-
-        executorService.shutdown();
-
-        System.out.println("성공한 유저 IDs: " + successUserIds);
-        System.out.println("실패한 유저 IDs: " + failedUserIds);
-        System.out.println("에러 메시지: " + errorMessages);
-
-        assertTrue(errorMessages.stream().anyMatch(msg -> msg.contains("쿠폰이 모두 소진되었습니다.")));
-        assertEquals(couponCapacity, successUserIds.size());
-        assertEquals(10 - couponCapacity, failedUserIds.size());
     }
 
     @Test
-    @DisplayName("[POST] /api/coupons/{couponId}/get/optimistic - 쿠폰 발급 요청 동시성 테스트 - 낙관적 락")
-    void issueCouponOptimisticConcurrencyTest() throws InterruptedException{
-        Long couponCapacity = 3L;
+    @DisplayName("[POST] /api/coupons/{couponId}/get - 쿠폰 선착순 발급 요청 테스트")
+    void issueCouponConcurrencyTest() throws InterruptedException {
+        Long couponCapacity = 7L;
         CouponEntity couponEntity = new CouponEntity(
                 "testCoupon1", 10L, couponCapacity, LocalDate.now().plusDays(10)
         );
 
         CouponEntity savedCoupon = jpaCouponRepository.save(couponEntity);
+        List<UserRequestLog> requestLogs = Collections.synchronizedList(new ArrayList<>());
 
-        List<Long> failList = Collections.synchronizedList(new ArrayList<>());
-        List<Long> successList = Collections.synchronizedList(new ArrayList<>());
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        CountDownLatch latch = new CountDownLatch(1);
 
-        int threadCount = 5;
-        CountDownLatch readyLatch = new CountDownLatch(threadCount);
-        CountDownLatch startLatch = new CountDownLatch(1);
-        CountDownLatch doneLatch = new CountDownLatch(threadCount);
-
-        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-
-        for (int i = 0; i < threadCount; i++) {
+        for (int i = 0; i < 10L; i++) {
             final Long userId = (long) (i + 1);
             executorService.submit(() -> {
                 try {
-                    readyLatch.countDown();
-                    try {
-                        startLatch.await();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        return;
-                    }
-
+                    latch.await();
+                    LocalDateTime requestTime = LocalDateTime.now();
                     var response =
                             given()
                                     .contentType(ContentType.JSON)
                                     .pathParam("couponId", savedCoupon.getCouponId())
                                     .body(userId)
                                     .when()
-                                    .post(" /api/coupons/{couponId}/get/optimistic")
-                                    .then()
-                                    .log().all()
-                                    .extract()
-                                    .response();
-
-                    if (response.statusCode() == 200) {
-                        successList.add(userId);
-                    } else {
-                        failList.add(userId);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    doneLatch.countDown();
-                }
-            });
-        }
-
-        readyLatch.await();
-        startLatch.countDown();
-
-        doneLatch.await();
-        executorService.shutdown();
-
-        System.out.println("성공한 유저 IDs: " + successList);
-        System.out.println("실패한 유저 IDs: " + failList);
-        assertTrue(successList.size() == couponCapacity);
-    }
-
-    @Test
-    @DisplayName("[POST] /api/coupons/{couponId}/get - 쿠폰 발급 요청 동시성 테스트 - 분산 락")
-    void issueCouponDistributedConcurrencyTest() {
-        Long couponCapacity = 8L;
-        CouponEntity couponEntity = new CouponEntity(
-                "testCoupon1", 10L, couponCapacity, LocalDate.now().plusDays(10)
-        );
-
-        CouponEntity savedCoupon = jpaCouponRepository.save(couponEntity);
-
-        List<Long> successUserIds = Collections.synchronizedList(new ArrayList<>());
-        List<Long> failedUserIds = Collections.synchronizedList(new ArrayList<>());
-        List<String> errorMessages = Collections.synchronizedList(new ArrayList<>());
-
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-
-        Future<?>[] futures = new Future[10];
-        for (int i = 0; i < 10L; i++) {
-            final Long userId = (long) (i + 1);
-            futures[i] = executorService.submit(() -> {
-                try {
-                    var response =
-                            given()
-                                    .contentType(ContentType.JSON)
-                                    .pathParam("couponId", savedCoupon.getCouponId())
-                                    .body(userId)
-                                    .when()
-                                    .post("/api/coupons/{couponId}/get")
+                                    .post("/api/coupons/{couponId}/request")
                                     .then()
                                     .log().all()
                                     .extract();
                     int statusCode = response.statusCode();
                     if (statusCode == 200) {
-                        CouponResponse couponResp = response.as(CouponResponse.class);
-                        successUserIds.add(userId);
-                    } else if (statusCode == 400) {
-                        failedUserIds.add(userId);
-                        String errorMessage = response.body().asString();
-                        errorMessages.add(errorMessage);
+                        requestLogs.add(new UserRequestLog(userId, requestTime, "Success"));
                     } else {
                         String errorMessage = response.body().asString();
-                        errorMessages.add(errorMessage);
-                        failedUserIds.add(userId);
+                        requestLogs.add(new UserRequestLog(userId, requestTime, "Failed - " + errorMessage));
                     }
                 } catch (Exception e) {
-                    failedUserIds.add(userId);
-                    errorMessages.add(e.getMessage());
+                    requestLogs.add(new UserRequestLog(userId, LocalDateTime.now(), "Failed - " + e.getMessage()));
                 }
             });
         }
-
-        for (Future<?> future : futures) {
-            try {
-                future.get();
-            } catch (Exception e) {
-                System.out.println("요청 실패: " + e.getMessage());
-            }
-        }
+        latch.countDown();
 
         executorService.shutdown();
+        executorService.awaitTermination(10, TimeUnit.SECONDS);
 
-        System.out.println("성공한 유저 IDs: " + successUserIds);
-        System.out.println("실패한 유저 IDs: " + failedUserIds);
-        System.out.println("에러 메시지: " + errorMessages);
+        requestLogs.sort((log1, log2) -> log1.requestTime.compareTo(log2.requestTime));
+        System.out.println("1. 요청을 보낸 시간 기준 유저ID 별 성공여부");
+        requestLogs.forEach(System.out::println);
 
-        assertTrue(errorMessages.stream().anyMatch(msg -> msg.contains("쿠폰이 모두 소진되었습니다.")));
-        assertEquals(couponCapacity, successUserIds.size());
-        assertEquals(10 - couponCapacity, failedUserIds.size());
+        String queueKey = "coupon:queue:" + savedCoupon.getCouponId();
+        List<String> zsetUserIds = null;
+        try {
+            Set<ZSetOperations.TypedTuple<String>> tuples = redisTemplate.opsForZSet().rangeWithScores(queueKey, 0, -1);
+            System.out.println("\n2. 레디스 ZSET에 추가된 순서 기준 유저ID 별 스코어");
+            zsetUserIds = new ArrayList<>();
+            if (tuples != null && !tuples.isEmpty()) {
+                for (ZSetOperations.TypedTuple<String> tuple : tuples) {
+                    System.out.println("User: " + tuple.getValue() + ", Score: " + tuple.getScore());
+                    zsetUserIds.add(tuple.getValue());
+                }
+            } else {
+                System.out.println("Redis queue is empty.");
+            }
+        } catch (Exception e) {
+            System.err.println("Error while retrieving Redis ZSET for coupon "
+                    + savedCoupon.getCouponId() + ": " + e.getMessage());
+        }
+
+        Thread.sleep(3000);
+
+        List<UserCouponEntity> issuedCoupons = userCouponRepository.findByCouponId(savedCoupon.getCouponId());
+        System.out.println("\n3. userCoupon db 테이블 기준 유저ID 별 발급 시간");
+        List<UserCouponEntity> sortedCoupons = issuedCoupons.stream()
+                .sorted(Comparator.comparing(UserCouponEntity::getCreatedAt))
+                .toList();
+
+        List<String> dbUserIds = new ArrayList<>();
+        for (UserCouponEntity coupon : sortedCoupons) {
+            System.out.println("UserId: " + coupon.getUserId() + ", CreatedAt: " + coupon.getCreatedAt());
+            dbUserIds.add(String.valueOf(coupon.getUserId()));
+        }
+
+        System.out.println("\n4. Redis ZSET 순서 vs. DB createdAt 순서 비교");
+        if (zsetUserIds.size() != dbUserIds.size()) {
+            System.out.println(" - 크기가 다릅니다! ZSET=" + zsetUserIds.size() + ", DB=" + dbUserIds.size());
+        } else {
+            for (int i = 0; i < zsetUserIds.size(); i++) {
+                String zsetId = zsetUserIds.get(i);
+                String dbId = dbUserIds.get(i);
+
+                // 출력
+                System.out.printf(" - [%d] ZSET=%s / DB=%s", i, zsetId, dbId);
+                if (zsetId.equals(dbId)) {
+                    System.out.println(" (일치)");
+                } else {
+                    System.out.println(" (불일치)");
+                }
+            }
+        }
+        assertEquals(couponCapacity.intValue(), issuedCoupons.size(), "발급된 쿠폰 수가 쿠폰 수량과 일치해야 함 ");
     }
 }

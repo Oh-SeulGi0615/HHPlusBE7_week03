@@ -14,12 +14,4 @@ import java.util.Optional;
 public interface JpaGoodsStockRepository extends JpaRepository<GoodsStockEntity, Long> {
     Optional<GoodsStockEntity> findByGoodsStockId(Long goodsStockId);
     Optional<GoodsStockEntity> findByGoodsId(Long goodsId);
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select g from GoodsStockEntity g where g.goodsId = :goodsId")
-    Optional<GoodsStockEntity> findByGoodsIdPessimistic(@Param("goodsId") Long goodsId);
-
-    @Lock(LockModeType.OPTIMISTIC)
-    @Query("select g from GoodsStockEntity g where g.goodsId = :goodsId")
-    Optional<GoodsStockEntity> findByGoodsIdOptimistic(@Param("goodsId") Long goodsId);
 }
