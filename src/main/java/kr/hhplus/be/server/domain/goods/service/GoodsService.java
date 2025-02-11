@@ -98,10 +98,8 @@ public class GoodsService {
         LocalDateTime endDate = LocalDateTime.now().toLocalDate().atStartOfDay();
         LocalDateTime startDate = endDate.minusDays(3);
 
-        Pageable topTen = PageRequest.of(0, 10);
-
         List<SalesHistoryEntity> result = salesHistoryRepository.findTop10GoodsSales(
-                startDate, endDate, topTen
+                startDate, endDate
         );
 
         return result;

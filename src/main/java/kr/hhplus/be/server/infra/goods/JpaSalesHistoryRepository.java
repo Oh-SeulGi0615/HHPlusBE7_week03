@@ -24,10 +24,10 @@ public interface JpaSalesHistoryRepository extends JpaRepository<SalesHistoryEnt
     WHERE s.createdAt BETWEEN :startDate AND :endDate
     GROUP BY s.goodsId
     ORDER BY SUM(s.quantity) DESC
+    LIMIT 10
     """)
     List<SalesHistoryEntity> findTop10GoodsSales(
             @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate,
-            Pageable pageable
+            @Param("endDate") LocalDateTime endDate
     );
 }
