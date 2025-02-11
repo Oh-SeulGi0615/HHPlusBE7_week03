@@ -44,9 +44,9 @@ public class GoodsController {
 
     @GetMapping("/goods/best")
     public List<SalesHistoryResponse> getBestGoods() {
-        List<SalesHistoryEntity> best10Goods = goodsFacade.getCachedBest10Goods();
-        return best10Goods.stream().map(salesHistoryServiceDto -> new SalesHistoryResponse(
-                salesHistoryServiceDto.getSalesHistoryId(), salesHistoryServiceDto.getGoodsId(), salesHistoryServiceDto.getUserId(), salesHistoryServiceDto.getQuantity()
+        List<SalesHistoryEntity> best10Goods = goodsFacade.getBest10Goods();
+        return best10Goods.stream().map(SalesHistoryEntity -> new SalesHistoryResponse(
+                SalesHistoryEntity.getSalesHistoryId(), SalesHistoryEntity.getGoodsId(), SalesHistoryEntity.getUserId(), SalesHistoryEntity.getQuantity()
         )).collect(Collectors.toList());
     }
 }
