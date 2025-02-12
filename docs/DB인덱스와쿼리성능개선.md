@@ -140,8 +140,8 @@ CREATE INDEX idx_users_age_gender ON users(age, gender);
 ```sql
  EXPLAIN SELECT * FROM users WHERE email = 'test@example.com';
 ```
-|id|select_type|table|type|possible_keys| key       |key_len|rows|extra|
-|---|---|---|---|---|-----------|---|---|---|
+|id|select_type|table|type|possible_keys| key|key_len|rows|extra|
+|---|---|---|---|---|----|---|---|---|
 |1|SIMPLE|users|ref|idx_email| idx_email |255|1|Using index|
 
 3) extra 칼럼
@@ -154,5 +154,114 @@ CREATE INDEX idx_users_age_gender ON users(age, gender);
  | Using temporary|	임시 테이블 사용 (비효율적)| 	나쁨 |
   |Using filesort|	정렬이 필요한 경우 (ORDER BY 시 발생)| 	중간 |
 - - -
-## 서비스 주요 쿼리 - 쿼리 성능 개선을 위한 인덱스 적용
+## 쿼리 성능 개선을 위한 인덱스 적용
 - - -
+### 인기 상품 조회
+#### 인덱스 적용 전
+- 기존 코드
+```java
+// 인기상품 상위 10건 조회 서비스
+public List<SalesHistoryEntity> getBest10Goods() {
+        LocalDateTime endDate = LocalDateTime.now().toLocalDate().atStartOfDay();
+        LocalDateTime startDate = endDate.minusDays(1);
+
+        List<SalesHistoryEntity> result = salesHistoryRepository.findTop10GoodsSales(
+                startDate, endDate
+        );
+
+        return result;
+    }
+
+// salesHistoryRepository.findTop10GoodsSales 쿼리
+@Query("""
+        SELECT s.goodsId AS goodsId,
+               SUM(s.quantity) AS totalQuantity
+        FROM SalesHistoryEntity s
+        WHERE s.createdAt BETWEEN :startDate AND :endDate
+        GROUP BY s.goodsId
+        ORDER BY SUM(s.quantity) DESC
+        LIMIT 10
+        """)
+List<SalesHistoryEntity> findTop10GoodsSales(
+        @Param("startDate") LocalDateTime startDate,
+        @Param("endDate") LocalDateTime endDate
+);
+```
+
+- 더미 데이터 준비 (500만건)
+```sql
+LOAD DATA INFILE '/var/lib/mysql-files/sales_history.csv'
+INTO TABLE sales_history
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES
+(sales_history_id,goods_id,user_id,quantity,created_at,updated_at);
+```
+
+- 기존 쿼리 실행 계획 확인
+```sql
+EXPLAIN 
+SELECT goods_id, SUM(quantity) AS totalQuantity
+FROM sales_history
+WHERE created_at BETWEEN '2025-02-09 00:00:00' AND '2025-02-11 23:59:59'
+GROUP BY goods_id
+ORDER BY SUM(quantity) DESC
+LIMIT 10;
+```
+|id| select_type| table| partitions| type| possible_keys| key| key_len| ref| rows| filtered| Extra|
+|---|---|---|---|---|---|---|---|---|---|---|---|
+|1| SIMPLE| sales_history| NULL| ALL| NULL| NULL| NULL| NULL| 4853772| 11.11| Using where; Using temporary; Using filesort|
+
+- 기존 쿼리 실행 계획 분석
+
+| 필드 | 설명                                                                                                                                                                                      |
+|---|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| type = ALL | 풀 테이블 스캔을 의미. 테이블의 거의 모든 행 (485만 행)을 읽고 나서 WHERE을 이용한 필터링 수행                                                                                                                            |
+| possible_key = NULL | 사용할 수 있는 인덱스가 없음                                                                                                                                                                        |
+| key = NULL | 사용한 인덱스가 없음                                                                                                                                                                             |
+| rows = 4853772 | 옵티마이저가 예상하는 스캔해야할 행의 개수                                                                                                                                                                 |
+| filtered = 11.11 | WHERE로 필터링된 후 남을 것으로 예상되는 행의 비율                                                                                                                                                         |
+| Extra = Using where; Using temporary; Using filesort | - Using where : 풀 스캔으로 읽은 뒤, WHERE로 필요한 행만 거름 <br> - Using temporary : GROUP BY, ORDER BY 등을 위해 임시 테이블을 사용 <br> - Using filesort : 인덱스가 아닌 방식의 정렬. 외부 정렬 알고리즘을 사용한다는 의미로 성능에 부담을 줄 수 있음 |
+
+- 쿼리 실행 시간 측정 (SQL_NO_CACHE 옵션 사용)
+
+![Image](https://github.com/user-attachments/assets/a3193fe3-533e-4535-9937-f1663b640eb7)
+
+### 인덱스 적용 후
+- 병목 지점
+  - WHERE created_at BETWEEN A AND B
+    - 전체 데이터 중 특정 기간을 추출하므로 인덱스가 없으면 풀 테이블 스캔을 해야함
+  - GROUP BY goods_id
+    - (created_at, goods_id) 복합 인덱스를 구성하면 정렬된 순서로 데이터를 가져올 수 있음
+
+- 복합 인덱스 추가
+  - created_at, goods_id, quantity 칼럼 포함
+  - 커버링 인덱스를 활용해 쿼리 최적화
+```sql
+ALTER TABLE sales_history
+ADD INDEX idx_created_at_goods_id_quantity (created_at, goods_id, quantity);
+```
+
+- 인덱스 추가 후 실행 계획 확인
+
+|id| select_type| table| partitions| type| possible_keys| key| key_len| ref| rows| filtered| Extra|
+|---|---|---|---|---|---|---|---|---|---|---|---|
+|1| SIMPLE| sales_history| NULL| range| idx_created_at_goods_id_quantity| idx_created_at_goods_id_quantity| 8| NULL| 2426224| 100.00| Using where; Using index; Using temporary; Using filesort|
+
+- 인덱스 추가 전 실행 계획과의 차이점
+
+| 필드       | 인덱스 미적용        | 인덱스 적용 | 차이점 |
+|----------|----------------|---|---|
+| type     | ALL            | range | 인덱스 범위 스캔을 사용하여 created_at 조건 범위에 맞는 데이터만 선별적으로 읽어옴 |
+| key      | NULL           | idx_created_at_goods_id_quantity | 인덱스가 사용되어 검색 범위가 줄어듦 |
+| rows     | 4853772        | 2426224 | 인덱스가 사용되어 검색 범위가 줄어듦 |
+| filtered | 11.11          | 100.00 | 인덱스가 사용되어 조건에 맞는 데이터만 미리 가져옴 |
+| Extra    | Using index 없음 | Using index 표시 | 인덱스에 쿼리에 필요한 모든 칼럼이 포함되어 있어 <br> 실제 데이터에 접근하지 않고 인덱스만으로 쿼리 결과를 가져올 수 있음 | 
+
+- 쿼리 실행 시간 측정 (SQL_NO_CACHE 옵션 사용)
+
+![Image](https://github.com/user-attachments/assets/c24c5641-bc63-434c-ad7a-469254e3232a)
+- 인덱스 추가 전 쿼리의 평균 실행 시간 : 2.076sec
+- 인덱스 추가 후 쿼리의 평균 실행 시간 : 1.281sec
+- 약 39%의 성능 개선
