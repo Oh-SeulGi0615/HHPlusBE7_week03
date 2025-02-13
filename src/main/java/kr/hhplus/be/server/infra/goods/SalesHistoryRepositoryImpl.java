@@ -44,7 +44,7 @@ public class SalesHistoryRepositoryImpl implements SalesHistoryRepository {
     }
 
     @Override
-    public List<SalesHistoryEntity> findTop10GoodsSales(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
-        return jpaSalesHistoryRepository.findTop10GoodsSales(startDate, endDate, pageable);
+    public List<SalesHistoryEntity> findTop10GoodsSales(LocalDateTime startDate, LocalDateTime endDate) {
+        return jpaSalesHistoryRepository.findTop10GoodsSales(startDate, endDate);
     }
 }

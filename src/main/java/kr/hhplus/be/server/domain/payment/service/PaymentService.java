@@ -13,6 +13,7 @@ import kr.hhplus.be.server.domain.order.entity.OrderDetailEntity;
 import kr.hhplus.be.server.domain.order.repository.OrderDetailRepository;
 import kr.hhplus.be.server.domain.order.entity.OrderEntity;
 import kr.hhplus.be.server.domain.order.repository.OrderRepository;
+import kr.hhplus.be.server.domain.payment.dto.PaymentConfirmedEvent;
 import kr.hhplus.be.server.domain.payment.dto.PaymentServiceDto;
 import kr.hhplus.be.server.domain.payment.entity.PaymentEntity;
 import kr.hhplus.be.server.domain.payment.repository.PaymentRepository;
@@ -40,9 +41,10 @@ public class PaymentService {
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final UserCouponRepository userCouponRepository;
+    private final PaymentEventPublisher eventPublisher;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, UserRepository userRepository, CouponRepository couponRepository, GoodsRepository goodsRepository, GoodsStockRepository goodsStockRepository, SalesHistoryRepository salesHistoryRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, UserCouponRepository userCouponRepository) {
+    public PaymentService(PaymentRepository paymentRepository, UserRepository userRepository, CouponRepository couponRepository, GoodsRepository goodsRepository, GoodsStockRepository goodsStockRepository, SalesHistoryRepository salesHistoryRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, UserCouponRepository userCouponRepository, PaymentEventPublisher eventPublisher) {
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
         this.couponRepository = couponRepository;
@@ -52,6 +54,7 @@ public class PaymentService {
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.userCouponRepository = userCouponRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public PaymentServiceDto createPayment(Long userId, Long orderId, Long couponId) {
@@ -144,6 +147,14 @@ public class PaymentService {
         orderRepository.save(orderEntity.get());
         paymentEntity.setStatus(PaymentStatus.PAID);
         paymentRepository.save(paymentEntity);
+
+        eventPublisher.success(new PaymentConfirmedEvent(
+                paymentEntity.getPaymentId(),
+                paymentEntity.getOrderId(),
+                userEntity.getUserId(),
+                paymentEntity.getCouponId(),
+                paymentEntity.getTotalPrice()
+        ));
 
         return new PaymentServiceDto(
                 paymentEntity.getPaymentId(),
