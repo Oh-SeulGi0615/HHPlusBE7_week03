@@ -29,13 +29,8 @@ spring.config.activate.on-profile: local, test
 
 spring:
   datasource:
-    noindex:
+    mysql:
       url: jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
-      username: application
-      password: application
-      driver-class-name: com.mysql.cj.jdbc.Driver
-    index:
-      url: jdbc:mysql://localhost:3307/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
       username: application
       password: application
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -50,3 +45,15 @@ spring:
     redis:
       host: localhost
       port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: hhplus
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    listener:
+      ack-mode: batch

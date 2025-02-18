@@ -40,6 +40,9 @@ dependencies {
 	// DB
 	runtimeOnly("com.mysql:mysql-connector-j")
 
+	// Kafka
+	implementation("org.springframework.kafka:spring-kafka")
+
 	// Redis
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.redisson:redisson-spring-boot-starter:3.43.0")
@@ -51,6 +54,8 @@ dependencies {
 	testImplementation("org.testcontainers:mysql")
 	testImplementation("io.rest-assured:rest-assured")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("org.springframework.kafka:spring-kafka-test")
+	testImplementation("org.testcontainers:kafka")
 }
 
 tasks.withType<Test> {
