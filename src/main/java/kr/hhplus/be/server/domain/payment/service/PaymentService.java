@@ -16,6 +16,8 @@ import kr.hhplus.be.server.domain.order.repository.OrderRepository;
 import kr.hhplus.be.server.domain.payment.dto.PaymentConfirmedEvent;
 import kr.hhplus.be.server.domain.payment.dto.PaymentServiceDto;
 import kr.hhplus.be.server.domain.payment.entity.PaymentEntity;
+import kr.hhplus.be.server.domain.payment.entity.PaymentOutboxEntity;
+import kr.hhplus.be.server.domain.payment.repository.PaymentOutboxRepository;
 import kr.hhplus.be.server.domain.payment.repository.PaymentRepository;
 import kr.hhplus.be.server.domain.user.entity.UserEntity;
 import kr.hhplus.be.server.domain.user.repository.UserRepository;
@@ -23,6 +25,7 @@ import kr.hhplus.be.server.enums.OrderStatus;
 import kr.hhplus.be.server.enums.PaymentStatus;
 import kr.hhplus.be.server.enums.UserCouponStatus;
 import kr.hhplus.be.server.exeption.customExceptions.*;
+import kr.hhplus.be.server.infra.kafka.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,10 +44,11 @@ public class PaymentService {
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final UserCouponRepository userCouponRepository;
-    private final PaymentEventPublisher eventPublisher;
+    private final PaymentOutboxRepository paymentOutboxRepository;
+    private final KafkaProducer kafkaProducer;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, UserRepository userRepository, CouponRepository couponRepository, GoodsRepository goodsRepository, GoodsStockRepository goodsStockRepository, SalesHistoryRepository salesHistoryRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, UserCouponRepository userCouponRepository, PaymentEventPublisher eventPublisher) {
+    public PaymentService(PaymentRepository paymentRepository, UserRepository userRepository, CouponRepository couponRepository, GoodsRepository goodsRepository, GoodsStockRepository goodsStockRepository, SalesHistoryRepository salesHistoryRepository, OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, UserCouponRepository userCouponRepository, PaymentOutboxRepository paymentOutboxRepository, KafkaProducer kafkaProducer) {
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
         this.couponRepository = couponRepository;
@@ -54,7 +58,8 @@ public class PaymentService {
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.userCouponRepository = userCouponRepository;
-        this.eventPublisher = eventPublisher;
+        this.paymentOutboxRepository = paymentOutboxRepository;
+        this.kafkaProducer = kafkaProducer;
     }
 
     public PaymentServiceDto createPayment(Long userId, Long orderId, Long couponId) {
@@ -148,13 +153,15 @@ public class PaymentService {
         paymentEntity.setStatus(PaymentStatus.PAID);
         paymentRepository.save(paymentEntity);
 
-        eventPublisher.success(new PaymentConfirmedEvent(
+        PaymentConfirmedEvent event = new PaymentConfirmedEvent(
                 paymentEntity.getPaymentId(),
                 paymentEntity.getOrderId(),
                 userEntity.getUserId(),
                 paymentEntity.getCouponId(),
                 paymentEntity.getTotalPrice()
-        ));
+        );
+        PaymentOutboxEntity outboxEvent = new PaymentOutboxEntity("PaymentConfirmed", event.toString());
+        paymentOutboxRepository.save(outboxEvent);
 
         return new PaymentServiceDto(
                 paymentEntity.getPaymentId(),

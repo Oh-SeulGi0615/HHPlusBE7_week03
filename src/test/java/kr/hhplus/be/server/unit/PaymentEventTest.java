@@ -8,15 +8,13 @@ import kr.hhplus.be.server.domain.order.entity.OrderDetailEntity;
 import kr.hhplus.be.server.domain.order.entity.OrderEntity;
 import kr.hhplus.be.server.domain.order.repository.OrderDetailRepository;
 import kr.hhplus.be.server.domain.order.repository.OrderRepository;
-import kr.hhplus.be.server.domain.payment.dto.PaymentConfirmedEvent;
 import kr.hhplus.be.server.domain.payment.entity.PaymentEntity;
 import kr.hhplus.be.server.domain.payment.repository.PaymentRepository;
-import kr.hhplus.be.server.domain.payment.service.PaymentEventPublisher;
 import kr.hhplus.be.server.domain.payment.service.PaymentService;
 import kr.hhplus.be.server.domain.user.entity.UserEntity;
 import kr.hhplus.be.server.domain.user.repository.UserRepository;
-import kr.hhplus.be.server.enums.PaymentStatus;
 import kr.hhplus.be.server.exeption.customExceptions.InsufficientPointException;
+import kr.hhplus.be.server.infra.kafka.KafkaProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentEventPublishTest {
+public class PaymentEventTest {
     @Mock
     private UserRepository userRepository;
     @Mock private PaymentRepository paymentRepository;
@@ -43,7 +41,7 @@ public class PaymentEventPublishTest {
     @Mock private SalesHistoryRepository salesHistoryRepository;
     @Mock private UserCouponRepository userCouponRepository;
     @Mock private ApplicationEventPublisher eventPublisher;
-    @Mock private PaymentEventPublisher paymentEventPublisher;
+    @Mock private KafkaProducer kafkaProducer;
 
     @InjectMocks
     private PaymentService paymentService;
@@ -78,7 +76,7 @@ public class PaymentEventPublishTest {
 
     @Test
     @DisplayName("confirmPayment 이벤트 발생 성공 테스트")
-    void confirmPaymentWithEvent() {
+    void confirmPayment1() {
         // Given: Mock 데이터 설정
         when(userRepository.findByUserId(1L)).thenReturn(Optional.of(user));
         when(paymentRepository.findByPaymentId(1L)).thenReturn(Optional.of(payment));
@@ -90,12 +88,12 @@ public class PaymentEventPublishTest {
         paymentService.confirmPayment(1L, 1L);
 
         // Then: 이벤트 발생 검증
-        verify(paymentEventPublisher, times(1)).success(any(PaymentConfirmedEvent.class));
+        verify(kafkaProducer, times(1)).sendMessage(anyString());
     }
 
     @Test
     @DisplayName("confirmPayment 로직 실패로 인한 이벤트 미발생 테스트")
-    void confirmPaymentWithNoEvent() {
+    void confirmPayment2() {
         // Given: 사용자 잔액 부족
         user.setPoint(1000L);
         when(userRepository.findByUserId(1L)).thenReturn(Optional.of(user));
@@ -103,6 +101,6 @@ public class PaymentEventPublishTest {
 
         // When & Then: 예외 발생 및 이벤트 미발생 검증
         assertThrows(InsufficientPointException.class, () -> paymentService.confirmPayment(1L, 1L));
-        verify(eventPublisher, never()).publishEvent(any(PaymentConfirmedEvent.class));
+        verify(kafkaProducer, never()).sendMessage(anyString());
     }
 }
