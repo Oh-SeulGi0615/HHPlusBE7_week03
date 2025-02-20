@@ -1,11 +1,12 @@
 package kr.hhplus.be.server.domain.payment.entity;
 
 import jakarta.persistence.*;
+import kr.hhplus.be.server.domain.BaseEntity;
 import kr.hhplus.be.server.enums.PaymentStatus;
 
 @Entity
 @Table(name = "payment")
-public class PaymentEntity {
+public class PaymentEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
